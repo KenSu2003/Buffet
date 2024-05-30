@@ -1,0 +1,1 @@
+Looks at my trading record. Profits and Losses. Calculates for Risk and Reward. My make recommendation.
