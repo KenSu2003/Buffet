@@ -1,25 +1,23 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import ta, talib
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report, accuracy_score
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.utils import to_categorical
+import talib
 import matplotlib.pyplot as plt
 import csv
 
+import strategy1
 
 # Testing Parameters
 symbol = 'AMD'
-start_date = '2023-01-01'
-end_date = '2023-12-31'
+start_date = '2021-01-01'   # default = 2023-01-01 , profit: 622.77
+end_date = '2023-12-31'     # default = 2023-12-31
 time_interval = '1d'
 
 RSI_HIGH = 70
 RSI_LOW = 30
+POSITION_SIZE = 1000    #in USD
+TAKE_PROFIT = 5         # in %  (default)5%: +$683.67, 10%: +$277.29
+STOP_LOSS = 5           # in %  (default)1%: +$602.70, 5%: +$136.19
 
 
 # —————————————————————— Step 1: Fetch df ——————————————————————
@@ -45,71 +43,21 @@ df.dropna(inplace=True)
 
 # —————————————————————— Step 3: Implement Strategy ——————————————————————
 
-
 # RSI
-'''  
-    If the RSI is above RSI_HIGH that means the stock is overbought
-    If the RSI is below RSI_LOW that means the stock is underbought
-    If the RSI is between RSI_HIGH aand RSI_LOW remain neutral
-
-    Acceleration —> Direction —> Bullish (+) and Bearish (-)
+df = strategy1.calc_RSI(df, RSI_HIGH, RSI_LOW)
     
-    If the RSI goes above the RSI-EWMA & RSI[-1] is below RSI-EWMA —> Bullish
-    If the RSI goes below the RSI-EWMA is above RSI-EWMA —> Bearish
-'''
-df['RSI_signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
-for i in range(1,len(df)):
-    # print("RSI",df['RSI'].iloc[i],"RSI ema",df['RSI_ema'].iloc[i])
-    if df['RSI'].iloc[i] > df['RSI_ema'].iloc[i] and df['RSI'].iloc[i-1] < df['RSI_ema'].iloc[i-1]:   # BUY
-        df['RSI_signal'].iloc[i] = 1
-        if df['RSI'].iloc[i] < RSI_LOW: df['RSI_signal'].iloc[i] = 2
-    elif df['RSI'].iloc[i] < df['RSI_ema'].iloc[i] and df['RSI'].iloc[i-1] > df['RSI_ema'].iloc[i-1]: # SELL
-        df['RSI_signal'].iloc[i] = -1
-        if df['RSI'].iloc[i] < RSI_LOW: df['RSI_signal'].iloc[i] = -2
-    else:
-        df['RSI_signal'].iloc[i] = 0
-    
-
 # MACD
-'''  
-    If the MACD flips from red to green with high volume that means —> Bullish
-    If the MACD flips from green to red with high volume that means —> Bearish
-    If the volume is decreasing that means the momentum is going down so prepare to close position.
-'''
-df['MACD_flip'] = 0
-for i in range(1, len(df)):
-    if df['MACD'].iloc[i] > df['MACD_signal'].iloc[i] and df['MACD'].iloc[i-1] <= df['MACD_signal'].iloc[i-1]:
-        df['MACD_flip'].iloc[i] = 1  # Flip from red to green
-    elif df['MACD'].iloc[i] < df['MACD_signal'].iloc[i] and df['MACD'].iloc[i-1] >= df['MACD_signal'].iloc[i-1]:
-        df['MACD_flip'].iloc[i] = -1  # Flip from green to red
-    # print(df['MACD_flip'])
-
+df = strategy1.calc_MACD(df)
 
 # Bollinger Bands
-'''  
-    If the Bolligner Bands are divierging that means there is a large price movement. 
-
-    MUCH MORE DIFFICULT TO IMPLEMENT
-    1. Find average NORMALIZED level
-
-'''
-df['BB_width'] = df['BB_upper'] - df['BB_lower']
-df['BB_diverging'] = 0
-for i in range(1, len(df)):
-    if df['BB_width'].iloc[i] > df['BB_width'].iloc[i-1]:
-        df['BB_diverging'].iloc[i] = 1  # Bands are diverging
-    elif df['BB_width'].iloc[i] < df['BB_width'].iloc[i-1]:
-        df['BB_diverging'].iloc[i] = -1  # Bands are converging
+df = strategy1.calc_BB(df)
 
 # Deterimine BUY/SELL signal
-df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
-for i in range(len(df)):
-    df['Signal'].iloc[i] = df['RSI_signal'].iloc[i] + df['RSI_signal'].iloc[i] + df['BB_diverging'].iloc[i]
-    # df.loc[i, 'signal'] = df['RSI_signal'].iloc[i] + df['RSI_signal'].iloc[i] + df['BB_diverging'].iloc[i]
-
+df = strategy1.trade(df)
 
 
 # ——————————————————————— Step 4: Analysis ——————————————————————— #
+
 def calculate_profitability(data, profit_target_pct, stop_loss_pct, trade_size):
     trades = []
     position = 0  # 1 for long, -1 for short, 0 for no position
@@ -143,8 +91,9 @@ def calculate_profitability(data, profit_target_pct, stop_loss_pct, trade_size):
 
     return sum(profits), trades
 
+
 # Calculate profitability
-profit, trades = calculate_profitability(df, profit_target_pct=5, stop_loss_pct=2, trade_size=1000)
+profit, trades = calculate_profitability(df, profit_target_pct=TAKE_PROFIT, stop_loss_pct=STOP_LOSS, trade_size=POSITION_SIZE)
 
 print(f"Total Profit: ${profit:.2f}")
 print("Trades:")
@@ -152,8 +101,11 @@ for entry, exit, pos in trades:
     print(f"Entry: {entry}, Exit: {exit}, Position: {'Long' if pos == 1 else 'Short'}")
 
 
+# Save data to csv file
 df.to_csv('technical_indicators.csv')       # export to CSV to analyze the data more easily
 
+
+# Plot the trade signals
 plt.figure(figsize=(14, 7))
 plt.plot(df.index, df['Close'], label='Close Price', color='blue')
 plt.scatter(df[df['Signal'] > 0].index, df[df['Signal'] > 0]['Close'], marker='^', color='g', label='Buy Signal')
