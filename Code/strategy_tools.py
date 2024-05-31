@@ -1,4 +1,11 @@
 import csv
+
+
+def setup(symbol):
+    
+
+
+
 def calculate_profitability(data, profit_target_pct, stop_loss_pct, trade_size):
     trades = []
     position = 0  # 1 for long, -1 for short, 0 for no position

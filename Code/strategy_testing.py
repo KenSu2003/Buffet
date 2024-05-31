@@ -7,23 +7,26 @@ import csv
 
 import strategy_tools, strategy1
 
-# Testing Parameters
+# —————————————————————— Parameters ——————————————————————
+
+# Stock
 symbol = 'AMD'
+
+# Time (time-period, time-interval)
 start_date = '2023-01-01'   # default = 2023-01-01 , profit: 622.77
 end_date = '2023-12-31'     # default = 2023-12-31
 time_interval = '1d'
 
+# Indicatiors
 RSI_HIGH = 70
 RSI_LOW = 30
 POSITION_SIZE = 1000    #in USD
 TAKE_PROFIT = 5         # in %  (default)5%: +$683.67, 10%: +$277.29
-STOP_LOSS = 2           # in %  (default)1%: +$602.70, 5%: +$136.19
+STOP_LOSS = 2           # in %  (default)2%: +$683.67, 1%: +$602.70, 5%: +$136.19
 
 ''' Need to test long-term and short-term ROI'''
 
-
 # —————————————————————— Step 1: Fetch df ——————————————————————
-ticker = 'AMD'
 df = yf.download(symbol, start=start_date, end=end_date, interval=time_interval)
 
 # —————————————————————— Step 2: Retrieve Indicators ——————————————————————
@@ -62,9 +65,7 @@ df = strategy1.trade(df)
 
 # Calculate profitability
 profit = strategy_tools.calculate_profitability(df, profit_target_pct=TAKE_PROFIT, stop_loss_pct=STOP_LOSS, trade_size=POSITION_SIZE)
-
 print(f"Total Profit: ${profit:.2f}")
-
 
 # Save data to csv file
 df.to_csv('technical_indicators.csv')       # export to CSV to analyze the data more easily

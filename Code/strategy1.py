@@ -1,3 +1,7 @@
+# Use `df.loc[row_indexer, "col"] = values` instead, 
+# to perform the assignment in a single step 
+# and ensure this keeps updating the original `df`.
+
 '''  
     If the RSI is above RSI_HIGH that means the stock is overbought
     If the RSI is below RSI_LOW that means the stock is underbought
@@ -54,8 +58,19 @@ def calc_BB(df):
             df['BB_diverging'].iloc[i] = -1  # Bands are converging
     return df
 
+'''
+    Simulate a trade based on this strategy.
+'''
+def trade(df, RSI_HIGH, RSI_LOW):
+    # RSI
+    df = calc_RSI(df, RSI_HIGH, RSI_LOW)
+        
+    # MACD
+    df = calc_MACD(df)
 
-def trade(df):
+    # Bollinger Bands
+    df = calc_BB(df)
+
     df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
     for i in range(len(df)):
         df['Signal'].iloc[i] = df['RSI_signal'].iloc[i] + df['RSI_signal'].iloc[i] + df['BB_diverging'].iloc[i]
