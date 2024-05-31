@@ -12,9 +12,12 @@ def objective(RSI_HIGH, RSI_LOW, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS):
     STOP_LOSS = float(STOP_LOSS)
 
     # Load data
-    df = yf.download('AMD', start='2020-01-01', end='2020-12-31', interval='1d')
+    symbol = 'AMD'
+    start_date = '2020-01-01'
+    end_date = '2020-12-31'
+    interval = '1d'
+    df = strategy_tools.setup(symbol,start_date,end_date,interval)
     df = strategy1.trade(df, RSI_HIGH, RSI_LOW)
-    # df = strategy1.trade(df)
     
     # Calculate profitability
     profit = strategy_tools.calculate_profitability(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)

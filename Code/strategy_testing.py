@@ -24,7 +24,14 @@ POSITION_SIZE = 1000    #in USD
 TAKE_PROFIT = 5         # in %  (default)5%: +$683.67, 10%: +$277.29
 STOP_LOSS = 2           # in %  (default)2%: +$683.67, 1%: +$602.70, 5%: +$136.19
 
+
 ''' Need to test long-term and short-term ROI'''
+
+### IMPORTANT
+''' apparently RSIx2+BBx1 = +$683.67 and RSIx1,MACDx1,BBx1 = $617.56'''
+RSI_WEIGHT = 1
+MACD_WEIGHT = 1
+BB_WEIGHT = 1
 
 # —————————————————————— Step 1: Fetch data ——————————————————————
 
@@ -33,7 +40,7 @@ df = strategy_tools.setup(symbol, start_date, end_date, time_interval)
 # —————————————————————— Step 2: Implement Strategy ——————————————————————
 
 # Deterimine BUY/SELL signal
-df = strategy1.trade(df, RSI_HIGH, RSI_LOW)
+df = strategy1.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
 
 # ——————————————————————— Step 4: Analysis ——————————————————————— #
 

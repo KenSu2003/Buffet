@@ -1,6 +1,7 @@
-# Use `df.loc[row_indexer, "col"] = values` instead, 
-# to perform the assignment in a single step 
-# and ensure this keeps updating the original `df`.
+import pandas as pd
+import warnings
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 '''  
     If the RSI is above RSI_HIGH that means the stock is overbought
@@ -16,13 +17,13 @@ def calc_RSI(df, RSI_HIGH, RSI_LOW):
     df['RSI_signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
     for i in range(1,len(df)):
         if df['RSI'].iloc[i] > df['RSI_ema'].iloc[i] and df['RSI'].iloc[i-1] < df['RSI_ema'].iloc[i-1]:   # BUY
-            df['RSI_signal'].iloc[i] = 1
-            if df['RSI'].iloc[i] < RSI_LOW: df['RSI_signal'].iloc[i] = 2
+            df.at[df.index[i], 'RSI_signal'] = 1
+            if df['RSI'].iloc[i] < RSI_LOW: df.at[df.index[i], 'RSI_signal'] = 2   # df['RSI_signal'].iloc[i] = 2
         elif df['RSI'].iloc[i] < df['RSI_ema'].iloc[i] and df['RSI'].iloc[i-1] > df['RSI_ema'].iloc[i-1]: # SELL
-            df['RSI_signal'].iloc[i] = -1
-            if df['RSI'].iloc[i] > RSI_HIGH: df['RSI_signal'].iloc[i] = -2
+            df.at[df.index[i], 'RSI_signal'] = -1
+            if df['RSI'].iloc[i] > RSI_HIGH: df.at[df.index[i], 'RSI_signal'] = -2   # df['RSI_signal'].iloc[i] = -2
         else:
-            df['RSI_signal'].iloc[i] = 0
+            df.at[df.index[i], 'RSI_signal'] = 0
     return df
 
 
@@ -35,9 +36,9 @@ def calc_MACD(df):
     df['MACD_flip'] = 0
     for i in range(1, len(df)):
         if df['MACD'].iloc[i] > df['MACD_signal'].iloc[i] and df['MACD'].iloc[i-1] <= df['MACD_signal'].iloc[i-1]:
-            df['MACD_flip'].iloc[i] = 1  # Flip from red to green
+            df.at[df.index[i], 'MACD_flip'] = 1     # Flip from red to green
         elif df['MACD'].iloc[i] < df['MACD_signal'].iloc[i] and df['MACD'].iloc[i-1] >= df['MACD_signal'].iloc[i-1]:
-            df['MACD_flip'].iloc[i] = -1  # Flip from green to red
+            df.at[df.index[i], 'MACD_flip'] = -1    # Flip from green to red
     return df
 
 
@@ -53,15 +54,16 @@ def calc_BB(df):
     df['BB_diverging'] = 0
     for i in range(1, len(df)):
         if df['BB_width'].iloc[i] > df['BB_width'].iloc[i-1]:
-            df['BB_diverging'].iloc[i] = 1  # Bands are diverging
+            df.at[df.index[i], 'BB_diverging'] = 1    # Bands are diverging
         elif df['BB_width'].iloc[i] < df['BB_width'].iloc[i-1]:
-            df['BB_diverging'].iloc[i] = -1  # Bands are converging
+            df.at[df.index[i], 'BB_diverging'] = -1   # Bands are converging
     return df
 
 '''
     Simulate a trade based on this strategy.
 '''
-def trade(df, RSI_HIGH, RSI_LOW):
+def trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT):
+
     # RSI
     df = calc_RSI(df, RSI_HIGH, RSI_LOW)
         
@@ -73,5 +75,8 @@ def trade(df, RSI_HIGH, RSI_LOW):
 
     df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
     for i in range(len(df)):
-        df['Signal'].iloc[i] = df['RSI_signal'].iloc[i] + df['RSI_signal'].iloc[i] + df['BB_diverging'].iloc[i]
+        # Calculate the new signal value directly
+        signal_value = df.at[df.index[i], 'RSI_signal']*RSI_WEIGHT + df.at[df.index[i], 'MACD_signal']*MACD_WEIGHT + df.at[df.index[i], 'BB_diverging']*BB_WEIGHT
+        df.at[df.index[i], 'Signal'] = float(signal_value)  # float (not int) makes it more accurate
+
     return df
