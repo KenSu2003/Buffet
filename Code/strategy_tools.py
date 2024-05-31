@@ -1,8 +1,32 @@
 import csv
+import yfinance as yf
+import talib
 
 
-def setup(symbol):
-    
+
+def setup(symbol, start_date, end_date, time_interval):
+
+    # —————————————————————— Step 1: Fetch df ——————————————————————
+
+    df = yf.download(symbol, start=start_date, end=end_date, interval=time_interval)
+
+    # —————————————————————— Step 2: Retrieve Indicators ——————————————————————
+
+    # Bollingner Bands
+    df['BB_upper'], df['BB_mid'], df['BB_lower'] = talib.BBANDS(df['Close'], timeperiod=20)
+
+    # MACD
+    df['MACD'], df['MACD_signal'], _ = talib.MACD(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+
+    # RSI
+    df['RSI'] = talib.RSI(df['Close'], timeperiod=14)
+    df['RSI_ema'] = talib.EMA(df['RSI'], timeperiod=14)  # Calculate RSI-EMA
+
+    # Volume
+    df['Volume'] = df['Volume']
+    df.dropna(inplace=True)
+
+    return df
 
 
 
@@ -44,12 +68,6 @@ def calculate_profitability(data, profit_target_pct, stop_loss_pct, trade_size):
         writer = csv.writer(f)
         # writer.writeheader()
         writer.writerows(list(trades))
-     
-
-    # f = open("trades.txt", "w")
-    # for trade in trades:
-    #     f.write(list(trade))
-    # f.close()
 
     return sum(profits)
 

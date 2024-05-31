@@ -26,40 +26,14 @@ STOP_LOSS = 2           # in %  (default)2%: +$683.67, 1%: +$602.70, 5%: +$136.1
 
 ''' Need to test long-term and short-term ROI'''
 
-# —————————————————————— Step 1: Fetch df ——————————————————————
-df = yf.download(symbol, start=start_date, end=end_date, interval=time_interval)
+# —————————————————————— Step 1: Fetch data ——————————————————————
 
-# —————————————————————— Step 2: Retrieve Indicators ——————————————————————
+df = strategy_tools.setup(symbol, start_date, end_date, time_interval)
 
-# Bollingner Bands
-df['BB_upper'], df['BB_mid'], df['BB_lower'] = talib.BBANDS(df['Close'], timeperiod=20)
-
-# MACD
-df['MACD'], df['MACD_signal'], _ = talib.MACD(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
-
-# RSI
-df['RSI'] = talib.RSI(df['Close'], timeperiod=14)
-df['RSI_ema'] = talib.EMA(df['RSI'], timeperiod=14)  # Calculate RSI-EMA
-
-# Volume
-df['Volume'] = df['Volume']
-df.dropna(inplace=True)
-
-
-# —————————————————————— Step 3: Implement Strategy ——————————————————————
-
-# RSI
-df = strategy1.calc_RSI(df, RSI_HIGH, RSI_LOW)
-    
-# MACD
-df = strategy1.calc_MACD(df)
-
-# Bollinger Bands
-df = strategy1.calc_BB(df)
+# —————————————————————— Step 2: Implement Strategy ——————————————————————
 
 # Deterimine BUY/SELL signal
-df = strategy1.trade(df)
-
+df = strategy1.trade(df, RSI_HIGH, RSI_LOW)
 
 # ——————————————————————— Step 4: Analysis ——————————————————————— #
 
