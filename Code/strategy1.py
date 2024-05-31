@@ -59,5 +59,4 @@ def trade(df):
     df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
     for i in range(len(df)):
         df['Signal'].iloc[i] = df['RSI_signal'].iloc[i] + df['RSI_signal'].iloc[i] + df['BB_diverging'].iloc[i]
-        # df.loc[i, 'signal'] = df['RSI_signal'].iloc[i] + df['RSI_signal'].iloc[i] + df['BB_diverging'].iloc[i]
     return df
