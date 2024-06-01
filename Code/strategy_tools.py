@@ -80,3 +80,4 @@ def plot(plt, df):
     plt.ylabel('Price')
     plt.legend()
     plt.savefig('year%s.png'%df.index[0].year)
+    print("Graph Plotted")

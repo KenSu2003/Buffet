@@ -61,7 +61,7 @@ POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1990, 5, 4
 
 # Test Different Years
 years = [2019, 2020, 2021, 2022, 2023]
-for year in years:
+for year in range (2019,2023):
     start_date = date(year, 1, 1)
     end_date = date(year, 12, 31)
     time_test = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)

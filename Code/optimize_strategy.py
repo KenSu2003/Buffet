@@ -4,26 +4,43 @@ import strategy_tools
 import yfinance as yf
 import csv
 
-def objective(RSI_HIGH, RSI_LOW, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS):
-    # Adjust types as Bayesian Optimization works with float
-    RSI_HIGH = int(RSI_HIGH)
-    RSI_LOW = int(RSI_LOW)
-    POSITION_SIZE = int(POSITION_SIZE)
-    TAKE_PROFIT = float(TAKE_PROFIT)
-    STOP_LOSS = float(STOP_LOSS)
-    RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT = 1, 1, 1
+class optimization():
 
-    # Load data
-    symbol = 'AMD'
-    start_date = '2020-01-01'
-    end_date = '2020-12-31'
-    interval = '1d'
-    df = strategy_tools.setup(symbol,start_date,end_date,interval)
-    df = strategy1.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
-    
-    # Calculate profitability
-    profit = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
-    return profit  # Directly maximize profit
+    def __init__(self, 
+                 symbol, 
+                 start_date, end_date, time_interval):
+        
+        self.symbol = symbol
+
+        # Time (time-period, time-interval)
+        self.start_date = start_date
+        self.end_date = end_date
+        self.time_interval = time_interval
+
+
+    def objective(self, RSI_HIGH, RSI_LOW, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS):
+        # Adjust types as Bayesian Optimization works with float
+        RSI_HIGH = int(RSI_HIGH)
+        RSI_LOW = int(RSI_LOW)
+        POSITION_SIZE = int(POSITION_SIZE)
+        TAKE_PROFIT = float(TAKE_PROFIT)
+        STOP_LOSS = float(STOP_LOSS)
+        RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT = 1, 1, 1
+
+        # Load data
+        symbol = self.symbol
+        start_date = self.start_date
+        end_date = self.end_date
+        interval = self.time_interval
+        df = strategy_tools.setup(symbol,start_date,end_date,interval)
+        df = strategy1.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
+        
+        # Calculate profitability
+        profit = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
+        return profit  # Directly maximize profit
+
+# def optimize(self):
+optimize = optimization('AMD', '2023-01-01', '2023-12-31', '1d')
 
 # Define parameter bounds
 pbounds = {
@@ -35,7 +52,7 @@ pbounds = {
 }
 
 optimizer = BayesianOptimization(
-    f=objective,
+    f=optimize.objective,
     pbounds=pbounds,
     random_state=1,
 )
