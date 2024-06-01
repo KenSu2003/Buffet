@@ -38,29 +38,32 @@ class optimization():
         # Calculate profitability
         profit = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
         return profit  # Directly maximize profit
+    
+    def optimize(self):
+        # Define parameter bounds
+        pbounds = {
+            'RSI_HIGH': (20, 80),
+            'RSI_LOW': (20, 80),
+            'POSITION_SIZE': (500, 2000),
+            'TAKE_PROFIT': (1, 10),
+            'STOP_LOSS': (1, 5)
+        }
 
-# def optimize(self):
-optimize = optimization('AMD', '2023-01-01', '2023-12-31', '1d')
+        optimizer = BayesianOptimization(
+            f=self.objective,
+            pbounds=pbounds,
+            random_state=1,
+        )
 
-# Define parameter bounds
-pbounds = {
-    'RSI_HIGH': (20, 80),
-    'RSI_LOW': (20, 80),
-    'POSITION_SIZE': (500, 2000),
-    'TAKE_PROFIT': (1, 10),
-    'STOP_LOSS': (1, 5)
-}
+        optimizer.maximize(
+            init_points=10,
+            n_iter=40,
+        )
 
-optimizer = BayesianOptimization(
-    f=optimize.objective,
-    pbounds=pbounds,
-    random_state=1,
-)
+        return optimizer
 
-optimizer.maximize(
-    init_points=10,
-    n_iter=40,
-)
-
+        
+optimizer = optimization('AMD', '2023-01-01', '2023-12-31', '1d').optimize()
 print("Best parameters:", optimizer.max['params'])
 print("Best profitability:", optimizer.max['target'])
+
