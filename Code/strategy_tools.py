@@ -2,8 +2,6 @@ import csv
 import yfinance as yf
 import talib
 
-
-
 def setup(symbol, start_date, end_date, time_interval):
 
     # —————————————————————— Step 1: Fetch df ——————————————————————
@@ -30,7 +28,7 @@ def setup(symbol, start_date, end_date, time_interval):
 
 
 
-def calculate_profitability(data, profit_target_pct, stop_loss_pct, trade_size):
+def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
     trades = []
     position = 0  # 1 for long, -1 for short, 0 for no position
     entry_price = 0
@@ -81,4 +79,4 @@ def plot(plt, df):
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.legend()
-    plt.show()
+    plt.savefig('year%s.png'%df.index[0].year)

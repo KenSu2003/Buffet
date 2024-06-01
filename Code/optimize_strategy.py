@@ -22,7 +22,7 @@ def objective(RSI_HIGH, RSI_LOW, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS):
     df = strategy1.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
     
     # Calculate profitability
-    profit = strategy_tools.calculate_profitability(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
+    profit = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
     return profit  # Directly maximize profit
 
 # Define parameter bounds
