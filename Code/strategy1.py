@@ -1,3 +1,10 @@
+# Default strategy uses the following parameters:
+# RSI_HIGH = 70
+# RSI_LOW = 30
+# POSITION_SIZE = 1000    #in USD
+# TAKE_PROFIT = 5         # in %  (default)5%: +$683.67, 10%: +$277.29
+# STOP_LOSS = 2           # in %  (default)2%: +$683.67, 1%: +$602.70, 5%: +$136.19
+
 import pandas as pd
 import warnings
 
@@ -13,7 +20,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
     If the RSI goes below the RSI-EWMA is above RSI-HIGH —> Bearish
     If the RSI goes above the RSI-EWMA & RSI[-1] is below RSI-LOW —> Bullish
 '''
-def calc_RSI(df, RSI_HIGH, RSI_LOW):
+def calc_RSI(df, RSI_HIGH=70, RSI_LOW=30):
     df['RSI_signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
     for i in range(1,len(df)):
         if df['RSI'].iloc[i] > df['RSI_ema'].iloc[i] and df['RSI'].iloc[i-1] < df['RSI_ema'].iloc[i-1]:   # BUY
@@ -62,7 +69,7 @@ def calc_BB(df):
 '''
     Simulate a trade based on this strategy.
 '''
-def trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT):
+def trade(df, RSI_HIGH=70, RSI_LOW=30, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
 
     # RSI
     df = calc_RSI(df, RSI_HIGH, RSI_LOW)

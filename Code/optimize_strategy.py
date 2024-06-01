@@ -47,34 +47,3 @@ optimizer.maximize(
 
 print("Best parameters:", optimizer.max['params'])
 print("Best profitability:", optimizer.max['target'])
-
-
-# class Logger:
-#     def __init__(self, file_path):
-#         self.file_path = file_path
-#         with open(self.file_path, mode='w', newline='') as file:
-#             self.writer = csv.writer(file)
-#             self.writer.writerow(['iter', 'target', 'POSITION_SIZE', 'RSI_HIGH', 'RSI_LOW', 'STOP_LOSS', 'TAKE_PROFIT'])
-
-#     def update(self, event, optimizer, result):
-#         with open(self.file_path, mode='a', newline='') as file:
-#             self.writer = csv.writer(file)
-#             self.writer.writerow([
-#                 len(optimizer.res),  # Use the length of the results list to get the iteration number
-#                 result['target'],
-#                 result['params']['POSITION_SIZE'],
-#                 result['params']['RSI_HIGH'],
-#                 result['params']['RSI_LOW'],
-#                 result['params']['STOP_LOSS'],
-#                 result['params']['TAKE_PROFIT']
-#             ])
-
-# # Create a CSV file to store the results
-# output_file = '/mnt/data/optimized_strategy_iterations.csv'
-# logger = Logger(output_file)
-
-# optimizer.subscribe(Events.OPTIMIZATION_STEP, logger.update)
-# optimizer.maximize(
-#     init_points=10,
-#     n_iter=40,
-# )

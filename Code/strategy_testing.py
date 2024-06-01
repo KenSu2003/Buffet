@@ -13,17 +13,16 @@ import strategy_tools, strategy1
 symbol = 'AMD'
 
 # Time (time-period, time-interval)
-start_date = '2023-01-01'   # default = 2023-01-01 , profit: 622.77
+start_date = '2021-01-01'   # default = 2023-01-01 , profit: 622.77
 end_date = '2023-12-31'     # default = 2023-12-31
 time_interval = '1d'
 
 # Indicatiors
-RSI_HIGH = 70
-RSI_LOW = 30
-POSITION_SIZE = 1000    #in USD
-TAKE_PROFIT = 5         # in %  (default)5%: +$683.67, 10%: +$277.29
-STOP_LOSS = 2           # in %  (default)2%: +$683.67, 1%: +$602.70, 5%: +$136.19
-
+RSI_HIGH = 77
+RSI_LOW = 32
+POSITION_SIZE = 1990
+TAKE_PROFIT = 5         
+STOP_LOSS = 4
 
 ''' Need to test long-term and short-term ROI'''
 
@@ -42,7 +41,7 @@ df = strategy_tools.setup(symbol, start_date, end_date, time_interval)
 # Deterimine BUY/SELL signal
 df = strategy1.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
 
-# ——————————————————————— Step 4: Analysis ——————————————————————— #
+# ——————————————————————— Step 3: Analysis ——————————————————————— #
 
 # Calculate profitability
 profit = strategy_tools.calculate_profitability(df, profit_target_pct=TAKE_PROFIT, stop_loss_pct=STOP_LOSS, trade_size=POSITION_SIZE)
