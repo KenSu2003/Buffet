@@ -2,7 +2,6 @@ from bayes_opt import BayesianOptimization, Events
 import strategy1
 import strategy_tools
 import yfinance as yf
-import csv
 
 class optimization():
 
@@ -63,7 +62,6 @@ class optimization():
         return optimizer
 
         
-optimizer = optimization('AMD', '2023-01-01', '2023-12-31', '1d').optimize()
+optimizer = optimization('AMD', '2020-01-01', '2020-12-31', '1d').optimize()
 print("Best parameters:", optimizer.max['params'])
 print("Best profitability:", optimizer.max['target'])
-
