@@ -52,7 +52,7 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
             profits.append(profit)
         elif pos == -1:
             profit = (entry - exit) * trade_size / entry
-            profits.append()
+            profits.append(profit)
         data.at[data.index[index], 'PnL'] = profit    # Flip from green to red
         index+=1
 
