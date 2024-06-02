@@ -3,6 +3,15 @@ import yfinance as yf
 import talib
 
 def setup(symbol, start_date, end_date, time_interval):
+    """
+    Download the stock price history within the given time frame.
+
+    :param symbol: the symbol of the stock to test the strategy with
+    :param start_date: the start date of the data to be downloaded
+    :param end_date: the end date of the data to be downloaded
+    :time_interval: intervals of the the closing price ['1m','2m','5m','15m','30m','60m','90m','1h','1d','5d','1wk','1mo','3mo']
+    :return: the data file
+    """
 
     df = yf.download(symbol, start=start_date, end=end_date, interval=time_interval)    # fetch stock data
 
@@ -18,12 +27,24 @@ def setup(symbol, start_date, end_date, time_interval):
     return df
 
 
-
+# should consider implementing margin
 def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
+    """
+    Calcualte the profit and loss (PnL) as well as the Return on Investment (ROI).
+    Saves the trades in the file trades.csv.
+
+    :param data: the data file (default=df)
+    :param profit_target_pct: the take-profit level in percentage (%) not in decimal (.)
+    :param stop_loss_pct: the stop-loss level in percentage (%) not in decimal (.)
+    :param trade_size: the size of the positon in $
+    :return: returns the PnL and the roi
+    """
+
     trades = []
     position = 0  # 1 for long, -1 for short, 0 for no position
     entry_price = 0
     profits = []
+    rois = []
 
     for i in range(len(data)):
         if position == 0:
@@ -37,33 +58,39 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
             if data['Close'].iloc[i] >= entry_price * (1 + profit_target_pct / 100) or \
                data['Close'].iloc[i] <= entry_price * (1 - stop_loss_pct / 100):
                 
-                pnl = (data['Close'].iloc[i] - entry_price) * trade_size / entry_price
+                # roi = (data['Close'].iloc[i] - entry_price) * trade_size / entry_price     # in %
+                roi = (data['Close'].iloc[i] - entry_price) / entry_price                   # in %
+                pnl = (data['Close'].iloc[i] - entry_price) * (trade_size/entry_price)      # in $
                 profits.append(pnl)
+                rois.append(roi)
                 data.at[data.index[i], 'PnL'] = pnl
+                data.at[data.index[i], 'ROI'] = roi
 
-                trades.append((entry_price, data['Close'].iloc[i], position, pnl))
+                trades.append((entry_price, data['Close'].iloc[i], position, pnl, roi))
                 position = 0
         elif position == -1:
             if data['Close'].iloc[i] <= entry_price * (1 - profit_target_pct / 100) or \
                data['Close'].iloc[i] >= entry_price * (1 + stop_loss_pct / 100):
                 
-                pnl = (entry_price - data['Close'].iloc[i]) * trade_size / entry_price
+                # roi = (entry_price - data['Close'].iloc[i]) * trade_size / entry_price     # in %
+                roi = (entry_price - data['Close'].iloc[i]) / entry_price                   # in %
+                pnl = (entry_price - data['Close'].iloc[i]) * (trade_size/entry_price)      # in $
                 profits.append(pnl)
+                rois.append(roi)
                 data.at[data.index[i], 'PnL'] = pnl
+                data.at[data.index[i], 'ROI'] = roi
 
-                trades.append((entry_price, data['Close'].iloc[i], position, pnl))
+                trades.append((entry_price, data['Close'].iloc[i], position, pnl, roi))
                 position = 0
-        
-
 
     with open('trades.csv', 'w', newline='') as f:
-        fields = ['entry', 'exit', 'pos']
+        fields = ['entry', 'exit', 'pos', 'roi']
         # writer = csv.DictWriter(csvfile, fieldnames=fields)
         writer = csv.writer(f)
         # writer.writeheader()
         writer.writerows(list(trades))
 
-    return sum(profits)
+    return sum(profits), sum(rois)
 
 
 def plot(plt, df, graph_title):

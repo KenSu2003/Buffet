@@ -22,9 +22,9 @@ class tester:
         # Indicators
         self.RSI_HIGH = RSI_HIGH
         self.RSI_LOW = RSI_LOW
-        self.POSITION_SIZE = POSITION_SIZE
-        self.TAKE_PROFIT = TAKE_PROFIT
-        self.STOP_LOSS = STOP_LOSS
+        self.POSITION_SIZE = POSITION_SIZE          # number of stocks not $
+        self.TAKE_PROFIT = TAKE_PROFIT              # in % not .
+        self.STOP_LOSS = STOP_LOSS                  # in % not .
 
         self.RSI_WEIGHT = 1
         self.MACD_WEIGHT = 1
@@ -37,8 +37,8 @@ class tester:
 
     def analyze(self, df, title):
         # Calculate PNL
-        pnl = strategy_tools.calculate_pnl(df, self.TAKE_PROFIT, self.STOP_LOSS, self.POSITION_SIZE) 
-        print(f"Total PnL: ${pnl:.2f}")
+        pnl, roi = strategy_tools.calculate_pnl(df, self.TAKE_PROFIT, self.STOP_LOSS, self.POSITION_SIZE) 
+        print(f"Total PnL: ${pnl:.2f}\t({roi*100:.2f}%)")
 
         df.to_csv('technical_indicators.csv')       # Save data to csv file, export to CSV to analyze the data more easily  
         
@@ -56,8 +56,10 @@ class tester:
 # Parameters
 symbol = 'AMD'
 start_date, end_date, time_interval = date(2022,1,1) , date(2022,12,31)  , '1d'
-RSI_HIGH, RSI_LOW = 77, 32
-POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1990, 5, 4      # Opitimized 2020 parameters
+# RSI_HIGH, RSI_LOW = 77, 32
+# POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1990, 5, 4      # Opitimized 2020 parameters
+RSI_HIGH, RSI_LOW = 70.7072761455959, 46.97366258546015
+POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1636.3178048021325, 7.119310323767721, 3.2616967549326095 
 
 # Test Different Years
 years = [2019, 2020, 2021, 2022, 2023]

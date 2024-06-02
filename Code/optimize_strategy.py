@@ -26,6 +26,10 @@ class optimization():
         STOP_LOSS = float(STOP_LOSS)
         RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT = 1, 1, 1
 
+        # Enforce the constraint that RSI_HIGH must be greater than RSI_LOW
+        if RSI_HIGH <= RSI_LOW:
+            return -9999  # Return a very low number to indicate an invalid set of parameters
+
         # Load data
         symbol = self.symbol
         start_date = self.start_date
@@ -35,14 +39,14 @@ class optimization():
         df = strategy1.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
         
         # Calculate profitability
-        profit = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
-        return profit  # Directly maximize profit
+        profit, roi = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
+        return roi  # Directly maximize profit
     
     def optimize(self):
         # Define parameter bounds
         pbounds = {
-            'RSI_HIGH': (20, 80),
-            'RSI_LOW': (20, 80),
+            'RSI_HIGH': (50, 100),
+            'RSI_LOW': (0, 50),
             'POSITION_SIZE': (500, 2000),
             'TAKE_PROFIT': (1, 10),
             'STOP_LOSS': (1, 5)
@@ -64,4 +68,4 @@ class optimization():
         
 optimizer = optimization('AMD', '2020-01-01', '2020-12-31', '1d').optimize()
 print("Best parameters:", optimizer.max['params'])
-print("Best profitability:", optimizer.max['target'])
+print(f"Best profitability: {optimizer.max['target']*100:.2f}%")
