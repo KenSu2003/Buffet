@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import csv
-import strategy_tools, strategy1
+import strategy_tools, momentum_trading
 from datetime import date
+from typing import overload
 
 
 class tester:
@@ -29,10 +30,16 @@ class tester:
         self.RSI_WEIGHT = 1
         self.MACD_WEIGHT = 1
         self.BB_WEIGHT = 1
-        
+    
     def test(self):
         df = strategy_tools.setup(self.symbol, self.start_date, self.end_date, self.time_interval)  # fetch data          
-        df = strategy1.trade(df, self.RSI_HIGH, self.RSI_LOW, self.RSI_WEIGHT, self.MACD_WEIGHT, self.BB_WEIGHT)    # implement strategy, determine BUY/SELL signal    
+        df = momentum_trading.trade(df, self.RSI_HIGH, self.RSI_LOW, self.RSI_WEIGHT, self.MACD_WEIGHT, self.BB_WEIGHT)    # implement strategy, determine BUY/SELL signal    
+        return df
+    
+    # @overload
+    def testspecific(self, RSI_HIGH, RSI_LOW, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+        df = strategy_tools.setup(self.symbol, self.start_date, self.end_date, self.time_interval)  # fetch data          
+        df = momentum_trading.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
         return df
 
     def analyze(self, df, title):
@@ -55,21 +62,26 @@ class tester:
 
 # Parameters
 symbol = 'AMD'
-start_date, end_date, time_interval = date(2022,1,1) , date(2022,12,31)  , '1d'
+year = 2023
+start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , '1d'
 # RSI_HIGH, RSI_LOW = 77, 32
 # POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1990, 5, 4      # Opitimized 2020 parameters
 RSI_HIGH, RSI_LOW = 70.7072761455959, 46.97366258546015
 POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1636.3178048021325, 7.119310323767721, 3.2616967549326095 
+t = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
+df = t.test()
+graph_title = f"PnL in {year}"
+t.analyze(df, graph_title)
 
 # Test Different Years
-years = [2019, 2020, 2021, 2022, 2023]
-for year in range (2019,2024):
-    start_date = date(year,1,1)
-    end_date = date(year,12,31)
-    years_test = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
-    df = years_test.test()
-    graph_title = f"PnL in {year}"
-    years_test.analyze(df, graph_title)
+# years = [2019, 2020, 2021, 2022, 2023]
+# for year in range (2019,2024):
+#     start_date = date(year,1,1)
+#     end_date = date(year,12,31)
+#     years_test = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
+#     df = years_test.test()
+#     graph_title = f"PnL in {year}"
+#     years_test.analyze(df, graph_title)
 
 # Test Different Intervals
 # intervals = ['1d','5d','1wk','1mo','3mo']

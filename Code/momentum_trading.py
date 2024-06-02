@@ -63,7 +63,6 @@ def calc_BB(df):
             df.at[df.index[i], 'BB_diverging'] = -1   # Bands are converging
     return df
 
-
 def trade(df, RSI_HIGH=70, RSI_LOW=30, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
     """
     Simulate a trade based on the given parameter using this strategy.

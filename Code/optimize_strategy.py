@@ -1,5 +1,5 @@
 from bayes_opt import BayesianOptimization, Events
-import strategy1
+import momentum_trading as momentum_trading
 import strategy_tools
 import yfinance as yf
 
@@ -36,7 +36,7 @@ class optimization():
         end_date = self.end_date
         interval = self.time_interval
         df = strategy_tools.setup(symbol,start_date,end_date,interval)
-        df = strategy1.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
+        df = momentum_trading.trade(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
         
         # Calculate profitability
         profit, roi = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
@@ -56,6 +56,7 @@ class optimization():
             f=self.objective,
             pbounds=pbounds,
             random_state=1,
+            verbose=0
         )
 
         optimizer.maximize(
