@@ -61,7 +61,7 @@ POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1990, 5, 4      # Opitimized 2020 parame
 
 # Test Different Years
 years = [2019, 2020, 2021, 2022, 2023]
-for year in range (2019,2023):
+for year in range (2019,2024):
     start_date = date(year,1,1)
     end_date = date(year,12,31)
     years_test = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
@@ -70,8 +70,8 @@ for year in range (2019,2023):
     years_test.analyze(df, graph_title)
 
 # Test Different Intervals
-intervals = ['1d','5d','1wk','1mo','3mo']
-for interval in intervals:
-    interval_test = tester(symbol,start_date,end_date,interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
-    df = interval_test.test()
-    interval_test.analyze(df,f"PnL at {interval}")
+# intervals = ['1d','5d','1wk','1mo','3mo']
+# for interval in intervals:
+#     interval_test = tester(symbol,start_date,end_date,interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
+#     df = interval_test.test()
+#     interval_test.analyze(df,f"PnL at {interval}")

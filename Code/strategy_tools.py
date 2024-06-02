@@ -42,14 +42,19 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
                data['Close'].iloc[i] >= entry_price * (1 + stop_loss_pct / 100):
                 trades.append((entry_price, data['Close'].iloc[i], position))
                 position = 0
+        
 
     profits = []
+    index = 0
     for entry, exit, pos in trades:
         if pos == 1:
-            profits.append((exit - entry) * trade_size / entry)
+            profit = (exit - entry) * trade_size / entry
+            profits.append(profit)
         elif pos == -1:
-            profits.append((entry - exit) * trade_size / entry)
-
+            profit = (entry - exit) * trade_size / entry
+            profits.append()
+        data.at[data.index[index], 'PnL'] = profit    # Flip from green to red
+        index+=1
 
     with open('trades.csv', 'w', newline='') as f:
         fields = ['entry', 'exit', 'pos']
