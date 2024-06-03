@@ -2,6 +2,8 @@ import csv
 import yfinance as yf
 import talib
 
+# trading on 1d not 1h so not as practical
+
 def setup(symbol, start_date, end_date, time_interval):
     """
     Download the stock price history within the given time frame.
@@ -22,7 +24,7 @@ def setup(symbol, start_date, end_date, time_interval):
     df['RSI_ema'] = talib.EMA(df['RSI'], timeperiod=14)  # Calculate RSI-EMA
     df['Volume'] = df['Volume'] # Volume
 
-    df.dropna(inplace=True) # Remove NULL values
+    # df.dropna(inplace=True) # Remove NULL values
 
     return df
 

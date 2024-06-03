@@ -2,8 +2,6 @@
 Look at the data from past year from current day and make a trading decision.
 '''
 
-
-
 import strategy_testing, strategy_tools, momentum_trading
 from optimize_strategy import optimization
 from datetime import date, timedelta

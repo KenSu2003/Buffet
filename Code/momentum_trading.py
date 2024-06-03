@@ -51,7 +51,11 @@ def calc_MACD(df):
 
 def calc_BB(df):
     """
-    If the Bolligner Bands are divierging that means there is a large price movement. 
+    Calculates the buy/sell signal from the Bollinger Bands.
+    If the Bolligner Bands are diverging that means there is a large price movement ahead. (signal=1)
+    If the Bollinger Bands are converging that means there is consolidation ahead. (signal=-1)
+    
+    :return: The function returns 1 if the BBs are diverging and -1 if they are converging
     """
 
     df['BB_width'] = df['BB_upper'] - df['BB_lower']
@@ -63,9 +67,28 @@ def calc_BB(df):
             df.at[df.index[i], 'BB_diverging'] = -1   # Bands are converging
     return df
 
-def trade(df, RSI_HIGH=70, RSI_LOW=30, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+def trade_date(df, trading_date, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
     """
-    Simulate a trade based on the given parameter using this strategy.
+    Evaluates whether to BUY or SELL on a given date using the strategy.
+
+    :param trading_date: the date you want to evaluate
+    :param RSI_WEIGHT: the significance of the RSI signal (default=1)
+    :param MACD_WEIGHT: the significance of the MACD signal (default=1)
+    :param BB_WEIGHT:   the significance of the Bolling Bands' signal (default=1)
+    :return: returns the buy/sell trade signal (-2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY)
+    """
+
+    buy_sell_signal = 0
+    i = df.index.get_loc(trading_date)       # need to include check if it's a trading date
+    rsi_signal = df.at[df.index[i], 'RSI_signal']
+    macd_signal = df.at[df.index[i], 'MACD_signal']
+    bb_signal = df.at[df.index[i], 'BB_diverging']
+    buy_sell_signal = rsi_signal*RSI_WEIGHT + macd_signal*MACD_WEIGHT + bb_signal*BB_WEIGHT
+    return buy_sell_signal
+
+def simulate_trades(df, RSI_HIGH=70, RSI_LOW=30, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+    """
+    Simulate all the trades in the given time frame based on the given parameter using this strategy.
     """
 
     df = calc_RSI(df, RSI_HIGH, RSI_LOW)    # RSI
@@ -79,3 +102,4 @@ def trade(df, RSI_HIGH=70, RSI_LOW=30, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1)
         df.at[df.index[i], 'Signal'] = float(signal_value)  # float (not int) makes it more accurate
 
     return df
+
