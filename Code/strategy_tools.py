@@ -25,7 +25,7 @@ def setup(symbol, start_date, end_date, time_interval):
     df['Volume'] = df['Volume'] # Volume
 
     # df.dropna(inplace=True) # Remove NULL values
-
+    print("Setup Successful")
     return df
 
 

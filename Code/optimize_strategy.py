@@ -4,12 +4,12 @@ import strategy_tools
 
 class optimization():
 
-    def __init__(self, 
+    def __init__(self, df, 
                  symbol, 
                  start_date, end_date, time_interval):
         
         self.symbol = symbol
-
+        self.df = df
         # Time (time-period, time-interval)
         self.start_date = start_date
         self.end_date = end_date
@@ -34,8 +34,8 @@ class optimization():
         start_date = self.start_date
         end_date = self.end_date
         interval = self.time_interval
-        df = strategy_tools.setup(symbol,start_date,end_date,interval)
-        df = momentum_trading.simulate_trades(df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
+        # df = strategy_tools.setup(symbol,start_date,end_date,interval)
+        df = momentum_trading.simulate_trades(self.df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
         
         # Calculate profitability
         profit, roi = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
@@ -46,9 +46,14 @@ class optimization():
         pbounds = {
             'RSI_HIGH': (50, 100),
             'RSI_LOW': (0, 50),
+
             'POSITION_SIZE': (500, 2000),
             'TAKE_PROFIT': (1, 10),
-            'STOP_LOSS': (1, 5)
+            'STOP_LOSS': (1, 5),
+
+            'RSI_WEIGHT': (0,3), 
+            'MACD_WEIGHT': (0,3), 
+            'BB_WEIGHT': (0,3)
         }
 
         optimizer = BayesianOptimization(
@@ -63,8 +68,14 @@ class optimization():
             n_iter=40,
         )
 
+        print('Strategy Optimized')
         return optimizer
 
-optimizer = optimization('AMD', '2020-01-01', '2020-12-31', '1d').optimize()
-print("Best parameters:", optimizer.max['params'])
-print(f"Best profitability: {optimizer.max['target']*100:.2f}%")
+# symbol = 'AMD'
+# start_date = '2020-01-01'
+# end_date = '2020-12-31'
+# time_interval = '1d'
+# df = strategy_tools.setup(symbol, start_date, end_date, time_interval)
+# optimizer = optimization(df, symbol, start_date, end_date, time_interval).optimize()
+# print("Best parameters:", optimizer.max['params'])
+# print(f"Best profitability: {optimizer.max['target']*100:.2f}%")
