@@ -1,10 +1,3 @@
-# Default strategy uses the following parameters:
-# RSI_HIGH = 70
-# RSI_LOW = 30
-# POSITION_SIZE = 1000    #in USD
-# TAKE_PROFIT = 5         # in %  (default)5%: +$683.67, 10%: +$277.29
-# STOP_LOSS = 2           # in %  (default)2%: +$683.67, 1%: +$602.70, 5%: +$136.19
-
 import pandas as pd
 import warnings
 

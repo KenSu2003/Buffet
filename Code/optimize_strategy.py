@@ -1,4 +1,4 @@
-from bayes_opt import BayesianOptimization, Events
+from bayes_opt import BayesianOptimization
 import momentum_trading as momentum_trading
 import strategy_tools
 
@@ -38,7 +38,7 @@ class optimization():
         df = momentum_trading.simulate_trades(self.df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
         
         # Calculate profitability
-        profit, roi = strategy_tools.calculate_pnl(df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
+        profit, roi = strategy_tools.calculate_pnl(self.df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
         return roi  # Directly maximize profit
     
     def optimize(self):
