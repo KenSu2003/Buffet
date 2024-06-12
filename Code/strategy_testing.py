@@ -4,7 +4,7 @@ import strategy_tools as tools
 import momentum_trading as strategy
 from datetime import date
 from typing import overload
-from optimize_strategy import optimization
+from optimize_strategy import BasicOptimization
 from pathlib import Path
 
 
@@ -15,7 +15,8 @@ class tester:
                  symbol, 
                  start_date, end_date, time_interval,       
                  RSI_HIGH, RSI_LOW,
-                 POSITION_SIZE, TAKE_PROFIT, STOP_LOSS):
+                 POSITION_SIZE, TAKE_PROFIT, STOP_LOSS,
+                 RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
 
         self.symbol = symbol
 
@@ -31,9 +32,9 @@ class tester:
         self.TAKE_PROFIT = TAKE_PROFIT              # in % not .
         self.STOP_LOSS = STOP_LOSS                  # in % not .
 
-        self.RSI_WEIGHT = 1
-        self.MACD_WEIGHT = 1
-        self.BB_WEIGHT = 1
+        self.RSI_WEIGHT = RSI_WEIGHT
+        self.MACD_WEIGHT = MACD_WEIGHT
+        self.BB_WEIGHT = BB_WEIGHT
 
         self.df = {}
     
@@ -70,7 +71,7 @@ class tester:
         print("Data Analyzed")
 
         # path = Path('/data/csv') # retrieved from https://stackoverflow.com/questions/54944524/how-to-write-csv-file-into-specific-folder
-        # path.mkdir(0o666,parents=True, exist_ok=True)
+        # path.mkdir(0o777,parents=True, exist_ok=True)
         # fpath = (path / file_name).with_suffix('.csv')
         # with fpath.open(mode='w+') as csvfile:
         #     writer = csv.writer(csvfile)
@@ -82,7 +83,7 @@ class tester:
 # Default Parameters
 symbol = 'AMD'
 year = 2023
-start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , '1h'
+start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , '1d'
 RSI_HIGH, RSI_LOW = 70, 30
 POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
 print("Default Parameters Set")
@@ -112,18 +113,23 @@ t.analyze(graph_title)
 #     df = interval_test.test()
 #     interval_test.analyze(df,f"PnL at {interval}")
 
+####### Test Optimized Parameters #######
 def test_optimized(symbol, start_date, end_date, time_interval):
     """
     Test the strategy using the optimized parameters
     """
     df = tools.setup(symbol, start_date, end_date, time_interval)
     ####### Test Optimized Parameters #######
-    optimizer = optimization(df, symbol, start_date, end_date, time_interval).optimize()
+    optimizer = BasicOptimization(df, symbol, start_date, end_date, time_interval).optimize()
     optimized_POSITION_SIZE = optimizer.max['params'].get('POSITION_SIZE')
     optimized_RSI_HIGH = optimizer.max['params'].get('RSI_HIGH')
     optimized_RSI_LOW = optimizer.max['params'].get('RSI_LOW')
     optimized_STOP_LOSS = optimizer.max['params'].get('STOP_LOSS')
     optimized_TAKE_PROFIT = optimizer.max['params'].get('TAKE_PROFIT')
+
+    optimized_RSI_WEIGHT = optimizer.max['params'].get('RSI_WEIGHT')
+    optimized_MACD_WEIGHT = optimizer.max['params'].get('MACD_WEIGHT')
+    optimized_BB_WEIGHT = optimizer.max['params'].get('BB_WEIGHT')
 
     o = tester(symbol, start_date, end_date, time_interval, 
             optimized_RSI_HIGH, optimized_RSI_LOW, 
@@ -131,7 +137,33 @@ def test_optimized(symbol, start_date, end_date, time_interval):
     df = o.test()
     graph_title = f"Optimized {symbol} - {year} {time_interval}"
     o.analyze(graph_title)
+    print("Best parameters:", optimizer.max['params'])
     # print("BUY/SELL Signal:",strategy.trade_date(df, '2022-03-24'))
 
+    return optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
 
-test_optimized(symbol, start_date, end_date, time_interval)
+optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
+
+# Test on a different year
+# Best parameters: {'BB_WEIGHT': 2.990162710303897, 
+#                   'MACD_WEIGHT': 2.34408483851548, 
+#                   'POSITION_SIZE': 1030.5529588393779, 
+#                   'RSI_HIGH': 58.744541059654985, 
+#                   'RSI_LOW': 24.234249228844096, 
+#                   'RSI_WEIGHT': 0.3325400242965314, 
+#                   'STOP_LOSS': 4.947503644655738, 
+#                   'TAKE_PROFIT': 4.7785960727406565}
+
+symbol = 'AMD'
+year = 2021
+start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , '1d'
+
+print("Default Parameters Set")
+
+####### Basic Testing #######
+print("Testing Default Strategy")
+t = tester(symbol,start_date,end_date,time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+t.test()
+graph_title = f"{symbol} - {year} {time_interval}"
+t.analyze(graph_title)
+# print("BUY/SELL Signal:",strategy.trade_date(df, '2022-03-24'))
