@@ -1,6 +1,7 @@
 import csv
 import yfinance as yf
 import talib
+import pandas as pd
 
 # trading on 1d not 1h so not as practical
 
@@ -18,9 +19,9 @@ def setup(symbol, start_date, end_date, time_interval):
     df = yf.download(symbol, start=start_date, end=end_date, interval=time_interval)    # fetch stock data
 
     # Retrieve Indicators
-    df['BB_upper'], df['BB_mid'], df['BB_lower'] = talib.BBANDS(df['Close'], timeperiod=20)     # Bollingner Bands
-    df['MACD'], df['MACD_signal'], _ = talib.MACD(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)    # MACD
-    df['RSI'] = talib.RSI(df['Close'], timeperiod=14)   # RSI
+    df['BB_upper'], df['BB_mid'], df['BB_lower'] = talib.BBANDS(df['close'], timeperiod=20)     # Bollingner Bands
+    df['MACD'], df['MACD_signal'], _ = talib.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)    # MACD
+    df['RSI'] = talib.RSI(df['close'], timeperiod=14)   # RSI
     df['RSI_ema'] = talib.EMA(df['RSI'], timeperiod=14)  # Calculate RSI-EMA
     df['Volume'] = df['Volume'] # Volume
 
@@ -52,37 +53,37 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
         if position == 0:
             if data['Signal'].iloc[i] > 0:
                 position = 1
-                entry_price = data['Close'].iloc[i]
+                entry_price = data['close'].iloc[i]
             elif data['Signal'].iloc[i] < 0:
                 position = -1
-                entry_price = data['Close'].iloc[i]
+                entry_price = data['close'].iloc[i]
         elif position == 1:
-            if data['Close'].iloc[i] >= entry_price * (1 + profit_target_pct / 100) or \
-               data['Close'].iloc[i] <= entry_price * (1 - stop_loss_pct / 100):
+            if data['close'].iloc[i] >= entry_price * (1 + profit_target_pct / 100) or \
+               data['close'].iloc[i] <= entry_price * (1 - stop_loss_pct / 100):
                 
-                # roi = (data['Close'].iloc[i] - entry_price) * trade_size / entry_price     # in %
-                roi = (data['Close'].iloc[i] - entry_price) / entry_price                   # in %
-                pnl = (data['Close'].iloc[i] - entry_price) * (trade_size/entry_price)      # in $
+                # roi = (data['close'].iloc[i] - entry_price) * trade_size / entry_price     # in %
+                roi = (data['close'].iloc[i] - entry_price) / entry_price                   # in %
+                pnl = (data['close'].iloc[i] - entry_price) * (trade_size/entry_price)      # in $
                 profits.append(pnl)
                 rois.append(roi)
                 data.at[data.index[i], 'PnL'] = pnl
                 data.at[data.index[i], 'ROI'] = roi
 
-                trades.append((entry_price, data['Close'].iloc[i], position, pnl, roi))
+                trades.append((entry_price, data['close'].iloc[i], position, pnl, roi))
                 position = 0
         elif position == -1:
-            if data['Close'].iloc[i] <= entry_price * (1 - profit_target_pct / 100) or \
-               data['Close'].iloc[i] >= entry_price * (1 + stop_loss_pct / 100):
+            if data['close'].iloc[i] <= entry_price * (1 - profit_target_pct / 100) or \
+               data['close'].iloc[i] >= entry_price * (1 + stop_loss_pct / 100):
                 
-                # roi = (entry_price - data['Close'].iloc[i]) * trade_size / entry_price     # in %
-                roi = (entry_price - data['Close'].iloc[i]) / entry_price                   # in %
-                pnl = (entry_price - data['Close'].iloc[i]) * (trade_size/entry_price)      # in $
+                # roi = (entry_price - data['close'].iloc[i]) * trade_size / entry_price     # in %
+                roi = (entry_price - data['close'].iloc[i]) / entry_price                   # in %
+                pnl = (entry_price - data['close'].iloc[i]) * (trade_size/entry_price)      # in $
                 profits.append(pnl)
                 rois.append(roi)
                 data.at[data.index[i], 'PnL'] = pnl
                 data.at[data.index[i], 'ROI'] = roi
 
-                trades.append((entry_price, data['Close'].iloc[i], position, pnl, roi))
+                trades.append((entry_price, data['close'].iloc[i], position, pnl, roi))
                 position = 0
 
     with open('trades.csv', 'w', newline='') as f:
@@ -97,9 +98,10 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
 
 def plot(plt, df, graph_title):
     plt.figure(figsize=(14, 7))
-    plt.plot(df.index, df['Close'], label='Close Price', color='blue')
-    plt.scatter(df[df['Signal'] > 0].index, df[df['Signal'] > 0]['Close'], marker='^', color='g', label='Buy Signal')
-    plt.scatter(df[df['Signal'] < 0].index, df[df['Signal'] < 0]['Close'], marker='v', color='r', label='Sell Signal')
+    plt.plot(df.index, df['close'], label='close Price', color='blue')
+    # plt.plot(pd.to_datetime(df.index.get_level_values('timestamp')), df['close'], label='close Price', color='blue')
+    plt.scatter(df[df['Signal'] > 0].index, df[df['Signal'] > 0]['close'], marker='^', color='g', label='Buy Signal')
+    plt.scatter(df[df['Signal'] < 0].index, df[df['Signal'] < 0]['close'], marker='v', color='r', label='Sell Signal')
     plt.title('Buy and Sell Signals on AMD Historical Data')
     plt.xlabel('Date')
     plt.ylabel('Price')
