@@ -5,6 +5,16 @@ import talib
 
 
 def setup(symbol_or_sumbols,start_time,end_time,interval):
+    """
+    Download the stock price history within the given time frame.
+
+    :param symbol: the symbol of the stock to test the strategy with
+    :param start_date: the start date of the data to be downloaded
+    :param end_date: the end date of the data to be downloaded
+    :time_interval: intervals of the the closing price ['1m','2m','5m','15m','30m','60m','90m','1h','1d','5d','1wk','1mo','3mo']
+    :return: the data file
+    """
+
     # Replace with your Alpaca API keys
     APCA_API_KEY_ID = "PKDSUFSDD8XOZZC309LK"
     APCA_API_SECRET_KEY = "araI1T7gB3rsXErEanFI9QwIdyQeVE8XUgGOMtey"

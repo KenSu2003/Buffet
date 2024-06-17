@@ -1,11 +1,12 @@
 import csv
-import yfinance as yf
 import talib
-import pandas as pd
+from alpaca.data.historical import StockHistoricalDataClient
+from alpaca.data.requests import StockBarsRequest
+from alpaca.data.timeframe import TimeFrame
 
 # trading on 1d not 1h so not as practical
 
-def setup(symbol, start_date, end_date, time_interval):
+def setup(symbol_or_sumbols,start_time,end_time,interval):
     """
     Download the stock price history within the given time frame.
 
@@ -16,17 +17,32 @@ def setup(symbol, start_date, end_date, time_interval):
     :return: the data file
     """
 
-    df = yf.download(symbol, start=start_date, end=end_date, interval=time_interval)    # fetch stock data
+    # Replace with your Alpaca API keys
+    APCA_API_KEY_ID = "PKDSUFSDD8XOZZC309LK"
+    APCA_API_SECRET_KEY = "araI1T7gB3rsXErEanFI9QwIdyQeVE8XUgGOMtey"
+
+    data = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
+
+    request_params = StockBarsRequest(
+                            symbol_or_symbols=symbol_or_sumbols,
+                            timeframe=interval,
+                            start=start_time,
+                            end=end_time
+                    )
+    barset = data.get_stock_bars(request_params)
+    df = barset.df      # convert to dataframe
+    df = df.reset_index(level='symbol', drop=True)
 
     # Retrieve Indicators
     df['BB_upper'], df['BB_mid'], df['BB_lower'] = talib.BBANDS(df['close'], timeperiod=20)     # Bollingner Bands
     df['MACD'], df['MACD_signal'], _ = talib.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)    # MACD
     df['RSI'] = talib.RSI(df['close'], timeperiod=14)   # RSI
     df['RSI_ema'] = talib.EMA(df['RSI'], timeperiod=14)  # Calculate RSI-EMA
-    df['Volume'] = df['Volume'] # Volume
-
+    df['Volume'] = df['volume'] # Volume
     # df.dropna(inplace=True) # Remove NULL values
+    
     print("Setup Successful")
+    
     return df
 
 
