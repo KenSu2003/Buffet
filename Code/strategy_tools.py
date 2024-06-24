@@ -14,7 +14,7 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
     :param start_date: the start date of the data to be downloaded
     :param end_date: the end date of the data to be downloaded
     :time_interval: intervals of the the closing price ['1m','2m','5m','15m','30m','60m','90m','1h','1d','5d','1wk','1mo','3mo']
-    :return: the data file
+    :return: the datafile
     """
 
     # Replace with your Alpaca API keys
@@ -49,7 +49,7 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
 # should consider implementing margin
 def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
     """
-    Calcualte the profit and loss (PnL) as well as the Return on Investment (ROI).
+    Calculate the profit and loss (PnL) as well as the Return on Investment (ROI).
     Saves the trades in the file trades.csv.
 
     :param data: the data file (default=df)
@@ -102,7 +102,9 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
                 trades.append((entry_price, data['close'].iloc[i], position, pnl, roi))
                 position = 0
 
-    with open('trades.csv', 'w', newline='') as f:
+    file_path = "./Data"
+    filename = f"{file_path}/trades.csv"
+    with open(filename, 'w', newline='') as f:
         fields = ['entry', 'exit', 'pos', 'roi']
         # writer = csv.DictWriter(csvfile, fieldnames=fields)
         writer = csv.writer(f)
@@ -113,11 +115,15 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
 
 
 def plot(plt, df, graph_title):
-    plt.figure(figsize=(14, 7))
+    x_scale = 1
+    y_scale = 1
+    signal_scale=1
+
+    plt.figure(figsize=(14*x_scale, 7*y_scale), dpi=300)
     plt.plot(df.index, df['close'], label='close Price', color='blue')
     # plt.plot(pd.to_datetime(df.index.get_level_values('timestamp')), df['close'], label='close Price', color='blue')
-    plt.scatter(df[df['Signal'] > 0].index, df[df['Signal'] > 0]['close'], marker='^', color='g', label='Buy Signal')
-    plt.scatter(df[df['Signal'] < 0].index, df[df['Signal'] < 0]['close'], marker='v', color='r', label='Sell Signal')
+    plt.scatter(df[df['Signal'] > 0].index, df[df['Signal'] > 0]['close'], marker='^', color='g', label='Buy Signal', s=24*signal_scale)
+    plt.scatter(df[df['Signal'] < 0].index, df[df['Signal'] < 0]['close'], marker='v', color='r', label='Sell Signal', s=24*signal_scale)
     plt.title('Buy and Sell Signals on AMD Historical Data')
     plt.xlabel('Date')
     plt.ylabel('Price')

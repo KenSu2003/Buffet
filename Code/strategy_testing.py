@@ -47,39 +47,38 @@ class tester:
         return df
 
     def analyze(self, title):
+        file_path = "./Data"
+
         print("Analyzing Data")
         # Calculate PNL
         pnl, roi = tools.calculate_pnl(self.df, self.TAKE_PROFIT, self.STOP_LOSS, self.POSITION_SIZE) 
         print(f"Total PnL: ${pnl:.2f}\t({roi*100:.2f}%)")
-
         year = f"{self.start_date.year}-{self.end_date.year}"
 
-        filename = f"TI_{self.symbol}_{year}_{self.time_interval}.csv"
+        print("Saving Datafile")
+        filename = f"{file_path}/TI_{self.symbol}_{year}_{self.time_interval}.csv"
         self.df.to_csv(filename)       # Save data to csv file, export to CSV to analyze the data more easily  
-        
-        tools.plot(plt, self.df, title)    # Plot the trade signals
+        print("Datafile Saved")
 
-        # # Save year and PnL to CSV file
-        file_name = f"pnl_record_{title}.csv"
+
+        # Save year and PnL to CSV file
+        file_name = f"{file_path}/pnl_record_{title}.csv"
         with open(file_name, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([year, pnl])
         print("Data Analyzed")
 
-        # path = Path('/data/csv') # retrieved from https://stackoverflow.com/questions/54944524/how-to-write-csv-file-into-specific-folder
-        # path.mkdir(0o777,parents=True, exist_ok=True)
-        # fpath = (path / file_name).with_suffix('.csv')
-        # with fpath.open(mode='w+') as csvfile:
-        #     writer = csv.writer(csvfile)
-        #     writer.writerow([year, pnl])
-
-
+        # Plot the trades
+        title = f"{file_path}/{title}"
+        tools.plot(plt, self.df, title)    
+        
+ 
 # ——————————————————- Run Tests ————————————————————
 
 # Default Parameters
 symbol = 'AMD'
 year = 2022
-start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , '1d'
+start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , TimeFrame.Day
 RSI_HIGH, RSI_LOW = 70, 30
 POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
 print("Default Parameters Set")
@@ -95,7 +94,6 @@ print("Default Parameters Set")
 
 ####### Alpaca Testing #######
 print("Testing Default Strategy")
-time_interval = TimeFrame.Day
 t = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
 t.test()
 graph_title = f"{symbol} - {year} {time_interval}"
@@ -150,18 +148,17 @@ def test_optimized(symbol, start_date, end_date, time_interval):
 
     return optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
 
-optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
+# optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
 
 ####### Testing on a Different Year #######
-symbol = 'AMD'
-year = 2021
-start_date, end_date = date(year,1,1) , date(year,12,31)
+# symbol = 'AMD'
+# year = 2021
+# start_date, end_date = date(year,1,1) , date(year,12,31)
 
-print("Default Parameters Set")
+# print("Default Parameters Set")
 
-print("Testing Default Strategy")
-t = tester(symbol,start_date,end_date,time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+# print("Testing Default Strategy")
+# t = tester(symbol,start_date,end_date,time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
 # t.test()
-t.test()
-graph_title = f"{symbol} - {year} {time_interval}"
-t.analyze(graph_title)
+# graph_title = f"{symbol} - {year} {time_interval}"
+# t.analyze(graph_title)

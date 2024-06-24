@@ -21,7 +21,7 @@ class BasicOptimization():
         if RSI_HIGH <= RSI_LOW:
             return -9999
 
-        df = momentum_trading.simulate_trades(self.df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
+        momentum_trading.simulate_trades(self.df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
         
         profit, roi = strategy_tools.calculate_pnl(self.df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
         
@@ -42,3 +42,14 @@ class BasicOptimization():
         optimizer.maximize(init_points=10, n_iter=100)
         
         return optimizer
+
+
+
+'''
+Rather than test everything.
+
+Use machine learning by reflecting on the trades.
+
+Learn which signals are positive (profitable) and which signals are negative (unprofitable). 
+
+'''

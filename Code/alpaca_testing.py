@@ -2,6 +2,8 @@ from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame
 import talib
+import momentum_trading as strategy
+import strategy_tools as tools
 
 
 def setup(symbol_or_sumbols,start_time,end_time,interval):
@@ -43,10 +45,16 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
     
     return df
 
+
+####### Test #######
 # symbol = "AMD"
 # start_time = '2020-01-01'
 # end_time = '2021-01-01'
-# df = setup(symbol,start_time,end_time)
+# df = setup(symbol,start_time,end_time, TimeFrame.Day)
 # # print(df)
 # filename = f"Alpaca Testing.csv"
+# df = strategy.simulate_trades(df)
+# tools.calculate_pnl(df,70,20,1000)
+# print("Saving Datafile")
 # df.to_csv(filename)       # Save data to csv file, export to CSV to analyze the data more easily  
+# print("Datafile Saved")
