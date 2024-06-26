@@ -41,7 +41,9 @@ class tester:
         print("Setting up Alpaca Datafile")
         df = tools.setup(self.symbol, self.start_date, self.end_date, self.time_interval)  # fetch data
         print("Testing Strategy")
-        df = strategy.simulate_trades(df, self.RSI_HIGH, self.RSI_LOW, self.RSI_WEIGHT, self.MACD_WEIGHT, self.BB_WEIGHT)    # implement strategy, determine BUY/SELL signal    
+        strategy1 = strategy.Strategy(df)
+        strategy1.evaluate_indicators()
+        df = strategy1.simulate_all_trades()    # implement strategy, determine BUY/SELL signal    
         print("Strategy Tested")
         self.df = df
         return df
@@ -148,17 +150,17 @@ def test_optimized(symbol, start_date, end_date, time_interval):
 
     return optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
 
-# optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
+optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
 
 ####### Testing on a Different Year #######
-# symbol = 'AMD'
-# year = 2021
-# start_date, end_date = date(year,1,1) , date(year,12,31)
+symbol = 'AMD'
+year = 2021
+start_date, end_date = date(year,1,1) , date(year,12,31)
 
-# print("Default Parameters Set")
+print("Default Parameters Set")
 
-# print("Testing Default Strategy")
-# t = tester(symbol,start_date,end_date,time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
-# t.test()
-# graph_title = f"{symbol} - {year} {time_interval}"
-# t.analyze(graph_title)
+print("Testing Default Strategy")
+t = tester(symbol,start_date,end_date,time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+t.test()
+graph_title = f"{symbol} - {year} {time_interval}"
+t.analyze(graph_title)

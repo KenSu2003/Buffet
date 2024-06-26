@@ -21,7 +21,9 @@ class BasicOptimization():
         if RSI_HIGH <= RSI_LOW:
             return -9999
 
-        momentum_trading.simulate_trades(self.df, RSI_HIGH, RSI_LOW, RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT)
+        strategy1 = momentum_trading.Strategy(self.df)
+        strategy1.evaluate_indicators()
+        df = strategy1.simulate_all_trades()    # implement strategy, determine BUY/SELL signal    
         
         profit, roi = strategy_tools.calculate_pnl(self.df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
         
