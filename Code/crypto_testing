@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import csv
-import strategy_tools as tools
+import crypto_tools as tools
 import momentum_trading as strategy
 from datetime import date
 from optimize_strategy import BasicOptimization
 from alpaca.data.timeframe import TimeFrame
+import os
 
 
 class tester:
@@ -62,40 +63,19 @@ class tester:
         return self.df
 
     def analyze(self, title):
-        file_path = "./Data"
-
         print("Analyzing Data")
         # Calculate PNL
         pnl, roi = tools.calculate_pnl(self.df, self.TAKE_PROFIT, self.STOP_LOSS, self.POSITION_SIZE) 
         print(f"Total PnL: ${pnl:.2f}\t({roi*100:.2f}%)")
-        year = f"{self.start_date.year}-{self.end_date.year}"
 
-        print("Saving Datafile")
-        filename = f"{file_path}/TI_{self.symbol}_{year}_{self.time_interval}.csv"
-        self.df.to_csv(filename)       # Save data to csv file, export to CSV to analyze the data more easily  
-        print("Datafile Saved")
-
-
-        # Save year and PnL to CSV file
-        file_name = f"{file_path}/pnl_record_{title}.csv"
-        with open(file_name, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([year, pnl])
-        print("Data Analyzed")
-
-        # Plot the trades
-        title = f"{file_path}/{title}"
-        tools.plot(plt, self.df, title)    
-        
- 
 # ——————————————————- Run Tests ————————————————————
 
 # Default Parameters
-symbol = 'AMD'
-year = 2022
-start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , TimeFrame.Day
+symbol = 'BTC/USDT'
+year = 2024
+start_date, end_date, time_interval = date(year,1,1) , date(year,5,31)  , TimeFrame.Day
 RSI_HIGH, RSI_LOW = 70, 30
-POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
+POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 15, 3 
 print("Default Parameters Set")
 
 ####### Basic Testing #######

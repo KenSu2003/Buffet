@@ -1,10 +1,13 @@
+# A trading strategy outlines the investor's financial goals, 
+# including risk tolerance level, 
+# long-term and short-term financial needs, 
+# tax implications, and time horizon.
+
 import warnings
 import strategy_tools
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from datetime import date
 from pandas import Timestamp
-
-
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -79,6 +82,7 @@ class Strategy:
         self.df = self.calc_RSI()    # RSI
         self.df = self.calc_MACD()                      # MACD
         self.df = self.calc_BB()                        # Bollinger Bands
+        return self.df
 
     def evaluate(self, rsi_signal, macd_signal, bb_signal):
         return rsi_signal * self.RSI_WEIGHT + macd_signal * self.MACD_WEIGHT + bb_signal * self.BB_WEIGHT
@@ -108,19 +112,6 @@ class Strategy:
             trading_signal = self.evaluate(rsi_signal, macd_signal, bb_signal)
 
         return trading_signal
-    
-
-    def simulate_all_trades(self):
-        """
-        Simulate all the trades in the given time frame based on the given parameter using this strategy.
-        """
-
-        self.df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
-        for i in range(len(self.df)):
-            # Calculate the new signal value directly
-            signal_value = self.df.at[self.df.index[i], 'RSI_signal']*self.RSI_WEIGHT + self.df.at[self.df.index[i], 'MACD_signal']*self.MACD_WEIGHT + self.df.at[self.df.index[i], 'BB_diverging']*self.BB_WEIGHT
-            self.df.at[self.df.index[i], 'Signal'] = float(signal_value)  # float (not int) makes it more accurate
-        return self.df
 
 
 #### Test ####

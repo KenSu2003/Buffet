@@ -1,7 +1,7 @@
 import csv
 import talib
-from alpaca.data.historical import StockHistoricalDataClient
-from alpaca.data.requests import StockBarsRequest
+from alpaca.data.historical import StockHistoricalDataClient, CryptoHistoricalDataClient
+from alpaca.data.requests import StockBarsRequest, CryptoBarsRequest
 from alpaca.data.timeframe import TimeFrame
 
 # trading on 1d not 1h so not as practical
@@ -21,15 +21,16 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
     APCA_API_KEY_ID = "PKDSUFSDD8XOZZC309LK"
     APCA_API_SECRET_KEY = "araI1T7gB3rsXErEanFI9QwIdyQeVE8XUgGOMtey"
 
-    data = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
+    data = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
 
-    request_params = StockBarsRequest(
+    request_params = CryptoBarsRequest(
                             symbol_or_symbols=symbol_or_sumbols,
                             timeframe=interval,
                             start=start_time,
                             end=end_time
                     )
-    barset = data.get_stock_bars(request_params)
+    # barset = data.get_stock_bars(request_params)
+    barset = data.get_crypto_bars(request_params)
     df = barset.df      # convert to dataframe
     df = df.reset_index(level='symbol', drop=True)
 
@@ -142,3 +143,4 @@ def simulate_trades(df, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
         signal_value = df.at[df.index[i], 'RSI_signal']*RSI_WEIGHT + df.at[df.index[i], 'MACD_signal']*MACD_WEIGHT + df.at[df.index[i], 'BB_diverging']*BB_WEIGHT
         df.at[df.index[i], 'Signal'] = float(signal_value)  # float (not int) makes it more accurate
     return df
+
