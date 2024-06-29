@@ -34,19 +34,19 @@ class tester:
         self.MACD_WEIGHT = MACD_WEIGHT
         self.BB_WEIGHT = BB_WEIGHT
 
-        self.df = {}
+        print("Setting up Alpaca Datafile")
+        self.df = tools.setup(self.symbol, self.start_date, self.end_date, self.time_interval)  # fetch data
 
     
     def test(self):
-        print("Setting up Alpaca Datafile")
-        df = tools.setup(self.symbol, self.start_date, self.end_date, self.time_interval)  # fetch data
-        self.df = df
+        
         print("Testing Strategy")
         strategy1 = strategy.Strategy(df)
         strategy1.evaluate_indicators()
         df = self.simulate_all_trades()    # implement strategy, determine BUY/SELL signal    
-        print("Strategy Tested")
         self.df = df
+        print("Strategy Tested")
+        
         return df
     
     def simulate_all_trades(self):
@@ -62,19 +62,21 @@ class tester:
         return self.df
 
     def analyze(self, title):
-        file_path = "./Data"
 
         print("Analyzing Data")
+        
+        file_path = "./Data"
+
         # Calculate PNL
         pnl, roi = tools.calculate_pnl(self.df, self.TAKE_PROFIT, self.STOP_LOSS, self.POSITION_SIZE) 
         print(f"Total PnL: ${pnl:.2f}\t({roi*100:.2f}%)")
         year = f"{self.start_date.year}-{self.end_date.year}"
 
+        # Save the Technical Indicator Datafile
         print("Saving Datafile")
         filename = f"{file_path}/TI_{self.symbol}_{year}_{self.time_interval}.csv"
         self.df.to_csv(filename)       # Save data to csv file, export to CSV to analyze the data more easily  
         print("Datafile Saved")
-
 
         # Save year and PnL to CSV file
         file_name = f"{file_path}/pnl_record_{title}.csv"
@@ -138,32 +140,23 @@ def test_optimized(symbol, start_date, end_date, time_interval):
     Test the strategy using the optimized parameters
     """
     df = tools.setup(symbol, start_date, end_date, time_interval)
-    # df = tools.setup(symbol, start_date, end_date, time_interval)
+    
     ####### Test Optimized Parameters #######
-    optimizer = BasicOptimization(df, symbol, start_date, end_date, time_interval).optimize()
-    optimized_POSITION_SIZE = optimizer.max['params'].get('POSITION_SIZE')
-    optimized_RSI_HIGH = optimizer.max['params'].get('RSI_HIGH')
-    optimized_RSI_LOW = optimizer.max['params'].get('RSI_LOW')
-    optimized_STOP_LOSS = optimizer.max['params'].get('STOP_LOSS')
-    optimized_TAKE_PROFIT = optimizer.max['params'].get('TAKE_PROFIT')
-
-    optimized_RSI_WEIGHT = optimizer.max['params'].get('RSI_WEIGHT')
-    optimized_MACD_WEIGHT = optimizer.max['params'].get('MACD_WEIGHT')
-    optimized_BB_WEIGHT = optimizer.max['params'].get('BB_WEIGHT')
-
-    o = tester(symbol, start_date, end_date, time_interval, 
-            optimized_RSI_HIGH, optimized_RSI_LOW, 
-            optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS)
-    # df = o.test()
-    df = o.test()
+    basic_optimization = BasicOptimization(df, symbol, start_date, end_date, time_interval)
+    best_parameters = basic_optimization.optimize()
+    optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = basic_optimization.get_optimized_parameters()
+    o = tester(symbol, start_date, end_date, time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+    o.test()
     graph_title = f"Optimized {symbol} - {year} {time_interval}"
     o.analyze(graph_title)
-    print("Best parameters:", optimizer.max['params'])
-    # print("BUY/SELL Signal:",strategy.trade_date(df, '2022-03-24'))
+    print("Best parameters:", best_parameters)
 
     return optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
 
 optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
+
+''' Need to test on 2022 and see if using this program earlier can save the portfolio'''
+
 
 ####### Testing on a Different Year #######
 # symbol = 'AMD'

@@ -67,21 +67,21 @@ class BasicOptimization():
         self.optimized_MACD_WEIGHT = optimizer.max['params'].get('MACD_WEIGHT')
         self.optimized_BB_WEIGHT = optimizer.max['params'].get('BB_WEIGHT')
         
-        print("Best parameters:", optimizer.max['params'])
+        return optimizer.max['params']
 
-    def get_optimized_values(self):
+    def get_optimized_parameters(self):
         return self.optimized_RSI_HIGH, self.optimized_RSI_LOW, self.optimized_POSITION_SIZE, self.optimized_TAKE_PROFIT, self.optimized_STOP_LOSS, self.optimized_RSI_WEIGHT, self.optimized_MACD_WEIGHT, self.optimized_BB_WEIGHT
 
 
 #### Test ####
-symbol = 'AMD'
-start_date = '2021-01-01'
-end_date = '2022-01-01'
-interval = TimeFrame.Day
-df = tools.setup(symbol, start_date, end_date, interval)
-basic_optimization = BasicOptimization(df, symbol, start_date, end_date, interval)
-basic_optimization.optimize()
-print(basic_optimization.get_optimized_values())
+# symbol = 'AMD'
+# start_date = '2021-01-01'
+# end_date = '2022-01-01'
+# interval = TimeFrame.Day
+# df = tools.setup(symbol, start_date, end_date, interval)
+# basic_optimization = BasicOptimization(df, symbol, start_date, end_date, interval)
+# basic_optimization.optimize()
+# print(basic_optimization.get_optimized_parameters())
 
 
 '''
