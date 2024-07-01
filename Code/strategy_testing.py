@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import csv
 import strategy_tools as tools
 import momentum_trading as strategy
-from datetime import date
+from datetime import date, timedelta, datetime
 from optimize_strategy import BasicOptimization
 from alpaca.data.timeframe import TimeFrame
 
@@ -23,7 +23,7 @@ class tester:
         self.end_date = end_date
         self.time_interval = time_interval
 
-        # Indicators
+        # Technical Indicators
         self.RSI_HIGH = RSI_HIGH
         self.RSI_LOW = RSI_LOW
         self.POSITION_SIZE = POSITION_SIZE          # number of stocks not $
@@ -41,7 +41,7 @@ class tester:
     def test(self):
         
         print("Testing Strategy")
-        strategy1 = strategy.Strategy(df)
+        strategy1 = strategy.Strategy(self.df)
         strategy1.evaluate_indicators()
         df = self.simulate_all_trades()    # implement strategy, determine BUY/SELL signal    
         self.df = df
@@ -95,21 +95,15 @@ class tester:
 # Default Parameters
 symbol = 'AMD'
 year = 2022
-start_date, end_date, time_interval = date(year,1,1) , date(year,12,31)  , TimeFrame.Day
+
+end_date = datetime.now()
+start_date = end_date-timedelta(days=365)
+time_interval = TimeFrame.Day
 RSI_HIGH, RSI_LOW = 70, 30
 POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
 print("Default Parameters Set")
 
 ####### Basic Testing #######
-# print("Testing Default Strategy")
-# t = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
-# t.test()
-# graph_title = f"{symbol} - {year} {time_interval}"
-# t.analyze(graph_title)
-# print("BUY/SELL Signal:",strategy.trade_date(df, '2022-03-24'))
-
-
-####### Alpaca Testing #######
 print("Testing Default Strategy")
 t = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
 t.test()

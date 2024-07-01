@@ -7,6 +7,7 @@ from optimize_strategy import BasicOptimization
 from alpaca.data.timeframe import TimeFrame
 import os
 
+###### Need to find the best sample range
 
 class tester:
 
@@ -73,9 +74,9 @@ class tester:
 # Default Parameters
 symbol = 'BTC/USDT'
 year = 2024
-start_date, end_date, time_interval = date(year,1,1) , date(year,5,31)  , TimeFrame.Day
+start_date, end_date, time_interval = date(2023,6,30) , date(2024,6,29)  , TimeFrame.Day
 RSI_HIGH, RSI_LOW = 70, 30
-POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 15, 3 
+POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 10, 3 
 print("Default Parameters Set")
 
 ####### Basic Testing #######
@@ -118,28 +119,16 @@ def test_optimized(symbol, start_date, end_date, time_interval):
     Test the strategy using the optimized parameters
     """
     df = tools.setup(symbol, start_date, end_date, time_interval)
-    # df = tools.setup(symbol, start_date, end_date, time_interval)
+    
     ####### Test Optimized Parameters #######
-    optimizer = BasicOptimization(df, symbol, start_date, end_date, time_interval).optimize()
-    optimized_POSITION_SIZE = optimizer.max['params'].get('POSITION_SIZE')
-    optimized_RSI_HIGH = optimizer.max['params'].get('RSI_HIGH')
-    optimized_RSI_LOW = optimizer.max['params'].get('RSI_LOW')
-    optimized_STOP_LOSS = optimizer.max['params'].get('STOP_LOSS')
-    optimized_TAKE_PROFIT = optimizer.max['params'].get('TAKE_PROFIT')
-
-    optimized_RSI_WEIGHT = optimizer.max['params'].get('RSI_WEIGHT')
-    optimized_MACD_WEIGHT = optimizer.max['params'].get('MACD_WEIGHT')
-    optimized_BB_WEIGHT = optimizer.max['params'].get('BB_WEIGHT')
-
-    o = tester(symbol, start_date, end_date, time_interval, 
-            optimized_RSI_HIGH, optimized_RSI_LOW, 
-            optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS)
-    # df = o.test()
-    df = o.test()
+    basic_optimization = BasicOptimization(df, symbol, start_date, end_date, time_interval)
+    best_parameters = basic_optimization.optimize()
+    optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = basic_optimization.get_optimized_parameters()
+    o = tester(symbol, start_date, end_date, time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+    o.test()
     graph_title = f"Optimized {symbol} - {year} {time_interval}"
     o.analyze(graph_title)
-    print("Best parameters:", optimizer.max['params'])
-    # print("BUY/SELL Signal:",strategy.trade_date(df, '2022-03-24'))
+    print("Best parameters:", best_parameters)
 
     return optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
 
