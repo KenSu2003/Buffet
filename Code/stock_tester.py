@@ -40,12 +40,12 @@ class tester:
     
     def test(self):
         
-        print("Testing Strategy")
+        # print("Testing Strategy")
         strategy1 = strategy.Strategy(self.df)
         strategy1.evaluate_indicators()
         df = self.simulate_all_trades()    # implement strategy, determine BUY/SELL signal    
         self.df = df
-        print("Strategy Tested")
+        # print("Strategy Tested")
         
         return df
     
@@ -95,22 +95,22 @@ class tester:
 # ——————————————————- Run Tests ————————————————————
 
 # Default Parameters
-symbol = 'AMD'
-year = 2022
+# symbol = 'AMD'
+# year = 2022
 
-end_date = datetime.now()
-start_date = end_date-timedelta(days=365)
-time_interval = TimeFrame.Day
-RSI_HIGH, RSI_LOW = 70, 30
-POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
-print("Default Parameters Set")
+# end_date = datetime.now()
+# start_date = end_date-timedelta(days=365)
+# time_interval = TimeFrame.Day
+# RSI_HIGH, RSI_LOW = 70, 30
+# POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
+# print("Default Parameters Set")
 
 ####### Basic Testing #######
-print("Testing Default Strategy")
-t = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
-t.test()
-graph_title = f"{symbol} - {year} {time_interval}"
-t.analyze(graph_title)
+# print("Testing Default Strategy")
+# t = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
+# t.test()
+# graph_title = f"{symbol} - {year} {time_interval}"
+# t.analyze(graph_title)
 
 
 ####### Test Different Years #######
@@ -140,16 +140,16 @@ def test_optimized(symbol, start_date, end_date, time_interval):
     ####### Test Optimized Parameters #######
     basic_optimization = BasicOptimization(df, symbol, start_date, end_date, time_interval)
     best_parameters = basic_optimization.optimize()
-    optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = basic_optimization.get_optimized_parameters()
-    o = tester(symbol, start_date, end_date, time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+    optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = basic_optimization.get_optimized_parameters()
+    o = tester(symbol, start_date, end_date, time_interval, optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
     o.test()
-    graph_title = f"Optimized {symbol} - {year} {time_interval}"
+    graph_title = f"Optimized {symbol} - {year} {time_interval}" 
     o.analyze(graph_title)
     print("Best parameters:", best_parameters)
 
-    return optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
+    return optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
 
-optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
+# optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
 
 ''' Need to test on 2022 and see if using this program earlier can save the portfolio'''
 

@@ -38,7 +38,7 @@ class BasicOptimization():
         self.df = strategy1.evaluate_indicators()
         self.df = tools.simulate_trades(self.df)    # implement strategy, determine BUY/SELL signal    
         
-        profit, roi = tools.calculate_pnl(self.df, TAKE_PROFIT, STOP_LOSS, POSITION_SIZE)
+        profit, roi = tools.calculate_pnl(self.df, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS)
         
         return roi  # Directly maximize profit
     
@@ -91,3 +91,6 @@ Use machine learning by reflecting on the trades.
 Learn which signals are positive (profitable) and which signals are negative (unprofitable). 
 
 '''
+
+
+''' The pnl and roi is incorrect '''
