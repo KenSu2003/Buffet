@@ -2,7 +2,6 @@ from bayes_opt import BayesianOptimization
 import momentum_trading as momentum_trading
 import strategy_tools as tools
 from alpaca.data.timeframe import TimeFrame
-from tqdm import tqdm
 
 
 class BasicOptimization():
@@ -24,7 +23,7 @@ class BasicOptimization():
         self.optimized_BB_WEIGHT = 0
 
 
-    def objective(self, RSI_HIGH, RSI_LOW, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+    def objective(self, POSITION_SIZE, RSI_HIGH, RSI_LOW, TAKE_PROFIT, STOP_LOSS, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
         RSI_HIGH = int(RSI_HIGH)
         RSI_LOW = int(RSI_LOW)
         POSITION_SIZE = int(POSITION_SIZE)
@@ -70,7 +69,7 @@ class BasicOptimization():
         return optimizer.max['params']
 
     def get_optimized_parameters(self):
-        return self.optimized_RSI_HIGH, self.optimized_RSI_LOW, self.optimized_POSITION_SIZE, self.optimized_TAKE_PROFIT, self.optimized_STOP_LOSS, self.optimized_RSI_WEIGHT, self.optimized_MACD_WEIGHT, self.optimized_BB_WEIGHT
+        return self.optimized_POSITION_SIZE, self.optimized_RSI_HIGH, self.optimized_RSI_LOW, self.optimized_TAKE_PROFIT, self.optimized_STOP_LOSS, self.optimized_RSI_WEIGHT, self.optimized_MACD_WEIGHT, self.optimized_BB_WEIGHT
 
 
 #### Test ####

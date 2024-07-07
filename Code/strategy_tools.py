@@ -47,7 +47,7 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
 
 
 # should consider implementing margin
-def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
+def calculate_pnl(data, trade_size, profit_target_pct, stop_loss_pct,):
     """
     Calculate the profit and loss (PnL) as well as the Return on Investment (ROI).
     Saves the trades in the file trades.csv.

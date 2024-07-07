@@ -49,6 +49,9 @@ class tester:
         
         return df
     
+    def calculate_pnl(self):
+        return tools.calculate_pnl(self.df, self.POSITION_SIZE, self.TAKE_PROFIT, self.STOP_LOSS)
+    
     def simulate_all_trades(self):
         """
         Simulate all the trades in the given time frame based on the given parameter using this strategy.
@@ -68,7 +71,7 @@ class tester:
         file_path = "./Data"
 
         # Calculate PNL
-        pnl, roi = tools.calculate_pnl(self.df, self.TAKE_PROFIT, self.STOP_LOSS, self.POSITION_SIZE) 
+        pnl, roi = tools.calculate_pnl(self.df, self.POSITION_SIZE, self.TAKE_PROFIT, self.STOP_LOSS) 
         print(f"Total PnL: ${pnl:.2f}\t({roi*100:.2f}%)")
         year = f"{self.start_date.year}-{self.end_date.year}"
 
@@ -89,7 +92,6 @@ class tester:
         title = f"{file_path}/{title}"
         tools.plot(plt, self.df, title)    
         
- 
 # ——————————————————- Run Tests ————————————————————
 
 # Default Parameters
