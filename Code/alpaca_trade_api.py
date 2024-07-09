@@ -43,7 +43,8 @@ def set_order(symbol,long_short,ORDER_SIZE,order_limit=False,limit_price=0):
         latest_multisymbol_quotes = price_client.get_stock_latest_quote(multisymbol_request_params)
         latest_ask_price = latest_multisymbol_quotes[symbol].ask_price  # returns 0 when market is closed
 
-        qty = ORDER_SIZE/latest_ask_price   
+        qty = round(abs(ORDER_SIZE/latest_ask_price))
+        print(qty)
 
         market_order_data = MarketOrderRequest(
                             symbol=symbol,
