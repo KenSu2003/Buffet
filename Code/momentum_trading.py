@@ -21,6 +21,13 @@ class Strategy:
         self.MACD_WEIGHT = MACD_WEIGHT
         self.BB_WEIGHT = BB_WEIGHT
 
+    def calc_RSI_signal(self, rsi, rsi_ema, rsi_prev, rsi_ema_prev):
+        if rsi > rsi_ema and rsi_prev < rsi_ema_prev:
+            return 1 if rsi < self.RSI_LOW else 2
+        elif rsi < rsi_ema and rsi_prev > rsi_ema_prev:
+            return -1 if rsi > self.RSI_HIGH else -2
+        return 0
+
     def calc_RSI(self):
         """  
         If the RSI is above RSI_HIGH that means the stock is overbought
@@ -35,15 +42,19 @@ class Strategy:
         
         self.df['RSI_signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
         for i in range(1,len(self.df)):
-            if self.df['RSI'].iloc[i] > self.df['RSI_ema'].iloc[i] and self.df['RSI'].iloc[i-1] < self.df['RSI_ema'].iloc[i-1]:   # BUY
-                self.df.at[self.df.index[i], 'RSI_signal'] = 1
-                if self.df['RSI'].iloc[i] < self.RSI_LOW: self.df.at[self.df.index[i], 'RSI_signal'] = 2   # self.df['RSI_signal'].iloc[i] = 2
-            elif self.df['RSI'].iloc[i] < self.df['RSI_ema'].iloc[i] and self.df['RSI'].iloc[i-1] > self.df['RSI_ema'].iloc[i-1]: # SELL
-                self.df.at[self.df.index[i], 'RSI_signal'] = -1
-                if self.df['RSI'].iloc[i] > self.RSI_HIGH: self.df.at[self.df.index[i], 'RSI_signal'] = -2   # self.df['RSI_signal'].iloc[i] = -2
-            else:
-                self.df.at[self.df.index[i], 'RSI_signal'] = 0
+            rsi = self.df['RSI'].iloc[i]
+            rsi_ema = self.df['RSI_ema'].iloc[i]
+            rsi_prev = self.df['RSI'].iloc[i-1]
+            rsi_ema_prev = self.df['RSI_ema'].iloc[i-1]
+            self.df.at[self.df.index[i], 'RSI_signal'] = self.calc_RSI_signal(rsi, rsi_ema, rsi_prev, rsi_ema_prev)
         return self.df
+
+    def calc_MACD_signal(self, macd, macd_signal, macd_prev, macd_signal_prev):
+        if macd > macd_signal and macd_prev <= macd_signal_prev:
+            return 1    # Flip from red to green
+        elif macd < macd_signal and macd_prev >= macd_signal_prev:
+            return -1   # Flip from green to red
+        return 0
 
     def calc_MACD(self):
         """
@@ -51,14 +62,23 @@ class Strategy:
         If the MACD flips from green to red with high volume that means —> Bearish
         If the volume is decreasing that means the momentum is going down so prepare to close position.
         """
-
         self.df['MACD_flip'] = 0
         for i in range(1, len(self.df)):
-            if self.df['MACD'].iloc[i] > self.df['MACD_signal'].iloc[i] and self.df['MACD'].iloc[i-1] <= self.df['MACD_signal'].iloc[i-1]:
-                self.df.at[self.df.index[i], 'MACD_flip'] = 1     # Flip from red to green
-            elif self.df['MACD'].iloc[i] < self.df['MACD_signal'].iloc[i] and self.df['MACD'].iloc[i-1] >= self.df['MACD_signal'].iloc[i-1]:
-                self.df.at[self.df.index[i], 'MACD_flip'] = -1    # Flip from green to red
+            macd = self.df['MACD'].iloc[i]
+            macd_signal = self.df['MACD_signal'].iloc[i]
+            macd_prev = self.df['MACD'].iloc[i-1]
+            macd_signal_prev = self.df['MACD_signal'].iloc[i-1]
+            self.df.at[self.df.index[i], 'MACD_flip'] = self.calc_MACD_signal(macd, macd_signal, macd_prev, macd_signal_prev)
         return self.df
+
+    def calc_BB_signal(self, bb_upper, bb_lower, bb_upper_prev, bb_lower_prev):
+        bb_width = bb_upper-bb_lower
+        bb_width_prev = bb_upper_prev-bb_lower_prev
+        if bb_width > bb_width_prev:
+            return 1    # Bands are diverging
+        elif bb_width < bb_width_prev:
+            return -1   # Bands are converging
+        return 0
 
     def calc_BB(self):
         """
@@ -69,30 +89,47 @@ class Strategy:
         :return: The function returns 1 if the BBs are diverging and -1 if they are converging
         """
 
-        self.df['BB_width'] = self.df['BB_upper'] - self.df['BB_lower']
-        self.df['BB_diverging'] = 0
+        # self.df['BB_width'] = self.df['BB_upper'] - self.df['BB_lower']
+        # self.df['BB_diverging'] = 0
+        # for i in range(1, len(self.df)):
+        #     if self.df['BB_width'].iloc[i] > self.df['BB_width'].iloc[i-1]:
+        #         self.df.at[self.df.index[i], 'BB_diverging'] = 1    # Bands are diverging
+        #     elif self.df['BB_width'].iloc[i] < self.df['BB_width'].iloc[i-1]:
+        #         self.df.at[self.df.index[i], 'BB_diverging'] = -1   # Bands are converging
+        
         for i in range(1, len(self.df)):
-            if self.df['BB_width'].iloc[i] > self.df['BB_width'].iloc[i-1]:
-                self.df.at[self.df.index[i], 'BB_diverging'] = 1    # Bands are diverging
-            elif self.df['BB_width'].iloc[i] < self.df['BB_width'].iloc[i-1]:
-                self.df.at[self.df.index[i], 'BB_diverging'] = -1   # Bands are converging
+            bb_upper = self.df['BB_upper'].iloc[i]
+            bb_lower = self.df['BB_lower'].iloc[i]
+            bb_upper_prev = self.df['BB_upper'].iloc[i-1]
+            bb_lower_prev = self.df['BB_lower'].iloc[i-1]
+            self.df.at[self.df.index[i], 'BB_diverging'] = self.calc_BB_signal(bb_upper, bb_lower, bb_upper_prev, bb_lower_prev)
         return self.df
-
-    # def calc_RSI_signal(rsi, rsi_ema, RSI_LOW, RSI_HIGH):
-    #     if rsi > rsi_ema:
-    #         return 1 if rsi < RSI_LOW else 2
-    #     elif rsi < rsi_ema:
-    #         return -1 if rsi > RSI_HIGH else -2
-    #     return 0
-
-
-
 
     def evaluate_indicators(self):
         self.df = self.calc_RSI()    # RSI
         self.df = self.calc_MACD()                      # MACD
         self.df = self.calc_BB()                        # Bollinger Bands
         return self.df
+    
+    def evaluate_latest(self):
+
+        rsi = self.df['RSI'].iloc[-1]
+        rsi_ema = self.df['RSI_ema'].iloc[-1]
+        rsi_prev = self.df['RSI'].iloc[-2]
+        rsi_ema_prev = self.df['RSI_ema'].iloc[-2]
+        
+        macd = self.df['MACD'].iloc[-1]
+        macd_signal = self.df['MACD_signal'].iloc[-1]
+        macd_prev = self.df['MACD'].iloc[-2]
+        macd_signal_prev = self.df['MACD_signal'].iloc[-2]
+        
+        bb_upper = self.df['BB_upper'].iloc[-1]
+        bb_lower = self.df['BB_lower'].iloc[-1]
+        bb_upper_prev = self.df['BB_upper'].iloc[-2]
+        bb_lower_prev = self.df['BB_lower'].iloc[-2]
+
+        return self.evaluate(self.calc_RSI_signal(rsi, rsi_ema, rsi_prev, rsi_ema_prev), self.calc_MACD_signal(macd, macd_signal, macd_prev, macd_signal_prev), self.calc_BB_signal(bb_upper, bb_lower, bb_upper_prev, bb_lower_prev))
+
 
     def evaluate(self, rsi_signal, macd_signal, bb_signal):
         return rsi_signal * self.RSI_WEIGHT + macd_signal * self.MACD_WEIGHT + bb_signal * self.BB_WEIGHT
@@ -122,6 +159,9 @@ class Strategy:
             trading_signal = self.evaluate(rsi_signal, macd_signal, bb_signal)
 
         return trading_signal
+
+
+
 
 
 
