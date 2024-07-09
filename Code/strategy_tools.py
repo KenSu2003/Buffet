@@ -1,5 +1,6 @@
 import csv
 import talib
+import matplotlib.pyplot as plt
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame
@@ -114,14 +115,13 @@ def calculate_pnl(data, trade_size, profit_target_pct, stop_loss_pct,):
     return sum(profits), sum(rois)
 
 
-def plot(plt, df, graph_title):
+def plot(df, graph_title):
     x_scale = 1
     y_scale = 1
     signal_scale=1
 
     plt.figure(figsize=(14*x_scale, 7*y_scale), dpi=300)
     plt.plot(df.index, df['close'], label='close Price', color='blue')
-    # plt.plot(pd.to_datetime(df.index.get_level_values('timestamp')), df['close'], label='close Price', color='blue')
     plt.scatter(df[df['Signal'] > 0].index, df[df['Signal'] > 0]['close'], marker='^', color='g', label='Buy Signal', s=24*signal_scale)
     plt.scatter(df[df['Signal'] < 0].index, df[df['Signal'] < 0]['close'], marker='v', color='r', label='Sell Signal', s=24*signal_scale)
     plt.title('Buy and Sell Signals on AMD Historical Data')

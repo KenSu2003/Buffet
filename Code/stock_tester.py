@@ -4,7 +4,7 @@ import strategy_tools as tools
 import momentum_trading as strategy
 from datetime import date, timedelta, datetime
 from optimize_strategy import BasicOptimization
-from alpaca.data.timeframe import TimeFrame
+from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
 
 class tester:
@@ -90,7 +90,7 @@ class tester:
 
         # Plot the trades
         title = f"{file_path}/{title}"
-        tools.plot(plt, self.df, title)    
+        tools.plot(self.df, title)    
         
 # ——————————————————- Run Tests ————————————————————
 
@@ -99,8 +99,14 @@ class tester:
 # year = 2022
 
 # end_date = datetime.now()
-# start_date = end_date-timedelta(days=365)
-# time_interval = TimeFrame.Day
+
+# # start_date = end_date-timedelta(days=365)
+# # time_interval = TimeFrame.Day
+
+# start_date = end_date-timedelta(days=1)
+# # time_interval = TimeFrame.Minute
+# time_interval = TimeFrame(amount=15,unit=TimeFrameUnit.Minute)
+
 # RSI_HIGH, RSI_LOW = 70, 30
 # POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
 # print("Default Parameters Set")

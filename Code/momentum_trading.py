@@ -78,6 +78,16 @@ class Strategy:
                 self.df.at[self.df.index[i], 'BB_diverging'] = -1   # Bands are converging
         return self.df
 
+    # def calc_RSI_signal(rsi, rsi_ema, RSI_LOW, RSI_HIGH):
+    #     if rsi > rsi_ema:
+    #         return 1 if rsi < RSI_LOW else 2
+    #     elif rsi < rsi_ema:
+    #         return -1 if rsi > RSI_HIGH else -2
+    #     return 0
+
+
+
+
     def evaluate_indicators(self):
         self.df = self.calc_RSI()    # RSI
         self.df = self.calc_MACD()                      # MACD
@@ -112,6 +122,10 @@ class Strategy:
             trading_signal = self.evaluate(rsi_signal, macd_signal, bb_signal)
 
         return trading_signal
+
+
+
+''' trades are not increasing position size for stronger signals'''
 
 
 #### Test ####
