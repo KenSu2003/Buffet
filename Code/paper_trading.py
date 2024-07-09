@@ -3,6 +3,7 @@ from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 import optimize_strategy, strategy_tools as tools
 from stock_tester import tester
 from momentum_trading import Strategy as Momentum   # from strategies import Momentum
+import alpaca_trade_api as alpaca_api
 
 # —————————————— Set Parameters —————————————— 
 
@@ -86,7 +87,8 @@ order_size = POSITION_SIZE*signal
 ####### Excute Order #######
 if signal>=1:
     print(f"Buy {order_size}")
-    # alpacaAPI.buy
+    alpaca_api.set_order(symbol,'long',order_size)
+
 elif signal<=-1:
     print(f"Sell {order_size}")
-    # alpacaAPI.sell
+    alpaca_api.set_order(symbol,'short',order_size)
