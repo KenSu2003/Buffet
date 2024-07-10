@@ -12,6 +12,10 @@ trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 price_client = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
 
 
+def get_balance():
+    account = trading_client.get_account()
+    return account.equity
+
 # preparing orders
 def set_order(symbol,long_short,ORDER_SIZE,order_limit=False,limit_price=0):
 

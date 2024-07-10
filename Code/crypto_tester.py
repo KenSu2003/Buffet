@@ -1,11 +1,9 @@
-import matplotlib.pyplot as plt
-import csv
-import strategy_tools as tools
+import crypto_tools as tools
 import momentum_trading as strategy
-from datetime import date, timedelta, datetime
+from datetime import timedelta, datetime
 from optimize_strategy import BasicOptimization
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
-
+import csv
 
 class tester:
 
@@ -34,7 +32,7 @@ class tester:
         self.MACD_WEIGHT = MACD_WEIGHT
         self.BB_WEIGHT = BB_WEIGHT
 
-        print("Setting up Alpaca Datafile")
+        # print("Setting up Alpaca Datafile")
         self.df = tools.setup(self.symbol, self.start_date, self.end_date, self.time_interval)  # fetch data
 
     
@@ -66,7 +64,7 @@ class tester:
 
     def analyze(self, title):
 
-        print("Analyzing Data")
+        # print("Analyzing Data")
         
         file_path = "./Data"
 
@@ -76,17 +74,17 @@ class tester:
         year = f"{self.start_date.year}-{self.end_date.year}"
 
         # Save the Technical Indicator Datafile
-        print("Saving Datafile")
+        # print("Saving Datafile")
         filename = f"{file_path}/TI_{self.symbol}_{year}_{self.time_interval}.csv"
         self.df.to_csv(filename)       # Save data to csv file, export to CSV to analyze the data more easily  
-        print("Datafile Saved")
+        # print("Datafile Saved")
 
         # Save year and PnL to CSV file
         file_name = f"{file_path}/pnl_record_{title}.csv"
         with open(file_name, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([year, pnl])
-        print("Data Analyzed")
+        # print("Data Analyzed")
 
         # Plot the trades
         title = f"{file_path}/{title}"
@@ -172,6 +170,3 @@ def test_optimized(symbol, start_date, end_date, time_interval):
 # t.test()
 # graph_title = f"{symbol} - {year} {time_interval}"
 # t.analyze(graph_title)
-
-
-''' deos not test the latest strategy on bearish year'''

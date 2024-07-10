@@ -42,7 +42,7 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
     df['Volume'] = df['volume'] # Volume
     # df.dropna(inplace=True) # Remove NULL values
     
-    print("Setup Successful")
+    # print("Setup Successful")
     
     return df
 
