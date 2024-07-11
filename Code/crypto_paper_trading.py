@@ -196,11 +196,11 @@ scheduler = BlockingScheduler()
 
 # Update Parameters Every HOUR
 scheduler.add_job(update_parameters, 'interval', hours=1, args=[progress_log])
-print("Paramters updating every 1 minutes")
+print("Paramters updating every 1 hour")
 
 # Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FORE TESTING
 scheduler.add_job(execute_trade, 'interval', minutes=15, args=[progress_log, trade_log])
-print("Trades Excuted every 1 minutes")
+print("Trades Excuted every 15 minutes")
 
 try:
     print("Starting the scheduler...")

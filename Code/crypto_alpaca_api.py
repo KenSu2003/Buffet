@@ -9,9 +9,8 @@ from alpaca.common.exceptions import APIError
 
 import time
 
-
-APCA_API_KEY_ID = "PKCD8EAUMACTHLAAOHDO"
-APCA_API_SECRET_KEY = "1VPEfeBMQoobA1x15x5G4dY6mYNElPfO4hB92uzb"
+APCA_API_KEY_ID = "PKHR4PFM00KX8GGXP9EG"
+APCA_API_SECRET_KEY = "QgH9zpwOkOodiP9LzRUMn2scmxJLd8QCnKUxpi25"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 price_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)

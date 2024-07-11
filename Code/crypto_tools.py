@@ -20,8 +20,8 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
     """
 
     # Replace with your Alpaca API keys
-    APCA_API_KEY_ID = "PKCD8EAUMACTHLAAOHDO"
-    APCA_API_SECRET_KEY = "1VPEfeBMQoobA1x15x5G4dY6mYNElPfO4hB92uzb"
+    APCA_API_KEY_ID = "PKHR4PFM00KX8GGXP9EG"
+    APCA_API_SECRET_KEY = "QgH9zpwOkOodiP9LzRUMn2scmxJLd8QCnKUxpi25"
 
     data = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
 

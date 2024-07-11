@@ -104,30 +104,30 @@ class tester:
         
 # ——————————————————- Run Tests ————————————————————
 
-# Default Parameters
-symbol = 'BTC/USDT'
-year = datetime.now().year
+# # Default Parameters
+# symbol = 'BTC/USDT'
+# year = datetime.now().year
 
-# end_time = datetime.now()
-# start_time = end_time-timedelta(days=31)
-# time_interval = TimeFrame(amount=1,unit=TimeFrameUnit.Hour)
+# # end_time = datetime.now()
+# # start_time = end_time-timedelta(days=31)
+# # time_interval = TimeFrame(amount=1,unit=TimeFrameUnit.Hour)
 
-end_time = datetime(2024,3,12)
-# start_date = end_date-timedelta(days=1)
-start_time = datetime(2024,3,1)
-# time_interval = TimeFrame.Minute
-time_interval = TimeFrame(amount=4,unit=TimeFrameUnit.Hour)
+# end_time = datetime(2024,3,12)
+# # start_date = end_date-timedelta(days=1)
+# start_time = datetime(2024,3,1)
+# # time_interval = TimeFrame.Minute
+# time_interval = TimeFrame(amount=4,unit=TimeFrameUnit.Hour)
 
-rsi_high, rsi_low = 70, 30
-position_size, take_profit, stop_loss = 1000, 5, 2 
-print("Default Parameters Set")
+# rsi_high, rsi_low = 70, 30
+# position_size, take_profit, stop_loss = 1000, 5, 2 
+# print("Default Parameters Set")
 
-####### Basic Testing #######
-print("Testing Default Strategy")
-t = tester(symbol,start_time,end_time,time_interval,rsi_high,rsi_low,position_size,take_profit,stop_loss)
-t.test()
-graph_title = f"{symbol} - {year} {time_interval}"
-t.analyze(graph_title)
+# ####### Basic Testing #######
+# print("Testing Default Strategy")
+# t = tester(symbol,start_time,end_time,time_interval,rsi_high,rsi_low,position_size,take_profit,stop_loss)
+# t.test()
+# graph_title = f"{symbol} - {year} {time_interval}"
+# t.analyze(graph_title)
 
 
 # ####### Test Different Years #######
