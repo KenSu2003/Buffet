@@ -5,8 +5,8 @@ from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockLatestQuoteRequest
 
-APCA_API_KEY_ID = "PKDSUFSDD8XOZZC309LK"
-APCA_API_SECRET_KEY = "araI1T7gB3rsXErEanFI9QwIdyQeVE8XUgGOMtey"
+APCA_API_KEY_ID = "PKCD8EAUMACTHLAAOHDO"
+APCA_API_SECRET_KEY = "1VPEfeBMQoobA1x15x5G4dY6mYNElPfO4hB92uzb"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 price_client = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)

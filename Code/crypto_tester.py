@@ -3,7 +3,7 @@ import momentum_trading as strategy
 from datetime import timedelta, datetime
 from optimize_strategy import BasicOptimization
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
-import csv
+import csv, os
 
 class tester:
 
@@ -66,7 +66,7 @@ class tester:
 
         # print("Analyzing Data")
         
-        file_path = "./Data"
+        file_path = "./crypto_data"
 
         # Calculate PNL
         pnl, roi = tools.calculate_pnl(self.df, self.POSITION_SIZE, self.TAKE_PROFIT, self.STOP_LOSS) 
@@ -76,97 +76,109 @@ class tester:
         # Save the Technical Indicator Datafile
         # print("Saving Datafile")
         filename = f"{file_path}/TI_{self.symbol}_{year}_{self.time_interval}.csv"
+
+        # Ensure the directory for the filename exists
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+
         self.df.to_csv(filename)       # Save data to csv file, export to CSV to analyze the data more easily  
         # print("Datafile Saved")
 
         # Save year and PnL to CSV file
         file_name = f"{file_path}/pnl_record_{title}.csv"
+
+        # Ensure the directory for the PnL record exists
+        os.makedirs(os.path.dirname(file_name), exist_ok=True)
+
         with open(file_name, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([year, pnl])
         # print("Data Analyzed")
 
         # Plot the trades
-        title = f"{file_path}/{title}"
-        tools.plot(self.df, title)    
+        graph_title = f"{file_path}/{title}"
+
+        # Ensure the directory for the graph_title record exists
+        os.makedirs(os.path.dirname(graph_title), exist_ok=True)
+
+        tools.plot(self.df, graph_title)    
         
 # ——————————————————- Run Tests ————————————————————
 
-# Default Parameters
-# symbol = 'AMD'
+# # Default Parameters
+# symbol = 'BTC/USDT'
 # year = 2022
 
-# end_date = datetime.now()
+# end_time = datetime.now()
+# start_time = end_time-timedelta(days=31)
+# time_interval = TimeFrame(amount=1,unit=TimeFrameUnit.Hour)
 
-# # start_date = end_date-timedelta(days=365)
-# # time_interval = TimeFrame.Day
-
-# start_date = end_date-timedelta(days=1)
-# # time_interval = TimeFrame.Minute
-# time_interval = TimeFrame(amount=15,unit=TimeFrameUnit.Minute)
+# # start_date = end_date-timedelta(days=1)
+# # start_date = datetime(2023,12,12)
+# # # time_interval = TimeFrame.Minute
+# # time_interval = TimeFrame(amount=4,unit=TimeFrameUnit.Hour)
 
 # RSI_HIGH, RSI_LOW = 70, 30
 # POSITION_SIZE, TAKE_PROFIT, STOP_LOSS = 1000, 5, 2 
 # print("Default Parameters Set")
 
-####### Basic Testing #######
+# ####### Basic Testing #######
 # print("Testing Default Strategy")
-# t = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
+# t = tester(symbol,start_time,end_time,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
 # t.test()
 # graph_title = f"{symbol} - {year} {time_interval}"
 # t.analyze(graph_title)
 
 
-####### Test Different Years #######
-# years = [2019, 2020, 2021, 2022, 2023]
-# for year in range (2019,2024):
-#     start_date = date(year,1,1)
-#     end_date = date(year,12,31)
-#     years_test = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
-#     df = years_test.test()
-#     graph_title = f"PnL in {year}"
-#     years_test.analyze(df, graph_title)
+# ####### Test Different Years #######
+# # years = [2019, 2020, 2021, 2022, 2023]
+# # for year in range (2019,2024):
+# #     start_date = date(year,1,1)
+# #     end_date = date(year,12,31)
+# #     years_test = tester(symbol,start_date,end_date,time_interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
+# #     df = years_test.test()
+# #     graph_title = f"PnL in {year}"
+# #     years_test.analyze(df, graph_title)
 
-####### Test Different Intervals #######
-# intervals = ['1d','5d','1wk','1mo','3mo']
-# for interval in intervals:
-#     interval_test = tester(symbol,start_date,end_date,interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
-#     df = interval_test.test()
-#     interval_test.analyze(df,f"PnL at {interval}")
+# ####### Test Different Intervals #######
+# # intervals = ['1d','5d','1wk','1mo','3mo']
+# # for interval in intervals:
+# #     interval_test = tester(symbol,start_date,end_date,interval,RSI_HIGH,RSI_LOW,POSITION_SIZE,TAKE_PROFIT,STOP_LOSS)
+# #     df = interval_test.test()
+# #     interval_test.analyze(df,f"PnL at {interval}")
 
-####### Test Optimized Parameters #######
-def test_optimized(symbol, start_date, end_date, time_interval):
-    """
-    Test the strategy using the optimized parameters
-    """
-    df = tools.setup(symbol, start_date, end_date, time_interval)
+# ####### Test Optimized Parameters #######
+# def test_optimized(symbol, start_date, end_date, time_interval):
+#     """
+#     Test the strategy using the optimized parameters
+#     """
+#     df = tools.setup(symbol, start_date, end_date, time_interval)
     
-    ####### Test Optimized Parameters #######
-    basic_optimization = BasicOptimization(df, symbol, start_date, end_date, time_interval)
-    best_parameters = basic_optimization.optimize()
-    optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = basic_optimization.get_optimized_parameters()
-    o = tester(symbol, start_date, end_date, time_interval, optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
-    o.test()
-    graph_title = f"Optimized {symbol} - {year} {time_interval}" 
-    o.analyze(graph_title)
-    print("Best parameters:", best_parameters)
+#     ####### Test Optimized Parameters #######
+#     basic_optimization = BasicOptimization(df, symbol, start_date, end_date, time_interval)
+#     best_parameters = basic_optimization.optimize()
+#     optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = basic_optimization.get_optimized_parameters()
+#     o = tester(symbol, start_date, end_date, time_interval, optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+#     o.test()
+#     graph_title = f"Optimized {symbol} - {year} {time_interval}" 
+#     o.analyze(graph_title)
+#     print("Best parameters:", best_parameters)
 
-    return optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
+#     return optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT
 
-# optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
+# # optimized_POSITION_SIZE, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT = test_optimized(symbol, start_date, end_date, time_interval)
 
-''' Need to test on 2022 and see if using this program earlier can save the portfolio'''
+# ''' Need to test on 2022 and see if using this program earlier can save the portfolio'''
 
 
-####### Testing on a Different Year #######
-# symbol = 'AMD'
-# year = 2021
-# start_date, end_date = date(year,1,1) , date(year,12,31)
+# ####### Testing on a Different Year #######
+# # symbol = 'AMD'
+# # year = 2021
+# # start_date, end_date = date(year,1,1) , date(year,12,31)
 
-# print("Default Parameters Set")
+# # print("Default Parameters Set")
 
-# print("Testing Default Strategy")
-# t = tester(symbol,start_date,end_date,time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
-# t.test()
-# graph_title = f"{symbol} - {year} {time_interval}"
-# t.analyze(graph_title)
+# # print("Testing Default Strategy")
+# # t = tester(symbol,start_date,end_date,time_interval, optimized_RSI_HIGH, optimized_RSI_LOW, optimized_POSITION_SIZE, optimized_TAKE_PROFIT, optimized_STOP_LOSS, optimized_RSI_WEIGHT, optimized_MACD_WEIGHT, optimized_BB_WEIGHT)
+# # t.test()
+# # graph_title = f"{symbol} - {year} {time_interval}"
+# # t.analyze(graph_title)

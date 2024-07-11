@@ -1,8 +1,10 @@
-import csv
+import csv, os
 import talib
-from alpaca.data.historical import StockHistoricalDataClient, CryptoHistoricalDataClient
-from alpaca.data.requests import StockBarsRequest, CryptoBarsRequest
+from alpaca.data.historical import CryptoHistoricalDataClient
+from alpaca.data.requests import CryptoBarsRequest
 from alpaca.data.timeframe import TimeFrame
+import matplotlib.pyplot as plt
+
 
 # trading on 1d not 1h so not as practical
 
@@ -18,8 +20,8 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
     """
 
     # Replace with your Alpaca API keys
-    APCA_API_KEY_ID = "PKDSUFSDD8XOZZC309LK"
-    APCA_API_SECRET_KEY = "araI1T7gB3rsXErEanFI9QwIdyQeVE8XUgGOMtey"
+    APCA_API_KEY_ID = "PKCD8EAUMACTHLAAOHDO"
+    APCA_API_SECRET_KEY = "1VPEfeBMQoobA1x15x5G4dY6mYNElPfO4hB92uzb"
 
     data = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
 
@@ -103,8 +105,12 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
                 trades.append((entry_price, data['close'].iloc[i], position, pnl, roi))
                 position = 0
 
-    file_path = "./Data"
+    file_path = "./crypto_data"
     filename = f"{file_path}/trades.csv"
+
+    # Ensure the directory for the PnL record exists
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+
     with open(filename, 'w', newline='') as f:
         fields = ['entry', 'exit', 'pos', 'roi']
         # writer = csv.DictWriter(csvfile, fieldnames=fields)
@@ -115,7 +121,7 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
     return sum(profits), sum(rois)
 
 
-def plot(plt, df, graph_title):
+def plot(df, graph_title):
     x_scale = 1
     y_scale = 1
     signal_scale=1
