@@ -26,7 +26,7 @@ def get_open_position(symbol):
         return trading_client.get_open_position(symbol)
     except APIError as e:
         if 'position does not exist' in str(e):
-            print("\nThe position does not exist.\n")
+            print("**** The position does not exist. ****")
         else:
             print(f"An API error occurred: {e}")
         return None

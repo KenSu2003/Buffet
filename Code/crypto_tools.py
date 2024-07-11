@@ -50,7 +50,7 @@ def setup(symbol_or_sumbols,start_time,end_time,interval):
 
 
 # should consider implementing margin
-def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
+def calculate_pnl(data, trade_size, profit_target_pct, stop_loss_pct):
     """
     Calculate the profit and loss (PnL) as well as the Return on Investment (ROI).
     Saves the trades in the file trades.csv.
@@ -108,7 +108,7 @@ def calculate_pnl(data, profit_target_pct, stop_loss_pct, trade_size):
     file_path = "./crypto_data"
     filename = f"{file_path}/trades.csv"
 
-    # Ensure the directory for the PnL record exists
+    # Ensure the directory for the trades record exists
     os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     with open(filename, 'w', newline='') as f:
@@ -139,14 +139,14 @@ def plot(df, graph_title):
     print("Graph Plotted")
 
 
-def simulate_trades(df, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+def simulate_trades(df, rsi_weight=1, macd_weight=1, bb_weight=1):
     """
     Simulate all the trades in the given time frame based on the given parameter using this strategy.
     """
     df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
     for i in range(len(df)):
         # Calculate the new signal value directly
-        signal_value = df.at[df.index[i], 'RSI_signal']*RSI_WEIGHT + df.at[df.index[i], 'MACD_signal']*MACD_WEIGHT + df.at[df.index[i], 'BB_diverging']*BB_WEIGHT
+        signal_value = df.at[df.index[i], 'RSI_signal']*rsi_weight + df.at[df.index[i], 'MACD_signal']*macd_weight + df.at[df.index[i], 'BB_diverging']*bb_weight
         df.at[df.index[i], 'Signal'] = float(signal_value)  # float (not int) makes it more accurate
     return df
 
