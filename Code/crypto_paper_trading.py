@@ -52,9 +52,7 @@ def update_parameters(progress_log):
         df = paper_tester.test()
         if progress_log: print("Strategy Tested")
 
-        if progress_log: print("Analyzing Strategy")
-        # paper_tester.analyze("Paper Tester: Basic Parameter")
-        # tools.plot(df,"Basic Parameters")
+        if progress_log: print("Analyzing Strategy") 
         basic_pnl, basic_roi = tools.calculate_pnl(df, position_size, take_profit, stop_loss)
         if trade_log: print(f"Total PnL: ${basic_pnl:.2f}\t({basic_roi*100:.2f}%)")
         if progress_log: print("Strategy Analzed")
@@ -106,7 +104,7 @@ def execute_trade(progress_log, trade_log):
             return  # Exit if parameters are not updated
 
         if progress_log: print("\nExecuting Trades ...")
-        if progress_log: print(rsi_high, rsi_low, rsi_weight, macd_weight, bb_weight)
+        if progress_log: print(rsi_high, rsi_low, rsi_weight, macd_weight, bb_weight, position_size)
 
         ####### Evaluate Trading Signal #######
         most_recent_df = tools.setup(SYMBOL,start_time,end_time,time_interval)
@@ -209,4 +207,4 @@ except (KeyboardInterrupt, SystemExit):
     print("Scheduler stopped.")
 
 
-
+'''Might make this a class and have each symbol be part of a different class'''

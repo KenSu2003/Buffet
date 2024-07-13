@@ -1,13 +1,15 @@
 from alpaca.trading.client import TradingClient
+from alpaca.trading.requests import GetOrdersRequest
 from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
-from alpaca.trading.enums import OrderSide, TimeInForce
+from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 
 from alpaca.data.historical import CryptoHistoricalDataClient
 from alpaca.data.requests import CryptoLatestQuoteRequest
 
 from alpaca.common.exceptions import APIError
 
-import time
+import csv, pandas as pd
+
 
 APCA_API_KEY_ID = "PKHR4PFM00KX8GGXP9EG"
 APCA_API_SECRET_KEY = "QgH9zpwOkOodiP9LzRUMn2scmxJLd8QCnKUxpi25"
@@ -75,69 +77,19 @@ def set_order(symbol,long_short,ORDER_SIZE,order_limit=False,limit_price=0):
                             symbol=symbol,
                             qty=qty,
                             side=side,
-                            # time_in_force=TimeInForce.DAY
                             time_in_force='gtc'
                             )
         
         market_order = trading_client.submit_order(
                         order_data=market_order_data
                     )
-    
+        print(market_order.failed_at)   # need to move this to the crypt_paper_trading
         return market_order
 
-####### Testing #######
-# symbol = 'BTC/USD'
-# POSITION_SIZE = 50000
-# signal = -1
-# trade_log = 1
-
-# ####### Determine Order Size and Execute Order #######
-# open_order = get_open_position(symbol)       # GETTING POSITON NOT ORDER NEED TO REEVALUATE
-# order_size = abs(POSITION_SIZE*signal)
-
-# # Check if there is an Active (Open) Order
-# if open_order != None:
-#     open_order_id = open_order.asset_id
-#     open_order_side = get_buy_sell(open_order)
-
-#     current_balance = float(open_order.qty)*float(open_order.market_value)    # order size = availabe asset
-#     account_balance = get_balance()     # order size = entire account availabe USD balance
-
-#     if open_order_side < 0: # For Active Short Position
-        
-#         if signal>0: 
-#             if order_size >= account_balance: # Close Long Position
-#                 order_size = account_balance
-#                 if trade_log: print(f"Reducing Order Size to {order_size}.")
-#                 if trade_log: print(f"Closing Short Position {open_order_id}")
-#                 close_position(symbol)   # if its an active long order close it
-#             else:
-#                 if trade_log: print(f"Opening Long Order {open_order_id}")
-#                 if trade_log: print(f"Reducing Short Position by ${order_size}")
-#                 set_order(symbol,'long',order_size)
-#         elif signal<0:
-#             order_size = current_balance
-#             if trade_log: print(f"Increasing Short Position {order_size}")
-#             set_order(symbol,'short',order_size)
-#     elif open_order_side > 0:   # For Active Long Position        
-#         if signal<0: 
-#             if order_size >= current_balance: # Close Long Position
-#                 order_size = current_balance
-#                 if trade_log: print(f"Closing Long Position {open_order_id}")
-#                 close_position(symbol)  # if its an active short order close it
-#             else:
-#                 if trade_log: print(f"Opening Short Order {open_order_id}")
-#                 if trade_log: print(f"Reducing Long Position by ${abs(order_size)}")
-#                 set_order(symbol,'short',order_size)
-#         elif signal>0:
-#             if order_size>account_balance: order_size = account_balance
-#             if trade_log: print(f"Increasing Long Position {order_size}")
-#             set_order(symbol,'long',order_size)
-# else:
-#     if signal > 0:
-#         if trade_log: print(f"Opening a new Long ${order_size} Order")
-#         set_order(symbol,'long',order_size)
-#     elif signal < 0:
-#         if trade_log: print("Insufficient Fund.")
-#     else:
-#         if trade_log: print("No trades made.")
+def get_all_orders(symbol):
+    request_params = GetOrdersRequest(symbol=symbol,status=QueryOrderStatus.CLOSED)
+    orders = trading_client.get_orders(filter=request_params)
+    print(orders)
+    orders_df = pd.DataFrame(orders)
+    orders_df.to_csv('orders.csv')
+    return orders_df
