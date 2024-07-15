@@ -13,7 +13,7 @@ rsi_high, rsi_low = 70, 30
 position_size, take_profit, stop_loss = 1000, 10, 2 
 rsi_weight, macd_weight, bb_weight = 1, 1, 1
 
-PROGRESS_LOG = False
+PROGRESS_LOG = True
 TRADE_LOG = True
 
 if PROGRESS_LOG: print("Default Parameters Set")

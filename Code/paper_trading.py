@@ -181,7 +181,7 @@ def execute_trade(PROGRESS_LOG, TRADE_LOG):
 
 # —————————————— Testing Console —————————————— 
 
-PROGRESS_LOG = True
+PROGRESS_LOG = False
 TRADE_LOG = True
 
 # Create a lock object
