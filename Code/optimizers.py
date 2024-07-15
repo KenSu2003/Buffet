@@ -1,6 +1,6 @@
 from bayes_opt import BayesianOptimization
 from strategies import Momentum
-import testing_tools as tools
+from testing_tools import simulate_trades, calculate_pnl
 
 class BasicOptimizer():
     def __init__(self, df, symbol, start_date, end_date, time_interval):
@@ -34,9 +34,9 @@ class BasicOptimizer():
 
         strategy = Momentum(self.df, RSI_HIGH=RSI_HIGH, RSI_LOW=RSI_LOW, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1)
         self.df = strategy.evaluate_indicators()
-        self.df = tools.simulate_trades(self.df)    # implement strategy, determine BUY/SELL signal    
+        self.df = simulate_trades(self.df)    # implement strategy, determine BUY/SELL signal    
         
-        profit, roi = tools.calculate_pnl(self.df, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS)
+        profit, roi = calculate_pnl(self.df, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS)
         
         return roi  # Directly maximize profit
     

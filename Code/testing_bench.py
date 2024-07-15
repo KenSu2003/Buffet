@@ -1,11 +1,11 @@
 import optimizers
-import testing_tools as tools
+from testing_tools import simulate_trades, calculate_pnl
 from datetime import datetime, timedelta
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from tester import tester
 
 SYMBOL = 'BTC/USD'
-crypto_or_stock = 'crypto'
+CRYPTO_OR_STOCK = 'crypto'
 end_time = datetime.now()
 start_time = end_time-timedelta(days=31)
 time_interval = TimeFrame(4,TimeFrameUnit.Hour)
@@ -13,43 +13,43 @@ rsi_high, rsi_low = 70, 30
 position_size, take_profit, stop_loss = 1000, 10, 2 
 rsi_weight, macd_weight, bb_weight = 1, 1, 1
 
-progress_log = False
-trade_log = True
+PROGRESS_LOG = False
+TRADE_LOG = True
 
-if progress_log: print("Default Parameters Set")
+if PROGRESS_LOG: print("Default Parameters Set")
 
 ####### Setup Tester #######
-if progress_log: print("Setting Up Tester")
-paper_tester = tester(SYMBOL, crypto_or_stock, start_time, end_time, time_interval, rsi_high, rsi_low, position_size, take_profit, stop_loss)
-if progress_log: print("Tester Setup Complete")
+if PROGRESS_LOG: print("Setting Up Tester")
+paper_tester = tester(SYMBOL, CRYPTO_OR_STOCK, start_time, end_time, time_interval, rsi_high, rsi_low, position_size, take_profit, stop_loss)
+if PROGRESS_LOG: print("Tester Setup Complete")
 
 ####### Test & Analyze Strategy #######
-if progress_log: print("Testing Strategy")
+if PROGRESS_LOG: print("Testing Strategy")
 df = paper_tester.test()
-if progress_log: print("Strategy Tested")
+if PROGRESS_LOG: print("Strategy Tested")
 
-if progress_log: print("Analyzing Strategy") 
-basic_pnl, basic_roi = tools.calculate_pnl(df, position_size, take_profit, stop_loss)
-if trade_log: print(f"Total PnL: ${basic_pnl:.2f}\t({basic_roi*100:.2f}%)")
-if progress_log: print("Strategy Analzed")
+if PROGRESS_LOG: print("Analyzing Strategy") 
+basic_pnl, basic_roi = calculate_pnl(df, position_size, take_profit, stop_loss)
+if TRADE_LOG: print(f"Total PnL: ${basic_pnl:.2f}\t({basic_roi*100:.2f}%)")
+if PROGRESS_LOG: print("Strategy Analzed")
 
 ####### Setup Optimizer #######
-if progress_log: print("Setting Up Optimizer")
+if PROGRESS_LOG: print("Setting Up Optimizer")
 optimizer = optimizers.BasicOptimizer(df, SYMBOL, start_time, end_time, time_interval)
-if progress_log: print("Optimizer Setup Complete")
+if PROGRESS_LOG: print("Optimizer Setup Complete")
 
 ####### Optimize Strategy #######
-if progress_log: print("Optimizing Strategy")
+if PROGRESS_LOG: print("Optimizing Strategy")
 optimized_parameters = optimizer.optimize()
 print(optimized_parameters)
-if progress_log: print(optimized_parameters)
-if progress_log: print("Strategy Optimized")
+if PROGRESS_LOG: print(optimized_parameters)
+if PROGRESS_LOG: print("Strategy Optimized")
 
 ####### Test Opimized Strategy #######
-if progress_log: print("Testing Optimized Parameters")
+if PROGRESS_LOG: print("Testing Optimized Parameters")
 optimized_position_size, optimized_rsi_high, optimized_rsi_low, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight = optimizer.get_optimized_parameters()
-optimized_tester = tester(SYMBOL, crypto_or_stock, start_time, end_time, time_interval, optimized_rsi_high, optimized_rsi_low, optimized_position_size, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight)
+optimized_tester = tester(SYMBOL, CRYPTO_OR_STOCK, start_time, end_time, time_interval, optimized_rsi_high, optimized_rsi_low, optimized_position_size, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight)
 optimized_df = optimized_tester.test()
-optimized_pnl, optimized_roi = tools.calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
-if trade_log: print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")
-if progress_log: print("Optimized Testing Complete")
+optimized_pnl, optimized_roi = calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
+if TRADE_LOG: print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")
+if PROGRESS_LOG: print("Optimized Testing Complete")

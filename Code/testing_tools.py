@@ -1,10 +1,8 @@
 import csv, os
 import talib
-from alpaca.data.historical import CryptoHistoricalDataClient, StockHistoricalDataClient
-from alpaca.data.requests import CryptoBarsRequest, StockBarsRequest
-from alpaca.data.timeframe import TimeFrame
 import matplotlib.pyplot as plt
-from alpaca_api import APCA_API_KEY_ID, APCA_API_SECRET_KEY
+from alpaca_api import crypto_client, stock_client, CryptoBarsRequest, StockBarsRequest
+
 
 def setup(symbol_or_symbols,crypto_or_stock,start_time,end_time,interval):
     """
@@ -18,23 +16,25 @@ def setup(symbol_or_symbols,crypto_or_stock,start_time,end_time,interval):
     """
 
     if crypto_or_stock == 'crypto':
-        data = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
+        # data = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
         request_params = CryptoBarsRequest(
                                 symbol_or_symbols=symbol_or_symbols,
                                 timeframe=interval,
                                 start=start_time,
                                 end=end_time
                         )
-        barset = data.get_crypto_bars(request_params)
+        # barset = data.get_crypto_bars(request_params)
+        barset = crypto_client.get_crypto_bars(request_params)
     elif crypto_or_stock == 'stock':
-        data = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
+        # data = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
         request_params = StockBarsRequest(
                                 symbol_or_symbols=symbol_or_symbols,
                                 timeframe=interval,
                                 start=start_time,
                                 end=end_time
                         )
-        barset = data.get_stock_bars(request_params)
+        # barset = data.get_stock_bars(request_params)
+        barset = stock_client.get_stock_bars(request_params)
     else:
         print("crypto or stock not sepcified")
         return
