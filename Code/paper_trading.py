@@ -11,12 +11,6 @@ from threading import Lock
 
 # —————————————— Initialize —————————————— 
 
-
-CRYPTO_OR_STOCK = 'crypto'
-
-# self.symbol = 'AMD'
-# CRYPTO_OR_STOCK = 'stock'
-
 # Initialize lock
 lock = Lock()
 
@@ -33,17 +27,12 @@ class paper_trader():
         self.rsi_weight = 1
         self.macd_weight = 1
         self.bb_weight = 1
-        self.position_size = 1000
+        self.position_size = 1000               # Need to figure out if this is account size or position size
         self.optimized_roi = 0
         self.basic_roi = 0
         self.take_profit = 5
         self.stop_loss = 3
-
         self.parameters_updated = False # Initialize a flag to indicate if parameters have been updated
-
-
-
-    # —————————————— Do Not Edit Code Below —————————————— 
 
     def update_parameters(self, PROGRESS_LOG):
 
@@ -118,7 +107,7 @@ class paper_trader():
             self.parameters_updated = True  # Set the flag to True after parameters are updated
 
     def execute_trade(self, PROGRESS_LOG, TRADE_LOG):
-
+        # Write now the trade does not allow margin so need to have the else statement.
         with lock:
 
             if not self.parameters_updated:
@@ -129,7 +118,7 @@ class paper_trader():
             if PROGRESS_LOG: print(self.rsi_high, self.rsi_low, self.rsi_weight, self.macd_weight, self.bb_weight, self.position_size)
 
             ####### Evaluate Trading Signal #######
-            most_recent_df = setup(self.symbol,CRYPTO_OR_STOCK,self.start_time,self.end_time,self.time_interval)
+            most_recent_df = setup(self.symbol,self.crypto_or_stock,self.start_time,self.end_time,self.time_interval)
             strategy = Momentum(most_recent_df, self.rsi_high, self.rsi_low, self.rsi_weight, self.macd_weight, self.bb_weight)
             signal = strategy.evaluate_latest()
 
@@ -138,66 +127,66 @@ class paper_trader():
                 if TRADE_LOG: print("Don't Trade Signal Alerted")
 
             ####### Determine Order Size and Execute Order #######
-            open_order = alpaca_api.get_open_position(self.symbol)       # GETTING POSITON NOT ORDER NEED TO REEVALUATE
+            open_position = alpaca_api.get_open_position(self.symbol)
+            account_balance = alpaca_api.get_balance()     # order size = entire account availabe USD balance
             order_size = abs(self.position_size*signal)
+                
 
             # Check if there is an Active (Open) Order
-            if open_order != None:
-                open_order_id = open_order.asset_id
-                open_order_side = alpaca_api.get_buy_sell(open_order)
+            if open_position != None:
 
-                current_balance = float(open_order.qty)*float(open_order.market_value)    # order size = availabe asset
-                account_balance = alpaca_api.get_balance()     # order size = entire account availabe USD balance
+                position_size = float(open_position.qty)*float(open_position.market_value)    # order size = availabe position
+                open_position_id = open_position.asset_id
+                open_position_side = alpaca_api.get_buy_sell(open_position)
 
-                if open_order_side < 0: # For Active Short Position
+                if open_position_side < 0: # For Active Short Position
                     
                     if signal>0: 
                         if order_size >= account_balance: # Close Long Position
                             order_size = account_balance
                             if TRADE_LOG: print(f"Reducing Order Size to {order_size}.")
-                            if TRADE_LOG: print(f"Closing Short Position {open_order_id}")
+                            if TRADE_LOG: print(f"Closing Short Position {open_position_id}")
                             alpaca_api.close_position(self.symbol)   # if its an active long order close it
                         else:
-                            if TRADE_LOG: print(f"Opening Long Order {open_order_id}")
+                            if TRADE_LOG: print(f"Opening Long Order {open_position_id}")
                             if TRADE_LOG: print(f"Reducing Short Position by ${order_size}")
-                            alpaca_api.set_order(self.symbol,CRYPTO_OR_STOCK,'long',order_size)
+                            alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
                     elif signal<0:
-                        order_size = current_balance
+                        order_size = position_size
                         if TRADE_LOG: print(f"Increasing Short Position {order_size}")
-                        alpaca_api.set_order(self.symbol,CRYPTO_OR_STOCK,'short',order_size)
-                elif open_order_side > 0:   # For Active Long Position        
+                        alpaca_api.set_order(self.symbol,self.crypto_or_stock,'short',order_size)
+                elif open_position_side > 0:   # For Active Long Position        
                     if signal<0: 
-                        if order_size >= current_balance: # Close Long Position
-                            order_size = current_balance
-                            if TRADE_LOG: print(f"Closing Long Position {open_order_id}")
+                        if order_size >= position_size: # Close Long Position
+                            order_size = position_size
+                            if TRADE_LOG: print(f"Closing Long Position {open_position_id}")
                             alpaca_api.close_position(self.symbol)  # if its an active short order close it
                         else:
-                            if TRADE_LOG: print(f"Opening Short Order {open_order_id}")
+                            if TRADE_LOG: print(f"Opening Short Order {open_position_id}")
                             if TRADE_LOG: print(f"Reducing Long Position by ${abs(order_size)}")
-                            alpaca_api.set_order(self.symbol,CRYPTO_OR_STOCK,'short',order_size)
+                            alpaca_api.set_order(self.symbol,self.crypto_or_stock,'short',order_size)
                     elif signal>0:
                         if order_size>account_balance: order_size = account_balance
                         if TRADE_LOG: print(f"Increasing Long Position {order_size}")
-                        alpaca_api.set_order(self.symbol,CRYPTO_OR_STOCK,'long',order_size)
+                        alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
                 else:
                     print("No new trades made.\n")
             else:
                 if signal > 0:
+                    if order_size>account_balance: order_size = account_balance-1
                     if TRADE_LOG: print(f"Opening a new Long ${order_size} Order")
-                    alpaca_api.set_order(self.symbol,CRYPTO_OR_STOCK,'long',order_size)
+                    alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
                 elif signal < 0:
                     if TRADE_LOG: print("Insufficient Fund.\n")
                 else:
                     if TRADE_LOG: print("No trades made.\n")
 
     ''' 
-    Should reconsider renaming self.position_size to order_size
+    Should reconsider renaming self.position_size to order_size. 
+    -> Should not because when we are testing it is position size because we are testing the entire positon not just one order.
     '''
-# —————————————— Do Not Edit Code Above —————————————— 
 
-
-
-# —————————————— Testing Console —————————————— 
+# —————————————— Do Not Edit Code Below —————————————— 
 
 PROGRESS_LOG = False
 TRADE_LOG = True
@@ -212,14 +201,12 @@ btc_trader.update_parameters(PROGRESS_LOG)
 scheduler = BlockingScheduler()
 
 # Update Parameters Every HOUR
-# scheduler.add_job(update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
-# print("Paramters updating every 1 hour")
-scheduler.add_job(btc_trader.update_parameters, 'interval', minutes=2, args=[PROGRESS_LOG])
+scheduler.add_job(btc_trader.update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
+print("Paramters updating every 1 hour")
 
 # Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FORE TESTING
-# scheduler.add_job(execute_trade, 'interval', minutes=15, args=[PROGRESS_LOG, TRADE_LOG])
-# print("Trades Excuted every 15 minutes")
-scheduler.add_job(btc_trader.execute_trade, 'interval', minutes=1, args=[PROGRESS_LOG, TRADE_LOG])
+scheduler.add_job(btc_trader.execute_trade, 'interval', minutes=15, args=[PROGRESS_LOG, TRADE_LOG])
+print("Trades Excuted every 15 minutes")
 
 
 try:
@@ -227,3 +214,11 @@ try:
     scheduler.start()
 except (KeyboardInterrupt, SystemExit):
     print("Scheduler stopped.")
+
+# # —————————————— Do Not Edit Code Above —————————————— 
+
+
+# —————————————— Testing Bench —————————————— 
+
+# btc_trader.update_parameters(PROGRESS_LOG) 
+# btc_trader.execute_trade(PROGRESS_LOG,TRADE_LOG)
