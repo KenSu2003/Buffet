@@ -3,6 +3,7 @@ from testing_tools import simulate_trades, calculate_pnl
 from datetime import datetime, timedelta
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from tester import tester
+from strategies import Momentum
 
 SYMBOL = 'BTC/USD'
 CRYPTO_OR_STOCK = 'crypto'
@@ -53,3 +54,20 @@ optimized_df = optimized_tester.test()
 optimized_pnl, optimized_roi = calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
 if TRADE_LOG: print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")
 if PROGRESS_LOG: print("Optimized Testing Complete")
+
+####### Determine Parameter #######
+if optimized_roi > basic_roi:
+    if TRADE_LOG: print("Excuting Trades using Optimized Parameters")
+    position_size = optimized_position_size
+    rsi_high=optimized_rsi_high
+    rsi_low=optimized_rsi_low
+    rsi_weight=optimized_rsi_weight
+    macd_weight=optimized_macd_weight
+    bb_weight=optimized_bb_weight
+else:
+    if TRADE_LOG: print("Excuting Trades using Basic Parameters")
+
+
+####### Evaluate Signal #######
+latest_signal = Momentum(df,rsi_high,rsi_low,rsi_weight,macd_weight,bb_weight).evaluate_latest()
+print("Latest Signal",latest_signal)
