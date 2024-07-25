@@ -1,5 +1,5 @@
 import csv, os
-import talib
+import talib, math
 import matplotlib.pyplot as plt
 from alpaca_api import crypto_client, stock_client, CryptoBarsRequest, StockBarsRequest
 
@@ -152,3 +152,37 @@ def simulate_trades(df, rsi_weight=1, macd_weight=1, bb_weight=1):
         signal_value = df.at[df.index[i], 'RSI_signal']*rsi_weight + df.at[df.index[i], 'MACD_signal']*macd_weight + df.at[df.index[i], 'BB_diverging']*bb_weight
         df.at[df.index[i], 'Signal'] = float(signal_value)  # float (not int) makes it more accurate
     return df
+
+# def sigmoid(x):
+#     return 1 / (1 + math.exp(-x))
+
+# def transform_signal(signal):
+#     # Apply sigmoid transformation and scale to range [-1, 1]
+#     return 2 * sigmoid(signal) - 1
+
+def calculate_order_size(starting_balance, current_account_balance, signal, base_order_size, max_position_size_percentage, current_position_size_dollars, price_per_unit, num_symbols=20):
+    # Check if the signal is within the no-trade range
+    if -1 <= signal <= 1:
+        return 0  # No trade
+    
+    # Calculate the capital allocated to each symbol based on the starting balance
+    capital_per_symbol_start = starting_balance / num_symbols
+    
+    # Scale factor based on the current balance relative to the starting balance
+    balance_scale = current_account_balance / starting_balance
+    
+    # Calculate the preliminary order size in dollars based on the starting capital allocation
+    preliminary_order_size_dollars = balance_scale * signal * capital_per_symbol_start
+    
+    # Calculate the maximum allowable position size in dollars based on the current account balance
+    max_position_size_dollars = max_position_size_percentage * current_account_balance
+    
+    # Adjust the order size based on the signal direction
+    if signal > 0:
+        # Buy signal
+        order_size_dollars = min(preliminary_order_size_dollars, max_position_size_dollars - current_position_size_dollars)
+    else:
+        # Sell signal
+        order_size_dollars = min(abs(preliminary_order_size_dollars), current_position_size_dollars)
+    
+    return order_size_dollars

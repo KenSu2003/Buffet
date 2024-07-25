@@ -1,5 +1,5 @@
 import optimizers
-from testing_tools import simulate_trades, calculate_pnl
+from testing_tools import calculate_pnl, calculate_order_size
 from datetime import datetime, timedelta
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from tester import tester
@@ -14,7 +14,7 @@ rsi_high, rsi_low = 70, 30
 position_size, take_profit, stop_loss = 1000, 10, 2 
 rsi_weight, macd_weight, bb_weight = 1, 1, 1
 
-PROGRESS_LOG = True
+PROGRESS_LOG = False
 TRADE_LOG = True
 
 if PROGRESS_LOG: print("Default Parameters Set")
@@ -71,3 +71,16 @@ else:
 ####### Evaluate Signal #######
 latest_signal = Momentum(df,rsi_high,rsi_low,rsi_weight,macd_weight,bb_weight).evaluate_latest()
 print("Latest Signal",latest_signal)
+
+
+####### Evaluate Order Size ########
+starting_balance = 1000000      # Starting capital
+current_account_balance = 80400 # Current account balance
+signal = -4.453                    # Latest signal strength
+base_order_size = 1000         # Base order size for unit signal in dollars
+max_position_size_percentage = 0.2  # Maximum position size as 20% of account balance
+current_position_size_dollars = 1000000 # Current position size in dollars
+price_per_unit = 67000         # Market price
+
+order_size_dollars = calculate_order_size(starting_balance, current_account_balance, signal, base_order_size, max_position_size_percentage, current_position_size_dollars, price_per_unit)
+print(f"Order Size in Dollars: ${order_size_dollars:.2f}")
