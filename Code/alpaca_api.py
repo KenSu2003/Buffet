@@ -6,8 +6,8 @@ from alpaca.data.requests import CryptoLatestQuoteRequest, StockLatestQuoteReque
 from alpaca.common.exceptions import APIError
 import os, pandas as pd
 
-APCA_API_KEY_ID = "PKTLXMO4EXAUR742WASJ"
-APCA_API_SECRET_KEY = "0Dyzh0quwGMNOSGR9iUvIG0UmkHDdoI0pUFzcdY6"
+APCA_API_KEY_ID = "PKC0I8RIJHZDQZTI5OGX"
+APCA_API_SECRET_KEY = "yzsEuNmXfwDMNqHP1Jg1Q5njGAuuL0CPhwRURO4P"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
@@ -92,7 +92,6 @@ def set_order(symbol,crypto_or_stock, long_short,ORDER_SIZE,order_limit=False,li
 def get_all_orders(symbol):
     request_params = GetOrdersRequest(symbol=symbol,status=QueryOrderStatus.CLOSED)
     orders = trading_client.get_orders(filter=request_params)
-    print(orders)
     orders_df = pd.DataFrame(orders)
     title = 'orders.csv'
     filepath = f"./data/{title}"

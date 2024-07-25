@@ -83,14 +83,6 @@ class Momentum:
         
         :return: The function returns 1 if the BBs are diverging and -1 if they are converging
         """
-
-        # self.df['BB_width'] = self.df['BB_upper'] - self.df['BB_lower']
-        # self.df['BB_diverging'] = 0
-        # for i in range(1, len(self.df)):
-        #     if self.df['BB_width'].iloc[i] > self.df['BB_width'].iloc[i-1]:
-        #         self.df.at[self.df.index[i], 'BB_diverging'] = 1    # Bands are diverging
-        #     elif self.df['BB_width'].iloc[i] < self.df['BB_width'].iloc[i-1]:
-        #         self.df.at[self.df.index[i], 'BB_diverging'] = -1   # Bands are converging
         
         for i in range(1, len(self.df)):
             bb_upper = self.df['BB_upper'].iloc[i]

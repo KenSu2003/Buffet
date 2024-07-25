@@ -173,7 +173,7 @@ class paper_trader():
                     print("No new trades made.\n")
             else:
                 if signal > 0:
-                    if order_size>account_balance: order_size = account_balance-1
+                    if order_size>account_balance: order_size = account_balance
                     if TRADE_LOG: print(f"Opening a new Long ${order_size} Order")
                     alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
                 elif signal < 0:

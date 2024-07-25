@@ -152,4 +152,3 @@ def simulate_trades(df, rsi_weight=1, macd_weight=1, bb_weight=1):
         signal_value = df.at[df.index[i], 'RSI_signal']*rsi_weight + df.at[df.index[i], 'MACD_signal']*macd_weight + df.at[df.index[i], 'BB_diverging']*bb_weight
         df.at[df.index[i], 'Signal'] = float(signal_value)  # float (not int) makes it more accurate
     return df
-
