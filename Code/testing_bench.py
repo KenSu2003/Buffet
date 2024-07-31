@@ -89,44 +89,39 @@ from alpaca_api import get_open_position, get_balance
 
 
 # ——————— Example usage with different capital allocations for each symbol
-# symbol = 'BTC/USD'
-# starting_balance = 10000  # initial captal
-# current_account_balance = get_balance()
-# # position_size_dollars = float(get_open_position(symbol=symbol).market_value)
+symbol = 'BTC/USD'
+starting_balance = 100000  # Initial capital
+current_account_balance = get_balance()
 
-# sym1_signal = 4.5
-# sym2_signal = 2.4
-# sym3_signal = -1.53
+sym1_signal = 4.5
+sym2_signal = 2.4
+sym3_signal = -1.53
 
-# # Starting captial per symbol
-# starting_sym1_portfolio = 0.5
-# starting_sym2_portfolio = 0.3
-# starting_sym3_portfolio = 0.2
-# # does the rsik management adjust the symbol portfolio weight or is it set?
+starting_sym1_portfolio = 0.5
+starting_sym2_portfolio = 0.3
+starting_sym3_portfolio = 0.2
 
-# # Caclulated from Risk Managment, should this add up top 1?
-# max_pos_size_perc_1 = 1
-# max_pos_size_perc_2 = 0
-# max_pos_size_perc_3 = 0
+# Maximum position size of account (Dynamically Adjusted from Risk-Analysis)
+max_pos_size_perc_1 = 0.5  # Set to a reasonable value
+max_pos_size_perc_2 = 0.0  # Set to a reasonable value
+max_pos_size_perc_3 = 0.2  # Set to zero as mentioned
 
-# cur_pos_size_dol_1 = 10000
-# cur_pos_size_dol_2 = 100
-# cur_pos_size_dol_3 = 3000
+# Current position size of account
+cur_pos_size_dol_1 = float(get_open_position(symbol=symbol).market_value)
+cur_pos_size_dol_2 = 100
+cur_pos_size_dol_3 = 3000
 
+symbol_trade_detail = {
+    'symbol1': (starting_balance * starting_sym1_portfolio, sym1_signal, max_pos_size_perc_1, cur_pos_size_dol_1),
+    'symbol2': (starting_balance * starting_sym2_portfolio, sym2_signal, max_pos_size_perc_2, cur_pos_size_dol_2),
+    'symbol3': (starting_balance * starting_sym3_portfolio, sym3_signal, max_pos_size_perc_3, cur_pos_size_dol_3)
+}
 
-# symbol_trade_detail = {
-#     'symbol1': (starting_balance*starting_sym1_portfolio, sym1_signal, max_pos_size_perc_1, cur_pos_size_dol_1),
-#     'symbol2': (starting_balance*starting_sym2_portfolio, sym2_signal, max_pos_size_perc_2, cur_pos_size_dol_2),
-#     'symbol3': (starting_balance*starting_sym3_portfolio, sym3_signal, max_pos_size_perc_3, cur_pos_size_dol_3)
-#     # Add more symbols as needed
-# }
+for symbol, trade_detail in symbol_trade_detail.items():
+    allocation = trade_detail[0]
+    signal = trade_detail[1]
+    max_position_size_percentage = trade_detail[2]
+    current_position_size_dollars = trade_detail[3]
 
-# for symbol, trade_detail in symbol_trade_detail.items():
-#     allocation = trade_detail[0]
-#     signal = trade_detail[1]
-#     max_position_size_percentage = trade_detail[2]
-#     current_position_size_dollars = trade_detail[3]
-
-#     order_size_dollars = calculate_order_size(starting_balance, current_account_balance, signal, max_position_size_percentage, current_position_size_dollars, allocation)
-#     print(f"Order Size for {symbol} in Dollars: ${order_size_dollars:.2f}")
-
+    order_size_dollars = calculate_order_size(starting_balance, current_account_balance, signal, max_position_size_percentage, current_position_size_dollars, allocation)
+    print(f"Order Size for {symbol} in Dollars: ${order_size_dollars:.2f}")
