@@ -35,9 +35,9 @@ def get_buy_sell(order):
 
 def get_balance():
     account = trading_client.get_account()
-    return float(account.equity)
+    return account
 
-def set_order(symbol,crypto_or_stock, long_short,ORDER_SIZE,order_limit=False,limit_price=0):
+def set_order(symbol,crypto_or_stock, long_short,order_size,order_limit=False,limit_price=0):
     if long_short == 'long':
         side=OrderSide.BUY
     elif long_short =='short':
@@ -51,7 +51,7 @@ def set_order(symbol,crypto_or_stock, long_short,ORDER_SIZE,order_limit=False,li
         limit_order_data = LimitOrderRequest(
                         symbol=symbol,
                         limit_price=limit_price,
-                        notional=ORDER_SIZE,
+                        notional=order_size,
                         side=side,
                         time_in_force=TimeInForce.GTC
                     )
@@ -63,40 +63,23 @@ def set_order(symbol,crypto_or_stock, long_short,ORDER_SIZE,order_limit=False,li
     
     # Market order
     else:   
-
-        if crypto_or_stock == "crypto":
-            multisymbol_request_params = CryptoLatestQuoteRequest(symbol_or_symbols=symbol)
-            latest_multisymbol_quotes = crypto_client.get_crypto_latest_quote(multisymbol_request_params)
-        elif crypto_or_stock == "stock":
-            multisymbol_request_params = StockLatestQuoteRequest(symbol_or_symbols=symbol)
-            latest_multisymbol_quotes = stock_client.get_stock_latest_quote(multisymbol_request_params)
-
-        latest_ask_price = latest_multisymbol_quotes[symbol].ask_price
-
-        qty = abs(ORDER_SIZE/latest_ask_price)    # for trading stock
-
         market_order_data = MarketOrderRequest(
                             symbol=symbol,
-                            qty=qty,
+                            notional=order_size,
                             side=side,
-                            # time_in_force=TimeInForce.DAY
                             time_in_force='gtc'
                             )
-        
+        print(market_order_data.notional)
         market_order = trading_client.submit_order(
                         order_data=market_order_data
                     )
-        # print(market_order.failed_at)   # need to move this to the crypto_paper_trading
+        
         return market_order
 
 def get_all_orders(symbol):
     request_params = GetOrdersRequest(symbol=symbol,status=QueryOrderStatus.CLOSED)
     orders = trading_client.get_orders(filter=request_params)
     orders_df = pd.DataFrame(orders)
-    # title = 'orders.csv'
-    # filepath = f"./data/{title}"
-    # os.makedirs(os.path.dirname(filepath), exist_ok=True) # Ensure the directory for the graph_title record exists
-    # orders_df.to_csv(filepath)
     return orders_df
 
 # ———————————————————————— TESTING ————————————————————————

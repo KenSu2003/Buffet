@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from testing_tools import setup, calculate_pnl
 from tester import tester
-from strategies import Momentum
+from strategies import Momentum, calculate_order_size
 from optimizers import BasicOptimizer
 from apscheduler.schedulers.blocking import BlockingScheduler
 from threading import Lock
@@ -126,60 +126,28 @@ class paper_trader():
                 signal = 0
                 if TRADE_LOG: print("Don't Trade Signal Alerted")
 
-            ####### Determine Order Size and Execute Order #######
-            open_position = alpaca_api.get_open_position(self.symbol)
-            account_balance = alpaca_api.get_balance()     # order size = entire account availabe USD balance
-            order_size = abs(self.position_size*signal)
-                
-
-            # Check if there is an Active (Open) Order
-            if open_position != None:
-
-                position_size = float(open_position.qty)*float(open_position.market_value)    # order size = availabe position
-                open_position_id = open_position.asset_id
-                open_position_side = alpaca_api.get_buy_sell(open_position)
-
-                if open_position_side < 0: # For Active Short Position
-                    
-                    if signal>0: 
-                        if order_size >= account_balance: # Close Long Position
-                            order_size = account_balance
-                            if TRADE_LOG: print(f"Reducing Order Size to {order_size}.")
-                            if TRADE_LOG: print(f"Closing Short Position {open_position_id}")
-                            alpaca_api.close_position(self.symbol)   # if its an active long order close it
-                        else:
-                            if TRADE_LOG: print(f"Opening Long Order {open_position_id}")
-                            if TRADE_LOG: print(f"Reducing Short Position by ${order_size}")
-                            alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
-                    elif signal<0:
-                        order_size = position_size
-                        if TRADE_LOG: print(f"Increasing Short Position {order_size}")
-                        alpaca_api.set_order(self.symbol,self.crypto_or_stock,'short',order_size)
-                elif open_position_side > 0:   # For Active Long Position        
-                    if signal<0: 
-                        if order_size >= position_size: # Close Long Position
-                            order_size = position_size
-                            if TRADE_LOG: print(f"Closing Long Position {open_position_id}")
-                            alpaca_api.close_position(self.symbol)  # if its an active short order close it
-                        else:
-                            if TRADE_LOG: print(f"Opening Short Order {open_position_id}")
-                            if TRADE_LOG: print(f"Reducing Long Position by ${abs(order_size)}")
-                            alpaca_api.set_order(self.symbol,self.crypto_or_stock,'short',order_size)
-                    elif signal>0:
-                        if order_size>account_balance: order_size = account_balance
-                        if TRADE_LOG: print(f"Increasing Long Position {order_size}")
-                        alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
-                else:
-                    print("No new trades made.\n")
+            ####### Determine Order Size #######
+            starting_balance = 100000  # Initial capital
+            if alpaca_api.get_open_position(symbol=self.symbol) == None: current_position_size_dollars=0
+            else: current_position_size_dollars = float(alpaca_api.get_open_position(symbol=self.symbol).market_value)
+            account_cash = float(alpaca_api.get_balance().cash)
+            max_pos_size_perc = 1   # only symbol traded 
+            starting_portfolio_weight = 1
+            capital_per_symbol_start = starting_balance * starting_portfolio_weight
+            order_size = calculate_order_size(starting_balance,account_cash,signal,max_pos_size_perc,current_position_size_dollars,capital_per_symbol_start)
+            order_size = float("{:.2f}".format(order_size))
+            
+            ####### Execute Order #######
+            if -1<signal<1 or order_size == 0:
+                if TRADE_LOG: print("No trades made.\n")
+            elif signal>=1:
+                if TRADE_LOG: print(f"Opening Long Order for ${order_size}\n")
+                alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
+            elif signal<=-1:
+                if TRADE_LOG: print(f"Opening Short Order for ${order_size}\n")
+                alpaca_api.set_order(self.symbol,self.crypto_or_stock,'short',order_size)
             else:
-                if signal > 0:
-                    if order_size>account_balance: order_size = account_balance
-                    if TRADE_LOG: print(f"Opening a new Long ${order_size} Order")
-                    alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
-                elif signal < 0:
-                    if TRADE_LOG: print("Insufficient Fund.\n")
-                else:
-                    if TRADE_LOG: print("No trades made.\n")
+                if TRADE_LOG: print("No trades made.\n")
 
     ''' 
     Should reconsider renaming self.position_size to order_size. 
@@ -188,7 +156,7 @@ class paper_trader():
 
 # —————————————— Do Not Edit Code Below —————————————— 
 
-PROGRESS_LOG = False
+PROGRESS_LOG = True
 TRADE_LOG = True
 
 
@@ -196,7 +164,7 @@ btc_trader = paper_trader('BTC/USD','crypto')
 
 # Set up the initial parameters
 btc_trader.update_parameters(PROGRESS_LOG) 
-
+btc_trader.execute_trade(PROGRESS_LOG, TRADE_LOG)
 # Create an instance of the scheduler
 scheduler = BlockingScheduler()
 

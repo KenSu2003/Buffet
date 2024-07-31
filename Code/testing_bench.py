@@ -1,9 +1,9 @@
 import optimizers
-from testing_tools import calculate_pnl, calculate_order_size
+from testing_tools import calculate_pnl
 from datetime import datetime, timedelta
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from tester import tester
-from strategies import Momentum
+from strategies import Momentum, calculate_order_size
 from alpaca_api import get_open_position, get_balance
 
 # SYMBOL = 'BTC/USD'
@@ -95,14 +95,14 @@ current_account_balance = get_balance()
 
 sym1_signal = 4.5
 sym2_signal = 2.4
-sym3_signal = -1.53
+sym3_signal = -10.53
 
-starting_sym1_portfolio = 0.5
+starting_sym1_portfolio = 1
 starting_sym2_portfolio = 0.3
 starting_sym3_portfolio = 0.2
 
 # Maximum position size of account (Dynamically Adjusted from Risk-Analysis)
-max_pos_size_perc_1 = 0.5  # Set to a reasonable value
+max_pos_size_perc_1 = 1  # Set to a reasonable value
 max_pos_size_perc_2 = 0.0  # Set to a reasonable value
 max_pos_size_perc_3 = 0.2  # Set to zero as mentioned
 
