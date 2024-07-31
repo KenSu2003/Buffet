@@ -160,18 +160,15 @@ def simulate_trades(df, rsi_weight=1, macd_weight=1, bb_weight=1):
 #     # Apply sigmoid transformation and scale to range [-1, 1]
 #     return 2 * sigmoid(signal) - 1
 
-def calculate_order_size(starting_balance, current_account_balance, signal, base_order_size, max_position_size_percentage, current_position_size_dollars, price_per_unit, num_symbols=20):
+def calculate_order_size(starting_balance, current_account_balance, signal, max_position_size_percentage, current_position_size_dollars, capital_per_symbol_start):
     # Check if the signal is within the no-trade range
     if -1 <= signal <= 1:
         return 0  # No trade
     
-    # Calculate the capital allocated to each symbol based on the starting balance
-    capital_per_symbol_start = starting_balance / num_symbols
-    
     # Scale factor based on the current balance relative to the starting balance
     balance_scale = current_account_balance / starting_balance
     
-    # Calculate the preliminary order size in dollars based on the starting capital allocation
+    # Calculate the preliminary order size in dollars based on the capital allocation per symbol
     preliminary_order_size_dollars = balance_scale * signal * capital_per_symbol_start
     
     # Calculate the maximum allowable position size in dollars based on the current account balance

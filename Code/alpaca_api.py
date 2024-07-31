@@ -6,8 +6,8 @@ from alpaca.data.requests import CryptoLatestQuoteRequest, StockLatestQuoteReque
 from alpaca.common.exceptions import APIError
 import os, pandas as pd
 
-APCA_API_KEY_ID = ""
-APCA_API_SECRET_KEY = ""
+APCA_API_KEY_ID = "PKC0I8RIJHZDQZTI5OGX"
+APCA_API_SECRET_KEY = "yzsEuNmXfwDMNqHP1Jg1Q5njGAuuL0CPhwRURO4P"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
@@ -93,12 +93,23 @@ def get_all_orders(symbol):
     request_params = GetOrdersRequest(symbol=symbol,status=QueryOrderStatus.CLOSED)
     orders = trading_client.get_orders(filter=request_params)
     orders_df = pd.DataFrame(orders)
-    title = 'orders.csv'
-    filepath = f"./data/{title}"
-    os.makedirs(os.path.dirname(filepath), exist_ok=True) # Ensure the directory for the graph_title record exists
-    orders_df.to_csv(filepath)
+    # title = 'orders.csv'
+    # filepath = f"./data/{title}"
+    # os.makedirs(os.path.dirname(filepath), exist_ok=True) # Ensure the directory for the graph_title record exists
+    # orders_df.to_csv(filepath)
     return orders_df
 
 # ———————————————————————— TESTING ————————————————————————
 
+# all_filled_orders = get_all_orders('BTC/USD')
+# title = 'orders_15min_31days.csv'
+# filepath = f"./data/{title}"
+# os.makedirs(os.path.dirname(filepath), exist_ok=True) # Ensure the directory for the graph_title record exists
+# all_filled_orders.to_csv(filepath)
+
 # print(set_order('BTC/USD', 'crypto', 'long',1000,order_limit=False,limit_price=0))
+
+
+'''
+    Need to review the trade algorithm
+'''

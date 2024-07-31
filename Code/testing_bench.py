@@ -8,8 +8,10 @@ from strategies import Momentum
 SYMBOL = 'BTC/USD'
 CRYPTO_OR_STOCK = 'crypto'
 end_time = datetime.now()
-start_time = end_time-timedelta(days=31)
-time_interval = TimeFrame(4,TimeFrameUnit.Hour)
+# start_time = end_time-timedelta(days=31)
+start_time = end_time-timedelta(days=90)
+# time_interval = TimeFrame(4,TimeFrameUnit.Hour)
+time_interval = TimeFrame(1,TimeFrameUnit.Day)
 rsi_high, rsi_low = 70, 30
 position_size, take_profit, stop_loss = 1000, 10, 2 
 rsi_weight, macd_weight, bb_weight = 1, 1, 1
@@ -74,13 +76,52 @@ print("Latest Signal",latest_signal)
 
 
 ####### Evaluate Order Size ########
-starting_balance = 1000000      # Starting capital
-current_account_balance = 80400 # Current account balance
-signal = -4.453                    # Latest signal strength
-base_order_size = 1000         # Base order size for unit signal in dollars
-max_position_size_percentage = 0.2  # Maximum position size as 20% of account balance
-current_position_size_dollars = 1000000 # Current position size in dollars
-price_per_unit = 67000         # Market price
+# starting_balance = 1000000       # Starting capital
+# current_account_balance = 804000 # Current account balance
+# signal = -4                     # Latest signal strength
+# max_position_size_percentage = 1  # Maximum position size of current account balance
+# current_position_size_dollars = 100000 # Current position size in dollars
+# capital_per_symbol_start = 5000  # Capital allocation per symbol
 
-order_size_dollars = calculate_order_size(starting_balance, current_account_balance, signal, base_order_size, max_position_size_percentage, current_position_size_dollars, price_per_unit)
-print(f"Order Size in Dollars: ${order_size_dollars:.2f}")
+# order_size_dollars = calculate_order_size(starting_balance, current_account_balance, signal, max_position_size_percentage, current_position_size_dollars, capital_per_symbol_start)
+# print(f"Order Size in Dollars: ${order_size_dollars:.2f}")
+
+
+# ——————— Example usage with different capital allocations for each symbol
+# starting_balance = 1000000  # initial captail
+# current_account_balance = 100000
+
+# sym1_signal = 4.5
+# sym2_signal = 2.4
+# sym3_signal = -1.53
+
+# sym1_portfolio = 0.5
+# sym2_portfolio = 0.3
+# sym3_portfolio = 0.2
+# # does the rsik management adjust the symbol portfolio weight or is it set?
+
+# # Caclulate from Risk Managment, should this add up top 1?
+# max_pos_size_perc_1 = 0.3
+# max_pos_size_perc_2 = 0.4
+# max_pos_size_perc_3 = 0.2
+
+# cur_pos_size_dol_1 = 10000
+# cur_pos_size_dol_2 = 100
+# cur_pos_size_dol_3 = 3000
+
+
+# symbol_trade_detail = {
+#     'symbol1': (starting_balance*sym1_portfolio, sym1_signal, max_pos_size_perc_1, cur_pos_size_dol_1),
+#     'symbol2': (starting_balance*sym2_portfolio, sym2_signal, max_pos_size_perc_2, cur_pos_size_dol_2),
+#     'symbol3': (starting_balance*sym3_portfolio, sym3_signal, max_pos_size_perc_3, cur_pos_size_dol_3)
+#     # Add more symbols as needed
+# }
+
+# for symbol, trade_detail in symbol_trade_detail.items():
+#     allocation = trade_detail[0]
+#     signal = trade_detail[1]
+#     max_position_size_percentage = trade_detail[2]
+#     current_position_size_dollars = trade_detail[3]
+
+#     order_size_dollars = calculate_order_size(starting_balance, current_account_balance, signal, max_position_size_percentage, current_position_size_dollars, allocation)
+#     print(f"Order Size for {symbol} in Dollars: ${order_size_dollars:.2f}")
