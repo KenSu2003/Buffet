@@ -1,7 +1,7 @@
 import csv, os
 import talib, math
 import matplotlib.pyplot as plt
-from alpaca_api import crypto_client, stock_client, CryptoBarsRequest, StockBarsRequest
+from alpaca_api import crypto_client, stock_client, CryptoBarsRequest, StockBarsRequest, get_open_position, get_balance
 
 
 def setup(symbol_or_symbols,crypto_or_stock,start_time,end_time,interval):
@@ -161,6 +161,7 @@ def simulate_trades(df, rsi_weight=1, macd_weight=1, bb_weight=1):
 #     return 2 * sigmoid(signal) - 1
 
 def calculate_order_size(starting_balance, current_account_balance, signal, max_position_size_percentage, current_position_size_dollars, capital_per_symbol_start):
+    
     # Check if the signal is within the no-trade range
     if -1 <= signal <= 1:
         return 0  # No trade
@@ -177,9 +178,10 @@ def calculate_order_size(starting_balance, current_account_balance, signal, max_
     # Adjust the order size based on the signal direction
     if signal > 0:
         # Buy signal
-        order_size_dollars = min(preliminary_order_size_dollars, max_position_size_dollars - current_position_size_dollars)
+        if max_position_size_dollars - current_position_size_dollars <= 0: order_size_dollars = 0
+        else: order_size_dollars = min(preliminary_order_size_dollars, max_position_size_dollars - current_position_size_dollars)
     else:
         # Sell signal
-        order_size_dollars = min(abs(preliminary_order_size_dollars), current_position_size_dollars)
+        order_size_dollars = min(abs(preliminary_order_size_dollars), abs(current_position_size_dollars))
     
     return order_size_dollars
