@@ -159,7 +159,6 @@ class paper_trader():
 PROGRESS_LOG = True
 TRADE_LOG = True
 
-
 btc_trader = paper_trader('BTC/USD','crypto')
 
 # Set up the initial parameters

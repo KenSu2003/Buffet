@@ -1,17 +1,90 @@
-# If the requirements.txt from github does not work manually install these. 
+# Buffet V2
 
-<!-- Install TA-Lib: -->
-pip install numpy==1.26.4
-brew install ta-lib
-pip install TA-Lib
+Buffet is part of a sophisticatd Trading AI that is trained to perform and even outperform human traders. Buffet V2 is an advanced trading algorithm that derives, tests, and optimizes trading strategies. It can perform paper trading or live trading on actual accounts, utilizing different optimizations to find the best parameters for trading.
 
-<!-- Install Bayesian Optimization: -->
-pip install bayesian-optimization
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
 
-<!-- Install Alapaca API -->
-pip install alpaca-py
+## Installation
 
-<!-- Install Other Tools -->
-pip install pandas
-pip install matplotlib
-pip install apscheduler
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/KenSu2003/Buffet.git
+    cd Buffet
+    git checkout branchForV2
+    ```
+
+2. Install the required dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. If the installation does not work follow these steps:
+    ```bash
+    < Install TA-Lib >
+    pip install numpy==1.26.4
+    brew install ta-lib
+    pip install TA-Lib
+
+    < Install Bayesian Optimization >
+    pip install bayesian-optimization
+
+    < Install Alapaca API >
+    pip install alpaca-py
+
+    < Install Other Tools >
+    pip install pandas
+    pip install matplotlib
+    pip install apscheduler
+    ```
+
+## Usage
+
+To use Buffet, follow these steps:
+
+1. **Strategy Selection**: Pick the strategy model you want to use for testing and trading. The strategies should be in **strategies.py**.
+
+2. **Strategy Testing**: Test the selected strategy with set timeframe.
+    Use the tester in **tester.py** to create testing objects for testing basic (given) parameters 
+    and opimized paratemers derived from **optimizers.py**
+    ```bash
+    python 
+    python train_model.py
+    ```
+
+3. **Simulated Trading**: Test the model in a simulated trading environment.
+    ```bash
+    python simulate_trading.py
+    ```
+
+4. **Live Trading**: Deploy the model for live trading (ensure all safety checks and risk management protocols are in place).
+    ```bash
+    python live_trading.py
+    ```
+
+## Features
+
+- **News Data Analysis**: Analyzes news data to gauge market sentiment.
+- **Technical Indicators**: Utilizes various technical indicators to predict market movements.
+- **Simulated Trading**: Allows for backtesting and strategy optimization in a simulated environment.
+- **Risk Management**: Includes modules for setting take-profit and stop-loss levels to manage risk.
+- **Live Trading**: Capable of executing trades in a live market environment.
+
+## Contributing
+
+Contributions are welcome! Please follow these steps to contribute:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit them (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

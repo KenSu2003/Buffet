@@ -17,6 +17,18 @@ class Momentum:
         self.BB_WEIGHT = BB_WEIGHT
 
     def calc_RSI_signal(self, rsi, rsi_ema, rsi_prev, rsi_ema_prev):
+        """The function calculates for the RSI signal with the given RSI values.
+
+        Args:
+            rsi (float): The rsi value on the given time-interval.
+            rsi_ema (float): The rsi-ema (exponential moving average) on the give time-interval.
+            rsi_prev (_type_): _description_
+            rsi_ema_prev (_type_): _description_
+
+        Returns:
+            int: The calcualed RSI signal.
+        """        
+
         if rsi > rsi_ema and rsi_prev < rsi_ema_prev:
             return 1 if rsi < self.RSI_LOW else 2
         elif rsi < rsi_ema and rsi_prev > rsi_ema_prev:
@@ -33,6 +45,9 @@ class Momentum:
         
         If the RSI goes below the RSI-EWMA is above RSI-HIGH —> Bearish
         If the RSI goes above the RSI-EWMA & RSI[-1] is below RSI-LOW —> Bullish
+
+        Returns:    
+            df (datafile): returns the datafile with calculated RSI
         """
         
         self.df['RSI_signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
