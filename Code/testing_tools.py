@@ -18,7 +18,6 @@ def setup(symbol_or_symbols,crypto_or_stock,start_time,end_time,interval):
     Returns:
         DataFrame: A DataFrame containing historical price data and calculated technical indicators.
     """
-
     if crypto_or_stock == 'crypto':
         request_params = CryptoBarsRequest(
                                 symbol_or_symbols=symbol_or_symbols,

@@ -6,8 +6,8 @@ from alpaca.data.requests import CryptoBarsRequest, StockBarsRequest    # needed
 from alpaca.common.exceptions import APIError
 import os, pandas as pd
 
-APCA_API_KEY_ID = "PKC0I8RIJHZDQZTI5OGX"
-APCA_API_SECRET_KEY = "yzsEuNmXfwDMNqHP1Jg1Q5njGAuuL0CPhwRURO4P"
+APCA_API_KEY_ID = "API_KEY_ID"
+APCA_API_SECRET_KEY = "API_SECRET_KEY"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
