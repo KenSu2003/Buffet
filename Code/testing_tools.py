@@ -13,31 +13,27 @@ def setup(symbol_or_symbols,crypto_or_stock,start_time,end_time,interval):
         crypto_or_stock (str): Indicates whether the symbol(s) is/are cryptocurrency or stock.
         start_time (str): The start time of the data to be downloaded (format: 'YYYY-MM-DD').
         end_time (str): The end time of the data to be downloaded (format: 'YYYY-MM-DD').
-        interval (str): The interval for the data ('1m', '5m', '1h', '1d', etc.).
+        interval (TimeFrame): The interval for the data using Alpaca TimeFrame.
 
     Returns:
         DataFrame: A DataFrame containing historical price data and calculated technical indicators.
     """
 
     if crypto_or_stock == 'crypto':
-        # data = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
         request_params = CryptoBarsRequest(
                                 symbol_or_symbols=symbol_or_symbols,
                                 timeframe=interval,
                                 start=start_time,
                                 end=end_time
                         )
-        # barset = data.get_crypto_bars(request_params)
         barset = crypto_client.get_crypto_bars(request_params)
     elif crypto_or_stock == 'stock':
-        # data = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
         request_params = StockBarsRequest(
                                 symbol_or_symbols=symbol_or_symbols,
                                 timeframe=interval,
                                 start=start_time,
                                 end=end_time
                         )
-        # barset = data.get_stock_bars(request_params)
         barset = stock_client.get_stock_bars(request_params)
     else:
         print("crypto or stock not sepcified")

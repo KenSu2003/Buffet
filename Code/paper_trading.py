@@ -154,10 +154,10 @@ class paper_trader():
                 if TRADE_LOG: print("No trades made.\n")
             elif signal>=1:
                 if TRADE_LOG: print(f"Opening Long Order for ${order_size}\n")
-                alpaca_api.set_order(self.symbol,self.crypto_or_stock,'long',order_size)
+                alpaca_api.set_order(self.symbol,'long',order_size)
             elif signal<=-1:
                 if TRADE_LOG: print(f"Opening Short Order for ${order_size}\n")
-                alpaca_api.set_order(self.symbol,self.crypto_or_stock,'short',order_size)
+                alpaca_api.set_order(self.symbol,'short',order_size)
             else:
                 if TRADE_LOG: print("No trades made.\n")
 
@@ -173,9 +173,10 @@ TRADE_LOG = True
 
 btc_trader = paper_trader('BTC/USD','crypto')
 
-# Set up the initial parameters
+# Set up the initial parameters and trade
 btc_trader.update_parameters(PROGRESS_LOG) 
 btc_trader.execute_trade(PROGRESS_LOG, TRADE_LOG)
+
 # Create an instance of the scheduler
 scheduler = BlockingScheduler()
 

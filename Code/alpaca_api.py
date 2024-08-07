@@ -2,6 +2,7 @@ from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest, GetOrdersRequest
 from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical import CryptoHistoricalDataClient, StockHistoricalDataClient
+from alpaca.data.requests import CryptoBarsRequest, StockBarsRequest    # needed for testing_tools.setup()
 from alpaca.common.exceptions import APIError
 import os, pandas as pd
 
@@ -69,13 +70,12 @@ def get_balance():
     account = trading_client.get_account()
     return account
 
-def set_order(symbol,crypto_or_stock, long_short,order_size,order_limit=False,limit_price=0):
+def set_order(symbol,long_short,order_size,order_limit=False,limit_price=0):
     """
     Sets a market or limit order for the given symbol.
 
     Args:
         symbol (str): The symbol for which the order should be placed (e.g., 'BTC/USD').
-        crypto_or_stock (str): Specifies if the symbol is a cryptocurrency ('crypto') or a stock ('stock').
         long_short (str): Specifies if the order is a buy ('long') or sell ('short').
         order_size (float): The size of the order.
         order_limit (bool): If True, a limit order is placed; otherwise, a market order is placed.
