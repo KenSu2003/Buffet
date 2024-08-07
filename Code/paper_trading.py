@@ -35,7 +35,12 @@ class paper_trader():
         self.parameters_updated = False # Initialize a flag to indicate if parameters have been updated
 
     def update_parameters(self, PROGRESS_LOG):
+        """
+        Updates the trading parameters by optimizing the strategy.
 
+        Args:
+            PROGRESS_LOG (bool): If True, prints progress logs.
+        """
         with lock:
 
             if PROGRESS_LOG: print("\nUpdating Parameters ...")
@@ -107,6 +112,13 @@ class paper_trader():
             self.parameters_updated = True  # Set the flag to True after parameters are updated
 
     def execute_trade(self, PROGRESS_LOG, TRADE_LOG):
+        """
+        Executes a trade based on the current strategy parameters.
+
+        Args:
+            PROGRESS_LOG (bool): If True, prints progress logs.
+            TRADE_LOG (bool): If True, prints trade logs.
+        """
         # Write now the trade does not allow margin so need to have the else statement.
         with lock:
 

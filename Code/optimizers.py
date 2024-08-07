@@ -4,6 +4,16 @@ from testing_tools import simulate_trades, calculate_pnl
 
 class BasicOptimizer():
     def __init__(self, df, symbol, start_date, end_date, time_interval):
+        """
+        Initializes the BasicOptimizer with historical data and trading parameters.
+
+        Args:
+            df (pd.DataFrame): The data frame containing historical price data.
+            symbol (str): The trading symbol (e.g., 'BTC/USD').
+            start_date (str): The start date for the optimization period.
+            end_date (str): The end date for the optimization period.
+            time_interval (str): The time interval for the data (e.g., '15min').
+        """
         self.symbol = symbol
         self.df = df
         self.start_date = start_date
@@ -22,6 +32,22 @@ class BasicOptimizer():
 
 
     def objective(self, POSITION_SIZE, RSI_HIGH, RSI_LOW, TAKE_PROFIT, STOP_LOSS, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+        """
+        The objective function for Bayesian Optimization, which evaluates the trading strategy.
+
+        Args:
+            POSITION_SIZE (int): The size of the trading position.
+            RSI_HIGH (int): The high RSI threshold.
+            RSI_LOW (int): The low RSI threshold.
+            TAKE_PROFIT (float): The take profit threshold.
+            STOP_LOSS (float): The stop loss threshold.
+            RSI_WEIGHT (float, optional): The weight for the RSI indicator. Default is 1.
+            MACD_WEIGHT (float, optional): The weight for the MACD indicator. Default is 1.
+            BB_WEIGHT (float, optional): The weight for the Bollinger Bands indicator. Default is 1.
+
+        Returns:
+            float: The return on investment (ROI) from the simulated trades.
+        """
         RSI_HIGH = int(RSI_HIGH)
         RSI_LOW = int(RSI_LOW)
         POSITION_SIZE = int(POSITION_SIZE)
@@ -41,6 +67,12 @@ class BasicOptimizer():
         return roi  # Directly maximize profit
     
     def optimize(self):
+        """
+        Optimizes the trading strategy parameters using Bayesian Optimization.
+
+        Returns:
+            dict: A dictionary of the optimized parameters.
+        """
         pbounds = {
             'RSI_HIGH': (50, 100),
             'RSI_LOW': (0, 50),
@@ -71,7 +103,15 @@ class BasicOptimizer():
         return optimizer.max['params']
 
     def get_optimized_parameters(self):
-        return self.optimized_POSITION_SIZE, self.optimized_RSI_HIGH, self.optimized_RSI_LOW, self.optimized_TAKE_PROFIT, self.optimized_STOP_LOSS, self.optimized_RSI_WEIGHT, self.optimized_MACD_WEIGHT, self.optimized_BB_WEIGHT
+        """
+        Retrieves the optimized parameters.
+
+        Returns:
+            tuple: A tuple containing the optimized parameters.
+        """
+        return (self.optimized_POSITION_SIZE, self.optimized_RSI_HIGH, self.optimized_RSI_LOW, 
+                self.optimized_TAKE_PROFIT, self.optimized_STOP_LOSS, self.optimized_RSI_WEIGHT, 
+                self.optimized_MACD_WEIGHT, self.optimized_BB_WEIGHT)
 
 
 # ———————————————————— Test ——————————————————————

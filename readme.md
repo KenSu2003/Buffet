@@ -59,17 +59,16 @@ To use Buffet, follow these steps:
 
 3. **Simulated Trading**: Test the model in a simulated trading environment.
     ```bash
-    python simulate_trading.py
+    python paper_trading.py
     ```
 
 4. **Live Trading**: Deploy the model for live trading (ensure all safety checks and risk management protocols are in place).
     ```bash
-    python live_trading.py
+    To be rolled out.
     ```
 
 ## Features
 
-- **News Data Analysis**: Analyzes news data to gauge market sentiment.
 - **Technical Indicators**: Utilizes various technical indicators to predict market movements.
 - **Simulated Trading**: Allows for backtesting and strategy optimization in a simulated environment.
 - **Risk Management**: Includes modules for setting take-profit and stop-loss levels to manage risk.

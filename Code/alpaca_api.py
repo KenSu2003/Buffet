@@ -13,10 +13,28 @@ crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
 stock_client = StockHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
 
 def close_position(symbol):
+    """
+    Closes the open position for the given symbol.
+
+    Args:
+        symbol (str): The symbol for which the position should be closed (e.g., 'BTC/USD').
+
+    Returns:
+        None
+    """
     symbol = symbol.replace('/','')
     trading_client.close_position(symbol)
 
 def get_open_position(symbol):
+    """
+    Gets the open position for the given symbol.
+
+    Args:
+        symbol (str): The symbol for which the open position should be retrieved (e.g., 'BTC/USD').
+
+    Returns:
+        dict: A dictionary containing details of the open position if it exists, otherwise None.
+    """
     symbol = symbol.replace('/','')
     try:
         return trading_client.get_open_position(symbol)
@@ -28,15 +46,44 @@ def get_open_position(symbol):
         return None
 
 def get_buy_sell(order):
+    """
+    Determines if an order is a buy (long) or sell (short) order.
+
+    Args:
+        order (dict): A dictionary representing an order.
+
+    Returns:
+        int: 1 if the order is a buy (long) order, -1 if it is a sell (short) order, 0 otherwise.
+    """
     if order.side == 'long': return 1
     elif order.side == 'short': return -1
     else: return 0
 
 def get_balance():
+    """
+    Gets the account balance.
+
+    Returns:
+        dict: A dictionary containing account balance information.
+    """
     account = trading_client.get_account()
     return account
 
 def set_order(symbol,crypto_or_stock, long_short,order_size,order_limit=False,limit_price=0):
+    """
+    Sets a market or limit order for the given symbol.
+
+    Args:
+        symbol (str): The symbol for which the order should be placed (e.g., 'BTC/USD').
+        crypto_or_stock (str): Specifies if the symbol is a cryptocurrency ('crypto') or a stock ('stock').
+        long_short (str): Specifies if the order is a buy ('long') or sell ('short').
+        order_size (float): The size of the order.
+        order_limit (bool): If True, a limit order is placed; otherwise, a market order is placed.
+        limit_price (float): The limit price for the order, if placing a limit order (default is 0).
+
+    Returns:
+        dict: A dictionary containing details of the placed order.
+    """
     if long_short == 'long':
         side=OrderSide.BUY
     elif long_short =='short':
@@ -76,6 +123,15 @@ def set_order(symbol,crypto_or_stock, long_short,order_size,order_limit=False,li
         return market_order
 
 def get_all_orders(symbol):
+    """
+    Retrieves all closed orders for the given symbol.
+
+    Args:
+        symbol (str): The symbol for which closed orders should be retrieved (e.g., 'BTC/USD').
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing details of all closed orders for the given symbol.
+    """
     request_params = GetOrdersRequest(symbol=symbol,status=QueryOrderStatus.CLOSED)
     orders = trading_client.get_orders(filter=request_params)
     orders_df = pd.DataFrame(orders)

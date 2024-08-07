@@ -8,11 +8,15 @@ def setup(symbol_or_symbols,crypto_or_stock,start_time,end_time,interval):
     """
     Download the asset price history within the given timeframe.
 
-    :param symbol: the symbol of the asset to test the strategy with
-    :param start_date: the start date of the data to be downloaded
-    :param end_date: the end date of the data to be downloaded
-    :time_interval: intervals of the the closing price ['1m','2m','5m','15m','30m','60m','90m','1h','1d','5d','1wk','1mo','3mo']
-    :return: the datafile
+    Args:
+        symbol_or_symbols (str or list): The symbol(s) of the asset(s) to fetch data for.
+        crypto_or_stock (str): Indicates whether the symbol(s) is/are cryptocurrency or stock.
+        start_time (str): The start time of the data to be downloaded (format: 'YYYY-MM-DD').
+        end_time (str): The end time of the data to be downloaded (format: 'YYYY-MM-DD').
+        interval (str): The interval for the data ('1m', '5m', '1h', '1d', etc.).
+
+    Returns:
+        DataFrame: A DataFrame containing historical price data and calculated technical indicators.
     """
 
     if crypto_or_stock == 'crypto':
@@ -59,13 +63,15 @@ def calculate_pnl(data, trade_size, profit_target_pct, stop_loss_pct):
     Calculate the profit and loss (PnL) as well as the Return on Investment (ROI).
     Saves the trades in the file trades.csv.
 
-    :param data: the data file (default=df)
-    :param profit_target_pct: the take-profit level in percentage (%) not in decimal (.)
-    :param stop_loss_pct: the stop-loss level in percentage (%) not in decimal (.)
-    :param trade_size: the size of the positon in $
-    :return: returns the PnL and the roi
-    """
+    Args:
+        data (DataFrame): The DataFrame containing trade data and signals.
+        trade_size (float): The size of the position in dollars.
+        profit_target_pct (float): The take-profit level in percentage.
+        stop_loss_pct (float): The stop-loss level in percentage.
 
+    Returns:
+        tuple: A tuple containing the total PnL (in dollars) and the average ROI (in percentage).
+    """
     trades = []
     position = 0  # 1 for long, -1 for short, 0 for no position
     entry_price = 0
@@ -126,12 +132,18 @@ def calculate_pnl(data, trade_size, profit_target_pct, stop_loss_pct):
 
 
 def plot(df, graph_title):
+    """
+    Plots the historical price data along with buy and sell signals.
+
+    Args:
+        df (DataFrame): The DataFrame containing price data and signals.
+        graph_title (str): The title and file path for saving the plot.
+    """
     x_scale = 1
     y_scale = 1
     signal_scale=1
     plt.figure(figsize=(14*x_scale, 7*y_scale), dpi=300)
     plt.plot(df.index, df['close'], label='close Price', color='blue')
-    # plt.plot(pd.to_datetime(df.index.get_level_values('timestamp')), df['close'], label='close Price', color='blue')
     plt.scatter(df[df['Signal'] > 0].index, df[df['Signal'] > 0]['close'], marker='^', color='g', label='Buy Signal', s=24*signal_scale)
     plt.scatter(df[df['Signal'] < 0].index, df[df['Signal'] < 0]['close'], marker='v', color='r', label='Sell Signal', s=24*signal_scale)
     plt.title("Buy and Sell Signals on \{symbol\} Historical Data")
@@ -144,7 +156,16 @@ def plot(df, graph_title):
 
 def simulate_trades(df, rsi_weight=1, macd_weight=1, bb_weight=1):
     """
-    Simulate all the trades in the given time frame based on the given parameter using this strategy.
+    Simulates all the trades based on the given weights for technical indicators.
+
+    Args:
+        df (DataFrame): The DataFrame containing price data and indicators.
+        rsi_weight (float, optional): The weight for the RSI indicator. Default is 1.
+        macd_weight (float, optional): The weight for the MACD indicator. Default is 1.
+        bb_weight (float, optional): The weight for the Bollinger Bands indicator. Default is 1.
+
+    Returns:
+        DataFrame: The DataFrame with added signals based on the simulation.
     """
     df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
     for i in range(len(df)):

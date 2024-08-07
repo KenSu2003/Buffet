@@ -10,7 +10,24 @@ class tester:
                  rsi_high, rsi_low,
                  position_size, take_profit, stop_loss,
                  rsi_weight=1, macd_weight=1, bb_weight=1):
+        """
+        Initializes the tester with the specified parameters and fetches the market data.
 
+        Args:
+            symbol (str): The trading symbol (e.g., 'BTC/USD').
+            crypto_or_stock (str): Indicates whether the symbol is for a cryptocurrency or a stock.
+            start_date (datetime): The start date for testing.
+            end_date (datetime): The end date for testing.
+            time_interval (TimeFrame): The time interval for fetching data (e.g., hourly).
+            rsi_high (float): The high RSI threshold.
+            rsi_low (float): The low RSI threshold.
+            position_size (int): The size of the trading position.
+            take_profit (float): The take profit threshold (in percentage).
+            stop_loss (float): The stop loss threshold (in percentage).
+            rsi_weight (float, optional): The weight for the RSI indicator. Default is 1.
+            macd_weight (float, optional): The weight for the MACD indicator. Default is 1.
+            bb_weight (float, optional): The weight for the Bollinger Bands indicator. Default is 1.
+        """
         self.symbol = symbol
 
         # Time (time-period, time-interval)
@@ -33,6 +50,12 @@ class tester:
 
 
     def test(self):
+        """
+        Evaluates the strategy using the Momentum class and simulates trades.
+
+        Returns:
+            DataFrame: The DataFrame containing the simulated trades with buy/sell signals.
+        """
         strategy = Momentum(self.df)
         strategy.evaluate_indicators()
         df = self.simulate_all_trades()    # implement strategy, determine BUY/SELL signal    
@@ -40,11 +63,20 @@ class tester:
         return df
     
     def calculate_pnl(self):
+        """
+        Calculates the profit and loss (PnL) from the simulated trades.
+
+        Returns:
+            tuple: The total PnL and the return on investment (ROI).
+        """
         return tools.calculate_pnl(self.df, self.position_size, self.take_profit, self.stop_loss)
     
     def simulate_all_trades(self):
         """
-        Simulate all the trades in the given time frame based on the given parameter using this strategy.
+        Simulates all the trades in the given time frame based on the given parameters using the strategy.
+
+        Returns:
+            DataFrame: The DataFrame containing the simulated trades with buy/sell signals.
         """
         self.df['Signal'] = 0      # -2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY
         for i in range(len(self.df)):
@@ -54,7 +86,12 @@ class tester:
         return self.df
 
     def analyze(self, title):
-        
+        """
+        Analyzes the strategy performance, calculates PnL, and saves the results to CSV files.
+
+        Args:
+            title (str): The title for the analysis and file naming.
+        """
         file_path = "./data"
 
         # Calculate PNL
