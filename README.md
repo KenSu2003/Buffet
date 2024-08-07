@@ -1,6 +1,6 @@
 # Buffet V2
 
-Buffet is part of a sophisticatd Trading AI that is trained to perform and even outperform human traders. Buffet V2 is an advanced trading algorithm that derives, tests, and optimizes trading strategies. It can perform paper trading or live trading on actual accounts, utilizing different optimizations to find the best parameters for trading.
+Buffet is part of a sophisticated Trading AI trained to perform and outperform human traders. Buffet V2 is an advanced trading algorithm that derives, tests, and optimizes trading strategies. It can perform paper trading or live trading on actual accounts, utilizing different optimizations to find the best parameters for trading.
 
 ## Table of Contents
 - [Installation](#installation)
