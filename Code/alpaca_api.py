@@ -2,7 +2,6 @@ from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest, GetOrdersRequest
 from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical import CryptoHistoricalDataClient, StockHistoricalDataClient
-from alpaca.data.requests import CryptoBarsRequest, StockBarsRequest    # needed for testing_tools.setup()
 from alpaca.common.exceptions import APIError
 import os, pandas as pd
 

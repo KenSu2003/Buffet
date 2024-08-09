@@ -1,8 +1,8 @@
 import csv, os
 import talib, math
 import matplotlib.pyplot as plt
-from alpaca_api import crypto_client, stock_client, CryptoBarsRequest, StockBarsRequest, get_open_position, get_balance
-
+from alpaca.data.requests import CryptoBarsRequest, StockBarsRequest
+from alpaca_api import crypto_client, stock_client
 
 def setup(symbol_or_symbols,crypto_or_stock,start_time,end_time,interval):
     """

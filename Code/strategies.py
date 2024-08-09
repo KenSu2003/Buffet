@@ -219,8 +219,6 @@ class Straddle:
     A long straddle involves buying both a call and put option with the same strike price and expiration date.
     This strategy is used when expecting a large price movement but uncertain of the direction.
     """
-
-
     def __init__(self):
         self.signal = 0     # 1 = Long Call and Long Put , -1 = Short Call and Short Put
 
@@ -233,7 +231,6 @@ class Straddle:
         if self.signal==1:
             self.long_straddle()
 
-    
     def long_straddle():
         """Executes a long straddle strategy by buying a call and a put option."""
         pass
@@ -280,7 +277,7 @@ def calculate_order_size(starting_balance, current_account_balance, signal, max_
     # Calculate the maximum allowable position size in dollars based on the current account balance
     max_position_size_dollars = max_position_size_percentage * current_account_balance
 
-    if max_position_size_dollars ==0: return 0
+    if max_position_size_dollars == 0: return 0
 
     # Adjust the order size based on the signal direction
     if signal > 0:
