@@ -5,8 +5,10 @@ from alpaca.data.historical import CryptoHistoricalDataClient, StockHistoricalDa
 from alpaca.common.exceptions import APIError
 import os, pandas as pd
 
-APCA_API_KEY_ID = "YOUR_APCA_API_KEY_ID"
-APCA_API_SECRET_KEY = "YOUR_APCA_API_SECRET_KEY"
+import alpaca.broker.models.accounts
+
+APCA_API_KEY_ID = "your-alpaca-key-id"
+APCA_API_SECRET_KEY = "your-alpaca-secret-key"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
@@ -69,16 +71,17 @@ def get_balance():
     account = trading_client.get_account()
     return account
 
-def set_order(symbol,long_short,order_size,order_limit=False,limit_price=0):
+def set_order(symbol,long_short,order_size=0,order_limit=False,limit_price=0, qty=0):
     """
     Sets a market or limit order for the given symbol.
 
     Args:
         symbol (str): The symbol for which the order should be placed (e.g., 'BTC/USD').
         long_short (str): Specifies if the order is a buy ('long') or sell ('short').
-        order_size (float): The size of the order.
+        order_size (float): The size of the order in dollars.
         order_limit (bool): If True, a limit order is placed; otherwise, a market order is placed.
         limit_price (float): The limit price for the order, if placing a limit order (default is 0).
+        qty (float): The size of the order in quantity. 
 
     Returns:
         dict: A dictionary containing details of the placed order.
@@ -108,13 +111,21 @@ def set_order(symbol,long_short,order_size,order_limit=False,limit_price=0):
     
     # Market order
     else:   
-        market_order_data = MarketOrderRequest(
+        if qty>0: 
+            market_order_data = MarketOrderRequest(
                             symbol=symbol,
-                            notional=order_size,
+                            qty=qty,
                             side=side,
                             time_in_force='gtc'
                             )
-        print(market_order_data.notional)
+        else:
+            market_order_data = MarketOrderRequest(
+                                symbol=symbol,
+                                notional=order_size,
+                                side=side,
+                                time_in_force='gtc'
+                                )
+            
         market_order = trading_client.submit_order(
                         order_data=market_order_data
                     )

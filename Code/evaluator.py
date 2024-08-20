@@ -28,7 +28,7 @@ merged_data.to_csv('./Data/AlpacaDataset.csv')
 
 
 # Plot the barset data
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(42, 21))
 plt.plot(merged_data.index, merged_data['close'], label='Barset Data')
 
 # Overlay the 'buy' and 'sell' orders

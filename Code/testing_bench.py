@@ -6,87 +6,90 @@ from tester import tester
 from strategies import Momentum, calculate_order_size
 from alpaca_api import get_open_position, get_balance
 
-# SYMBOL = 'BTC/USD'
-# CRYPTO_OR_STOCK = 'crypto'
-# end_time = datetime.now()
-# # start_time = end_time-timedelta(days=31)
-# start_time = end_time-timedelta(days=90)
-# # time_interval = TimeFrame(4,TimeFrameUnit.Hour)
-# time_interval = TimeFrame(1,TimeFrameUnit.Day)
-# rsi_high, rsi_low = 70, 30
-# position_size, take_profit, stop_loss = 1000, 10, 2 
-# rsi_weight, macd_weight, bb_weight = 1, 1, 1
+SYMBOL = 'BTC/USD'
+CRYPTO_OR_STOCK = 'crypto'
+end_time = datetime.now()
+# start_time = end_time-timedelta(days=31)
+start_time = end_time-timedelta(days=90)
+# time_interval = TimeFrame(4,TimeFrameUnit.Hour)
+time_interval = TimeFrame(1,TimeFrameUnit.Day)
+rsi_high, rsi_low = 70, 30
+position_size, take_profit, stop_loss = 1000, 10, 2 
+rsi_weight, macd_weight, bb_weight = 1, 1, 1
 
-# PROGRESS_LOG = False
-# TRADE_LOG = True
+PROGRESS_LOG = True
+TRADE_LOG = True
 
-# if PROGRESS_LOG: print("Default Parameters Set")
+if PROGRESS_LOG: print("Default Parameters Set")
 
-# ####### Setup Tester #######
-# if PROGRESS_LOG: print("Setting Up Tester")
-# paper_tester = tester(SYMBOL, CRYPTO_OR_STOCK, start_time, end_time, time_interval, rsi_high, rsi_low, position_size, take_profit, stop_loss)
-# if PROGRESS_LOG: print("Tester Setup Complete")
+####### Setup Tester #######
+if PROGRESS_LOG: print("Setting Up Tester")
+paper_tester = tester(SYMBOL, CRYPTO_OR_STOCK, start_time, end_time, time_interval, rsi_high, rsi_low, position_size, take_profit, stop_loss)
+if PROGRESS_LOG: print("Tester Setup Complete")
 
-# ####### Test & Analyze Strategy #######
-# if PROGRESS_LOG: print("Testing Strategy")
-# df = paper_tester.test()
-# if PROGRESS_LOG: print("Strategy Tested")
+####### Test & Analyze Strategy #######
+if PROGRESS_LOG: print("Testing Strategy")
+df = paper_tester.test()
+if PROGRESS_LOG: print("Strategy Tested")
 
-# if PROGRESS_LOG: print("Analyzing Strategy") 
-# basic_pnl, basic_roi = calculate_pnl(df, position_size, take_profit, stop_loss)
-# if TRADE_LOG: print(f"Total PnL: ${basic_pnl:.2f}\t({basic_roi*100:.2f}%)")
-# if PROGRESS_LOG: print("Strategy Analzed")
+if PROGRESS_LOG: print("Analyzing Strategy") 
+basic_pnl, basic_roi = calculate_pnl(df, position_size, take_profit, stop_loss)
+if TRADE_LOG: print(f"Total PnL: ${basic_pnl:.2f}\t({basic_roi*100:.2f}%)")
+if PROGRESS_LOG: print("Strategy Analzed")
 
-# ####### Setup Optimizer #######
-# if PROGRESS_LOG: print("Setting Up Optimizer")
-# optimizer = optimizers.BasicOptimizer(df, SYMBOL, start_time, end_time, time_interval)
-# if PROGRESS_LOG: print("Optimizer Setup Complete")
+####### Setup Optimizer #######
+if PROGRESS_LOG: print("Setting Up Optimizer")
+optimizer = optimizers.BasicOptimizer(df, SYMBOL, start_time, end_time, time_interval)
+if PROGRESS_LOG: print("Optimizer Setup Complete")
 
-# ####### Optimize Strategy #######
-# if PROGRESS_LOG: print("Optimizing Strategy")
-# optimized_parameters = optimizer.optimize()
-# print(optimized_parameters)
-# if PROGRESS_LOG: print(optimized_parameters)
-# if PROGRESS_LOG: print("Strategy Optimized")
+####### Optimize Strategy #######
+if PROGRESS_LOG: print("Optimizing Strategy")
+optimized_parameters = optimizer.optimize()
+print(optimized_parameters)
+if PROGRESS_LOG: print(optimized_parameters)
+if PROGRESS_LOG: print("Strategy Optimized")
 
-# ####### Test Opimized Strategy #######
-# if PROGRESS_LOG: print("Testing Optimized Parameters")
-# optimized_position_size, optimized_rsi_high, optimized_rsi_low, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight = optimizer.get_optimized_parameters()
-# optimized_tester = tester(SYMBOL, CRYPTO_OR_STOCK, start_time, end_time, time_interval, optimized_rsi_high, optimized_rsi_low, optimized_position_size, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight)
-# optimized_df = optimized_tester.test()
-# optimized_pnl, optimized_roi = calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
-# if TRADE_LOG: print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")
-# if PROGRESS_LOG: print("Optimized Testing Complete")
+####### Test Opimized Strategy #######
+if PROGRESS_LOG: print("Testing Optimized Parameters")
+optimized_position_size, optimized_rsi_high, optimized_rsi_low, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight = optimizer.get_optimized_parameters()
+optimized_tester = tester(SYMBOL, CRYPTO_OR_STOCK, start_time, end_time, time_interval, optimized_rsi_high, optimized_rsi_low, optimized_position_size, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight)
+optimized_df = optimized_tester.test()
+optimized_pnl, optimized_roi = calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
+if TRADE_LOG: print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")
+if PROGRESS_LOG: print("Optimized Testing Complete")
 
-# ####### Determine Parameter #######
-# if optimized_roi > basic_roi:
-#     if TRADE_LOG: print("Excuting Trades using Optimized Parameters")
-#     position_size = optimized_position_size
-#     rsi_high=optimized_rsi_high
-#     rsi_low=optimized_rsi_low
-#     rsi_weight=optimized_rsi_weight
-#     macd_weight=optimized_macd_weight
-#     bb_weight=optimized_bb_weight
-# else:
-#     if TRADE_LOG: print("Excuting Trades using Basic Parameters")
-
-
-# ####### Evaluate Signal #######
-# latest_signal = Momentum(df,rsi_high,rsi_low,rsi_weight,macd_weight,bb_weight).evaluate_latest()
-# print("Latest Signal",latest_signal)
+####### Determine Parameter #######
+if optimized_roi > basic_roi:
+    if TRADE_LOG: print("Excuting Trades using Optimized Parameters")
+    position_size = optimized_position_size
+    rsi_high=optimized_rsi_high
+    rsi_low=optimized_rsi_low
+    rsi_weight=optimized_rsi_weight
+    macd_weight=optimized_macd_weight
+    bb_weight=optimized_bb_weight
+else:
+    if TRADE_LOG: print("Excuting Trades using Basic Parameters")
 
 
-####### Evaluate Order Size ########
-# starting_balance = 1000000  # Initial captal
-# current_account_balance = 804000 # Current account balance
-# signal = -4                     # Latest signal strength
-# max_position_size_percentage = 1  # Maximum position size of current account balance
-# current_position_size_dollars = 100000 # Current position size in dollars
-# capital_per_symbol_start = 5000  # Capital allocation per symbol
+####### Evaluate Signal #######
+latest_signal = Momentum(df,rsi_high,rsi_low,rsi_weight,macd_weight,bb_weight).evaluate_latest()
+print("Latest Signal",latest_signal)
 
-# order_size_dollars = calculate_order_size(starting_balance, current_account_balance, signal, max_position_size_percentage, current_position_size_dollars, capital_per_symbol_start)
-# print(f"Order Size in Dollars: ${order_size_dollars:.2f}")
 
+###### Evaluate Order Size ########
+starting_balance = 10000  # Initial capital
+current_position = get_open_position(symbol=SYMBOL)
+if current_position == None: current_position_size_dollars=0
+else: current_position_size_dollars = float(current_position.market_value)
+current_position_qty = current_position.qty_available
+account_cash = float(get_balance().non_marginable_buying_power)
+max_pos_size_perc = 1   # only symbol traded 
+starting_portfolio_weight = 1
+capital_per_symbol_start = starting_balance * starting_portfolio_weight
+order_size = calculate_order_size(starting_balance,account_cash,50,max_pos_size_perc,current_position_size_dollars,capital_per_symbol_start)
+order_size = float("{:.2f}".format(order_size))
+if order_size == current_position_size_dollars: order_size = current_position_qty
+print("Order Size: %f"%order_size)
 
 # ——————— Example usage with different capital allocations for each symbol
 # symbol = 'BTC/USD'

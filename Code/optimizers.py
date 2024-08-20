@@ -20,49 +20,49 @@ class BasicOptimizer():
         self.end_date = end_date
         self.time_interval = time_interval
 
-        self.optimized_POSITION_SIZE = 0
-        self.optimized_RSI_HIGH = 0
-        self.optimized_RSI_LOW = 0
-        self.optimized_STOP_LOSS = 0
-        self.optimized_TAKE_PROFIT = 0
+        self.optimized_position_size = 0
+        self.optimized_rsi_high = 0
+        self.optimized_rsi_low = 0
+        self.optimized_stop_loss = 0
+        self.optimized_take_profit = 0
 
-        self.optimized_RSI_WEIGHT = 0
-        self.optimized_MACD_WEIGHT = 0
-        self.optimized_BB_WEIGHT = 0
+        self.optimized_rsi_weight = 0
+        self.optimized_macd_weight = 0
+        self.optimized_bb_weight = 0
 
 
-    def objective(self, POSITION_SIZE, RSI_HIGH, RSI_LOW, TAKE_PROFIT, STOP_LOSS, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+    def objective(self, position_size, rsi_high, rsi_low, take_profit, stop_loss, rsi_weight=1, macd_weight=1, bb_weight=1):
         """
         The objective function for Bayesian Optimization, which evaluates the trading strategy.
 
         Args:
-            POSITION_SIZE (int): The size of the trading position.
-            RSI_HIGH (int): The high RSI threshold.
-            RSI_LOW (int): The low RSI threshold.
-            TAKE_PROFIT (float): The take profit threshold.
-            STOP_LOSS (float): The stop loss threshold.
-            RSI_WEIGHT (float, optional): The weight for the RSI indicator. Default is 1.
-            MACD_WEIGHT (float, optional): The weight for the MACD indicator. Default is 1.
-            BB_WEIGHT (float, optional): The weight for the Bollinger Bands indicator. Default is 1.
+            position_size (int): The size of the trading position.
+            rsi_high (int): The high RSI threshold.
+            rsi_low (int): The low RSI threshold.
+            take_profit (float): The take profit threshold.
+            stop_loss (float): The stop loss threshold.
+            rsi_weight (float, optional): The weight for the RSI indicator. Default is 1.
+            macd_weight (float, optional): The weight for the MACD indicator. Default is 1.
+            bb_weight (float, optional): The weight for the Bollinger Bands indicator. Default is 1.
 
         Returns:
             float: The return on investment (ROI) from the simulated trades.
         """
-        RSI_HIGH = int(RSI_HIGH)
-        RSI_LOW = int(RSI_LOW)
-        POSITION_SIZE = int(POSITION_SIZE)
-        TAKE_PROFIT = float(TAKE_PROFIT)
-        STOP_LOSS = float(STOP_LOSS)
-        RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT = RSI_WEIGHT, MACD_WEIGHT, BB_WEIGHT
+        rsi_high = int(rsi_high)
+        rsi_low = int(rsi_low)
+        position_size = int(position_size)
+        take_profit = float(take_profit)
+        stop_loss = float(stop_loss)
+        rsi_weight, macd_weight, bb_weight = rsi_weight, macd_weight, bb_weight
         
-        if RSI_HIGH <= RSI_LOW:
+        if rsi_high <= rsi_low:
             return -9999
 
-        strategy = Momentum(self.df, RSI_HIGH=RSI_HIGH, RSI_LOW=RSI_LOW, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1)
+        strategy = Momentum(self.df, rsi_high=rsi_high, rsi_low=rsi_low, rsi_weight=1, macd_weight=1, bb_weight=1)
         self.df = strategy.evaluate_indicators()
         self.df = simulate_trades(self.df)    # implement strategy, determine BUY/SELL signal    
         
-        profit, roi = calculate_pnl(self.df, POSITION_SIZE, TAKE_PROFIT, STOP_LOSS)
+        profit, roi = calculate_pnl(self.df, position_size, take_profit, stop_loss)
         
         return roi  # Directly maximize profit
     
@@ -74,31 +74,31 @@ class BasicOptimizer():
             dict: A dictionary of the optimized parameters.
         """
         pbounds = {
-            'RSI_HIGH': (50, 100),
-            'RSI_LOW': (0, 50),
-            'POSITION_SIZE': (500, 2000),
-            'TAKE_PROFIT': (1, 10),
-            'STOP_LOSS': (1, 5),
-            # 'TAKE_PROFIT': (1, 20),
-            # 'STOP_LOSS': (1, 10),
-            # 'TAKE_PROFIT': (1, 100),
-            # 'STOP_LOSS': (1, 100),
-            'RSI_WEIGHT': (0, 3),
-            'MACD_WEIGHT': (0, 3),
-            'BB_WEIGHT': (0, 3),
+            'rsi_high': (50, 100),
+            'rsi_low': (0, 50),
+            'position_size': (500, 2000),
+            'take_profit': (1, 10),
+            'stop_loss': (1, 5),
+            # 'take_profit': (1, 20),
+            # 'stop_loss': (1, 10),
+            # 'take_profit': (1, 100),
+            # 'stop_loss': (1, 100),
+            'rsi_weight': (0, 3),
+            'macd_weight': (0, 3),
+            'bb_weight': (0, 3),
         }
         optimizer = BayesianOptimization(f=self.objective, pbounds=pbounds, verbose=0, random_state=1)
         optimizer.maximize(init_points=10, n_iter=100)
 
-        self.optimized_POSITION_SIZE = optimizer.max['params'].get('POSITION_SIZE')
-        self.optimized_RSI_HIGH = optimizer.max['params'].get('RSI_HIGH')
-        self.optimized_RSI_LOW = optimizer.max['params'].get('RSI_LOW')
-        self.optimized_STOP_LOSS = optimizer.max['params'].get('STOP_LOSS')
-        self.optimized_TAKE_PROFIT = optimizer.max['params'].get('TAKE_PROFIT')
+        self.optimized_position_size = optimizer.max['params'].get('position_size')
+        self.optimized_rsi_high = optimizer.max['params'].get('rsi_high')
+        self.optimized_rsi_low = optimizer.max['params'].get('rsi_low')
+        self.optimized_stop_loss = optimizer.max['params'].get('stop_loss')
+        self.optimized_take_profit = optimizer.max['params'].get('take_profit')
 
-        self.optimized_RSI_WEIGHT = optimizer.max['params'].get('RSI_WEIGHT')
-        self.optimized_MACD_WEIGHT = optimizer.max['params'].get('MACD_WEIGHT')
-        self.optimized_BB_WEIGHT = optimizer.max['params'].get('BB_WEIGHT')
+        self.optimized_rsi_weight = optimizer.max['params'].get('rsi_weight')
+        self.optimized_macd_weight = optimizer.max['params'].get('macd_weight')
+        self.optimized_bb_weight = optimizer.max['params'].get('bb_weight')
         
         return optimizer.max['params']
 
@@ -109,9 +109,9 @@ class BasicOptimizer():
         Returns:
             tuple: A tuple containing the optimized parameters.
         """
-        return (self.optimized_POSITION_SIZE, self.optimized_RSI_HIGH, self.optimized_RSI_LOW, 
-                self.optimized_TAKE_PROFIT, self.optimized_STOP_LOSS, self.optimized_RSI_WEIGHT, 
-                self.optimized_MACD_WEIGHT, self.optimized_BB_WEIGHT)
+        return (self.optimized_position_size, self.optimized_rsi_high, self.optimized_rsi_low, 
+                self.optimized_take_profit, self.optimized_stop_loss, self.optimized_rsi_weight, 
+                self.optimized_macd_weight, self.optimized_bb_weight)
 
 
 # ———————————————————— Test ——————————————————————

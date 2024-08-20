@@ -11,6 +11,8 @@ from threading import Lock
 
 # —————————————— Initialize —————————————— 
 
+starting_balance = 10000    # Initial capital
+
 # Initialize lock
 lock = Lock()
 
@@ -139,10 +141,13 @@ class paper_trader():
                 if TRADE_LOG: print("Don't Trade Signal Alerted")
 
             ####### Determine Order Size #######
-            starting_balance = 100000  # Initial capital
-            if alpaca_api.get_open_position(symbol=self.symbol) == None: current_position_size_dollars=0
-            else: current_position_size_dollars = float(alpaca_api.get_open_position(symbol=self.symbol).market_value)
-            account_cash = float(alpaca_api.get_balance().cash)
+            # starting_balance = 100000  # Initial capital
+            current_position = alpaca_api.get_open_position(symbol=self.symbol)
+            if current_position == None: current_position_size_dollars=0
+            else: current_position_size_dollars = float(current_position.market_value)
+            current_position_qty = current_position.qty_available
+            # account_cash = float(alpaca_api.get_balance().cash)
+            account_cash = float(alpaca_api.get_balance().non_marginable_buying_power)
             max_pos_size_perc = 1   # only symbol traded 
             starting_portfolio_weight = 1
             capital_per_symbol_start = starting_balance * starting_portfolio_weight
@@ -157,7 +162,8 @@ class paper_trader():
                 alpaca_api.set_order(self.symbol,'long',order_size)
             elif signal<=-1:
                 if TRADE_LOG: print(f"Opening Short Order for ${order_size}\n")
-                alpaca_api.set_order(self.symbol,'short',order_size)
+                if order_size == current_position_size_dollars: alpaca_api.set_order(self.symbol,'short',qty=current_position_qty)
+                else: alpaca_api.set_order(self.symbol,'short',order_size)
             else:
                 if TRADE_LOG: print("No trades made.\n")
 

@@ -8,13 +8,13 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class Momentum:
 
-    def __init__(self, df, RSI_HIGH=70, RSI_LOW=30, RSI_WEIGHT=1, MACD_WEIGHT=1, BB_WEIGHT=1):
+    def __init__(self, df, rsi_high=70, rsi_low=30, rsi_weight=1, macd_weight=1, bb_weight=1):
         self.df = df
-        self.RSI_HIGH = RSI_HIGH
-        self.RSI_LOW = RSI_LOW
-        self.RSI_WEIGHT = RSI_WEIGHT
-        self.MACD_WEIGHT = MACD_WEIGHT
-        self.BB_WEIGHT = BB_WEIGHT
+        self.rsi_high = rsi_high
+        self.rsi_low = rsi_low
+        self.rsi_weight = rsi_weight
+        self.macd_weight = macd_weight
+        self.bb_weight = bb_weight
 
     def calc_RSI_signal(self, rsi, rsi_ema, rsi_prev, rsi_ema_prev):
         """
@@ -31,18 +31,18 @@ class Momentum:
         """        
 
         if rsi > rsi_ema and rsi_prev < rsi_ema_prev:
-            return 1 if rsi < self.RSI_LOW else 2
+            return 1 if rsi < self.rsi_low else 2
         elif rsi < rsi_ema and rsi_prev > rsi_ema_prev:
-            return -1 if rsi > self.RSI_HIGH else -2
+            return -1 if rsi > self.rsi_high else -2
         return 0
 
     def calc_RSI(self):
         """
         Calculates the RSI signals for the entire DataFrame.
 
-        If the RSI is above RSI_HIGH, the stock is considered overbought.
-        If the RSI is below RSI_LOW, the stock is considered underbought.
-        If the RSI is between RSI_HIGH and RSI_LOW, remain neutral.
+        If the RSI is above rsi_high, the stock is considered overbought.
+        If the RSI is below rsi_low, the stock is considered underbought.
+        If the RSI is between rsi_high and rsi_low, remain neutral.
 
         Returns:    
             DataFrame: The updated DataFrame with calculated RSI signals.
@@ -183,16 +183,16 @@ class Momentum:
         Returns:
             int: The combined signal based on weighted indicators.
         """
-        return rsi_signal * self.RSI_WEIGHT + macd_signal * self.MACD_WEIGHT + bb_signal * self.BB_WEIGHT
+        return rsi_signal * self.rsi_weight + macd_signal * self.macd_weight + bb_signal * self.bb_weight
         
     def evaluate_date(self, trading_date):
         """
         Evaluates whether to BUY or SELL on a given date using the strategy.
 
         :param trading_date: the date you want to evaluate
-        :param RSI_WEIGHT: the significance of the RSI signal (default=1)
-        :param MACD_WEIGHT: the significance of the MACD signal (default=1)
-        :param BB_WEIGHT:   the significance of the Bolling Bands' signal (default=1)
+        :param rsi_weight: the significance of the RSI signal (default=1)
+        :param macd_weight: the significance of the MACD signal (default=1)
+        :param bb_weight:   the significance of the Bolling Bands' signal (default=1)
         :return: returns the buy/sell trade signal (-2: STRONG SELL, -1: SELL, 0: NEUTRAL, 1: BUY, 2: STRONG BUY)
         """
 
