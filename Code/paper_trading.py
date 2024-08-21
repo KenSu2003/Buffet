@@ -143,9 +143,11 @@ class paper_trader():
             ####### Determine Order Size #######
             # starting_balance = 100000  # Initial capital
             current_position = alpaca_api.get_open_position(symbol=self.symbol)
-            if current_position == None: current_position_size_dollars=0
-            else: current_position_size_dollars = float(current_position.market_value)
-            current_position_qty = current_position.qty_available
+            if current_position == None: 
+                current_position_size_dollars=0
+            else: 
+                current_position_size_dollars = float(current_position.market_value)
+                current_position_qty = current_position.qty_available
             # account_cash = float(alpaca_api.get_balance().cash)
             account_cash = float(alpaca_api.get_balance().non_marginable_buying_power)
             max_pos_size_perc = 1   # only symbol traded 

@@ -7,8 +7,8 @@ import os, pandas as pd
 
 import alpaca.broker.models.accounts
 
-APCA_API_KEY_ID = "your-alpaca-key-id"
-APCA_API_SECRET_KEY = "your-alpaca-secret-key"
+APCA_API_KEY_ID = "PKUTDG1NBV7B6GLZ8CRE"
+APCA_API_SECRET_KEY = "2lvRPczoJdyITQ5Udq0G4WKvTjKFWdhQWnmxZcDS"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
