@@ -67,6 +67,8 @@ To use Buffet, follow these steps:
     To be rolled out.
     ```
 
+![Buffet System Flow Diagram](https://github.com/user-attachments/assets/b055823f-29d0-4062-8df2-fdebbaebd615)
+
 ## Features
 
 - **Technical Indicators**: Utilizes various technical indicators to predict market movements.
