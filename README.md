@@ -67,7 +67,7 @@ To use Buffet, follow these steps:
     To be rolled out.
     ```
 
-![Buffet System Flow Diagram](https://github.com/user-attachments/assets/b055823f-29d0-4062-8df2-fdebbaebd615)
+![Buffet System Flow Diagram](https://github.com/user-attachments/assets/dd86523b-8a02-4469-a30a-0556da08c875)
 
 ## Features
 
