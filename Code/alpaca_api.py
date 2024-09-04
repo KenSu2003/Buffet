@@ -7,8 +7,8 @@ import os, pandas as pd
 
 import alpaca.broker.models.accounts
 
-APCA_API_KEY_ID = "PKUTDG1NBV7B6GLZ8CRE"
-APCA_API_SECRET_KEY = "2lvRPczoJdyITQ5Udq0G4WKvTjKFWdhQWnmxZcDS"
+APCA_API_KEY_ID = "YOUR-API-KEY-ID"
+APCA_API_SECRET_KEY = "YOUR-API-SECRET-KEY"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
@@ -156,6 +156,9 @@ def get_all_orders(symbol):
 # all_filled_orders.to_csv(filepath)
 
 # print(set_order('BTC/USD', 'crypto', 'long',1000,order_limit=False,limit_price=0))
+
+current_position = get_open_position(symbol='BTC/USD').qty_available
+print(current_position)
 
 
 '''

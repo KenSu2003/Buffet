@@ -121,7 +121,10 @@ class paper_trader():
             PROGRESS_LOG (bool): If True, prints progress logs.
             TRADE_LOG (bool): If True, prints trade logs.
         """
-        # Write now the trade does not allow margin so need to have the else statement.
+
+        if PROGRESS_LOG: print(datetime.now())
+
+        # Right now the trade does not allow margin so need to have the else statement.
         with lock:
 
             if not self.parameters_updated:
@@ -145,6 +148,7 @@ class paper_trader():
             current_position = alpaca_api.get_open_position(symbol=self.symbol)
             if current_position == None: 
                 current_position_size_dollars=0
+                current_position_qty = 0
             else: 
                 current_position_size_dollars = float(current_position.market_value)
                 current_position_qty = current_position.qty_available
@@ -164,7 +168,9 @@ class paper_trader():
                 alpaca_api.set_order(self.symbol,'long',order_size)
             elif signal<=-1:
                 if TRADE_LOG: print(f"Opening Short Order for ${order_size}\n")
-                if order_size == current_position_size_dollars: alpaca_api.set_order(self.symbol,'short',qty=current_position_qty)
+                # if the calculated order size is larger than the current available qty then set the order size as the current position qty
+                if order_size >= current_position_size_dollars: alpaca_api.set_order(self.symbol,'short',qty=current_position_qty)  
+                # else set the order as the calculated order_size
                 else: alpaca_api.set_order(self.symbol,'short',order_size)
             else:
                 if TRADE_LOG: print("No trades made.\n")
