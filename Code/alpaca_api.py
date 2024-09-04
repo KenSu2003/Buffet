@@ -157,8 +157,8 @@ def get_all_orders(symbol):
 
 # print(set_order('BTC/USD', 'crypto', 'long',1000,order_limit=False,limit_price=0))
 
-current_position = get_open_position(symbol='BTC/USD').qty_available
-print(current_position)
+# current_position = get_open_position(symbol='BTC/USD').qty_available
+# print(current_position)
 
 
 '''
