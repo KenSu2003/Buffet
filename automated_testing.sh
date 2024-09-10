@@ -4,7 +4,7 @@
 VENV_PATH="buffet_venv/bin/activate"
 
 # Directory where the code is located
-CODE_DIR="/path/to/Code"
+CODE_DIR="/Code"
 
 # Path to the Python file you want to execute
 PYTHON_FILE="Buffet/Code/paper_trading.py"
