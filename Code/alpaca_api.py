@@ -7,8 +7,8 @@ import os, pandas as pd
 
 import alpaca.broker.models.accounts
 
-APCA_API_KEY_ID = "PKUTDG1NBV7B6GLZ8CRE"
-APCA_API_SECRET_KEY = "2lvRPczoJdyITQ5Udq0G4WKvTjKFWdhQWnmxZcDS"
+APCA_API_KEY_ID = "YOUR-API-KEY"
+APCA_API_SECRET_KEY = "YOUR-API-SECRET-KEY"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
@@ -159,7 +159,7 @@ def get_all_orders(symbol):
 
 # current_position = get_open_position(symbol='BTC/USD').qty_available
 # print(current_position)
-print(get_open_position('BTC/USD').qty, get_open_position('BTC/USD').qty_available)
+# print(get_open_position('BTC/USD').qty, get_open_position('BTC/USD').qty_available)
 
 '''
     Need to review the trade algorithm
