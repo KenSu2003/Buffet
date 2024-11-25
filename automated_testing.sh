@@ -7,7 +7,7 @@ VENV_PATH="buffet_venv/bin/activate"
 CODE_DIR="Code"
 
 # Path to the Python file you want to execute
-PYTHON_FILE="Buffet/Code/paper_trading.py"
+PYTHON_FILE="paper_trading.py"
 
 # Activate the virtual environment
 source "$VENV_PATH"

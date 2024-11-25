@@ -10,7 +10,7 @@ SYMBOL = 'BTC/USD'
 CRYPTO_OR_STOCK = 'crypto'
 end_time = datetime.now()
 # start_time = end_time-timedelta(days=31)
-start_time = end_time-timedelta(days=90)
+start_time = end_time-timedelta(days=365*4)
 # time_interval = TimeFrame(4,TimeFrameUnit.Hour)
 time_interval = TimeFrame(1,TimeFrameUnit.Day)
 rsi_high, rsi_low = 70, 30
@@ -80,8 +80,9 @@ print("Latest Signal",latest_signal)
 starting_balance = 10000  # Initial capital
 current_position = get_open_position(symbol=SYMBOL)
 if current_position == None: current_position_size_dollars=0
-else: current_position_size_dollars = float(current_position.market_value)
-current_position_qty = current_position.qty_available
+else: 
+    current_position_size_dollars = float(current_position.market_value)
+    current_position_qty = current_position.qty_available
 account_cash = float(get_balance().non_marginable_buying_power)
 max_pos_size_perc = 1   # only symbol traded 
 starting_portfolio_weight = 1
