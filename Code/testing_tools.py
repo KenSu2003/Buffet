@@ -1,5 +1,5 @@
 import csv, os
-import talib, math
+import talib
 import matplotlib.pyplot as plt
 from alpaca.data.requests import CryptoBarsRequest, StockBarsRequest
 from alpaca_api import crypto_client, stock_client

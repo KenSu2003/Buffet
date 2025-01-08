@@ -51,7 +51,6 @@ class paper_trader():
             
             ####### Set Default Parameters #######
             if PROGRESS_LOG: print("Setting Default Parameters")
-
             self.end_time = datetime.now()
             self.start_time = self.end_time-timedelta(days=31)
             self.time_interval = TimeFrame(amount=1,unit=TimeFrameUnit.Hour)
@@ -198,7 +197,7 @@ scheduler = BlockingScheduler()
 scheduler.add_job(btc_trader.update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
 print("Paramters updating every 1 hour")
 
-# Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FORE TESTING
+# Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FOR TESTING)
 scheduler.add_job(btc_trader.execute_trade, 'interval', minutes=15, args=[PROGRESS_LOG, TRADE_LOG])
 print("Trades Excuted every 15 minutes")
 

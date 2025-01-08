@@ -1,3 +1,5 @@
+# The tester is basically the bot
+
 import csv, os
 import testing_tools as tools
 from strategies import Momentum
@@ -62,7 +64,7 @@ class tester:
         self.df = df
         return df
     
-    def calculate_pnl(self):
+    def calculate_pnl(self):    # a proxy function
         """
         Calculates the profit and loss (PnL) from the simulated trades.
 
