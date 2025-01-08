@@ -160,6 +160,7 @@ class paper_trader():
             order_size = float("{:.2f}".format(order_size))
             
             ####### Execute Order #######
+            if TRADE_LOG: print("Signal:",signal)
             if -1<signal<1 or order_size == 0:
                 if TRADE_LOG: print("No trades made.\n")
             elif signal>=1:
