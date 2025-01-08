@@ -1,3 +1,5 @@
+# This is to determine whether the strategy is good by graphing each trade for manual evaluation.
+
 from alpaca_api import *
 from testing_tools import *
 import datetime

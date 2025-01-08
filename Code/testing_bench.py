@@ -1,3 +1,5 @@
+# This is the testing bench for testing different functionalities, feautures, or even just optimization.
+
 import optimizers
 from testing_tools import calculate_pnl
 from datetime import datetime, timedelta
@@ -8,7 +10,10 @@ from alpaca_api import get_open_position, get_balance
 
 SYMBOL = 'BTC/USD'
 CRYPTO_OR_STOCK = 'crypto'
-end_time = datetime.now()
+# SYMBOL = 'CWEN'
+# CRYPTO_OR_STOCK = 'stock'
+# end_time = datetime.now()
+end_time = datetime(2024,12,26)
 # start_time = end_time-timedelta(days=31)
 start_time = end_time-timedelta(days=365*4)
 # time_interval = TimeFrame(4,TimeFrameUnit.Hour)
@@ -45,7 +50,6 @@ if PROGRESS_LOG: print("Optimizer Setup Complete")
 ####### Optimize Strategy #######
 if PROGRESS_LOG: print("Optimizing Strategy")
 optimized_parameters = optimizer.optimize()
-print(optimized_parameters)
 if PROGRESS_LOG: print(optimized_parameters)
 if PROGRESS_LOG: print("Strategy Optimized")
 
@@ -84,7 +88,7 @@ else:
     current_position_size_dollars = float(current_position.market_value)
     current_position_qty = current_position.qty_available
 account_cash = float(get_balance().non_marginable_buying_power)
-max_pos_size_perc = 1   # only symbol traded 
+max_pos_size_perc = 1   # only 1 symbol traded 
 starting_portfolio_weight = 1
 capital_per_symbol_start = starting_balance * starting_portfolio_weight
 order_size = calculate_order_size(starting_balance,account_cash,50,max_pos_size_perc,current_position_size_dollars,capital_per_symbol_start)

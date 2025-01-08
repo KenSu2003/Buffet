@@ -4,11 +4,27 @@ from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical import CryptoHistoricalDataClient, StockHistoricalDataClient
 from alpaca.common.exceptions import APIError
 import os, pandas as pd
+from dotenv import load_dotenv
 
 import alpaca.broker.models.accounts
 
-APCA_API_KEY_ID = "YOUR-KEY-ID"
-APCA_API_SECRET_KEY = "YOUR-SECRET-KEY"
+# ——————————————————————————— Development Purpose —————————————————————————————————
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Retrieve the keys from environment variables
+APCA_API_KEY_ID = os.getenv("APCA_API_KEY_ID")
+APCA_API_SECRET_KEY = os.getenv("APCA_API_SECRET_KEY")
+
+# Verify the keys
+if not APCA_API_KEY_ID or not APCA_API_SECRET_KEY:
+    raise ValueError("API keys are missing. Check your .env file.")
+
+# —————————————————————————————————————————————————————————————————————————————————
+
+# APCA_API_KEY_ID = "<YOUR_APCA_API_KEY_ID>"
+# APCA_API_SECRET_KEY = "<YOUR_APCA_API_SECRET_KEY>"
 
 trading_client = TradingClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY, paper=True)
 crypto_client = CryptoHistoricalDataClient(APCA_API_KEY_ID, APCA_API_SECRET_KEY)

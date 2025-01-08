@@ -85,12 +85,14 @@ def calculate_order_size_dynamic(current_balance, historical_returns, signal, ri
     return max(0, order_size)  # Ensure order size is non-negative
 
 # Example usage
-historical_returns = np.array([0.01, 0.02, -0.015, 0.03, -0.005, 0.01, -0.02, 0.015])  # Example returns
-current_balance = 100000  # Example current balance
-signal = 1.5  # Example signal strength
-risk_free_rate = 0.01  # Example risk-free rate
-risk_ratio = 1.5  # Example risk/reward ratio
-shape_adjustment = 0.9  # Example shape adjustment factor
+if __name__ == "__main__":
 
-order_size = calculate_order_size_dynamic(current_balance, historical_returns, signal, risk_free_rate, risk_ratio, shape_adjustment)
-print(f"Calculated Order Size: ${order_size:.2f}")
+    historical_returns = np.array([0.01, 0.02, -0.015, 0.03, -0.005, 0.01, -0.02, 0.015])  # Example returns
+    current_balance = 100000  # Example current balance
+    signal = 1.5  # Example signal strength
+    risk_free_rate = 0.01  # Example risk-free rate
+    risk_ratio = 1.5  # Example risk/reward ratio
+    shape_adjustment = 0.9  # Example shape adjustment factor
+
+    order_size = calculate_order_size_dynamic(current_balance, historical_returns, signal, risk_free_rate, risk_ratio, shape_adjustment)
+    print(f"Calculated Order Size: ${order_size:.2f}")

@@ -77,8 +77,10 @@ class BasicOptimizer():
             'rsi_high': (50, 100),
             'rsi_low': (0, 50),
             'position_size': (500, 2000),
-            'take_profit': (1, 10),
-            'stop_loss': (1, 5),
+            # 'take_profit': (1, 10),
+            # 'stop_loss': (1, 5),
+            'take_profit': (1, 100),
+            'stop_loss': (1, 10),
             # 'take_profit': (1, 20),
             # 'stop_loss': (1, 10),
             # 'take_profit': (1, 100),
@@ -116,6 +118,8 @@ class BasicOptimizer():
 
 # ———————————————————— Test ——————————————————————
 
+if __name__ == "__main__":
+    None
 
 '''
 Rather than test everything.
