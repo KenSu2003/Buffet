@@ -50,10 +50,9 @@ To use Buffet, follow these steps:
 1. **Strategy Selection**: Pick the strategy model you want to use for testing and trading. The strategies should be in **strategies.py**.
 
 2. **Strategy Testing**: Test the selected strategy with set timeframe.
-    Use the tester in **tester.py** to create testing objects for testing basic (given) parameters 
-    and opimized paratemers derived from **optimizers.py**
+    Use the tester in **tester.py** to create bot(s) for testing basic (given) parameters 
+    and optimized parameters derived from **optimizers.py**
     ```bash
-    python 
     python train_model.py
     ```
 
