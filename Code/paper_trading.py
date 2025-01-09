@@ -137,6 +137,7 @@ class paper_trader():
             most_recent_df = setup(self.symbol,self.crypto_or_stock,self.start_time,self.end_time,self.time_interval)
             strategy = Momentum(most_recent_df, self.rsi_high, self.rsi_low, self.rsi_weight, self.macd_weight, self.bb_weight)
             signal = strategy.evaluate_latest()
+            if TRADE_LOG: print("Signal:",signal)
             '''this part seems redundant'''
 
             if self.optimized_roi <= 0 and  self.basic_roi <= 0:
@@ -160,8 +161,7 @@ class paper_trader():
             order_size = calculate_order_size(starting_balance,account_cash,signal,max_pos_size_perc,current_position_size_dollars,capital_per_symbol_start)
             order_size = float("{:.2f}".format(order_size))
             
-            ####### Execute Order #######
-            if TRADE_LOG: print("Signal:",signal)
+            ####### Execute Order ####### 
             if -1<signal<1 or order_size == 0:
                 if TRADE_LOG: print("No trades made.\n")
             elif signal>=1:
