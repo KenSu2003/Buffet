@@ -137,6 +137,7 @@ class paper_trader():
             most_recent_df = setup(self.symbol,self.crypto_or_stock,self.start_time,self.end_time,self.time_interval)
             strategy = Momentum(most_recent_df, self.rsi_high, self.rsi_low, self.rsi_weight, self.macd_weight, self.bb_weight)
             signal = strategy.evaluate_latest()
+            '''this part seems redundant'''
 
             if self.optimized_roi <= 0 and  self.basic_roi <= 0:
                 signal = 0
