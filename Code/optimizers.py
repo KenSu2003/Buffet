@@ -73,10 +73,11 @@ class BasicOptimizer():
         Returns:
             dict: A dictionary of the optimized parameters.
         """
-        pbounds = {
+        pbounds = {                 # should change dynamically
             'rsi_high': (50, 100),
             'rsi_low': (0, 50),
-            'position_size': (500, 2000),
+            # 'position_size': (500, 2000),
+            'position_size': (500, 10000),
             # 'take_profit': (1, 10),
             # 'stop_loss': (1, 5),
             'take_profit': (1, 100),
