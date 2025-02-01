@@ -44,7 +44,8 @@ if PROGRESS_LOG: print("Strategy Analzed")
 
 ####### Setup Optimizer #######
 if PROGRESS_LOG: print("Setting Up Optimizer")
-optimizer = optimizers.BasicOptimizer(df, SYMBOL, start_time, end_time, time_interval)
+# optimizer = optimizers.BasicOptimizer(df, SYMBOL, start_time, end_time, time_interval)
+optimizer = optimizers.QuantumOptimizer(df)
 if PROGRESS_LOG: print("Optimizer Setup Complete")
 
 ####### Optimize Strategy #######
