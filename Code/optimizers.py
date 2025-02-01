@@ -120,7 +120,25 @@ class BasicOptimizer():
 # ———————————————————— Test ——————————————————————
 
 if __name__ == "__main__":
-    None
+    from paper_trading import datetime, TimeFrame, TimeFrameUnit
+    from testing_tools import setup
+    
+    # Set Environment
+    symbol = 'BTC/USD'
+    type = 'crypto'
+    start_time = datetime(2022,12,1)
+    end_time = datetime(2024,12,31)
+    time_interval = TimeFrame(1,TimeFrameUnit.Day)
+    df = setup(symbol, type, start_time, end_time, time_interval)
+
+    # Setup Optimizer
+    optimizer = BasicOptimizer(df, symbol, start_time, end_time, time_interval)
+    
+    # Optimize Parameters
+    optimized_parameters = optimizer.optimize()
+    print(optimized_parameters)
+
+    
 
 '''
 Rather than test everything.

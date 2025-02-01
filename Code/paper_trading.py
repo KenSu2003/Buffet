@@ -183,37 +183,32 @@ class paper_trader():
 
 # —————————————— Do Not Edit Code Below —————————————— 
 
-PROGRESS_LOG = True
-TRADE_LOG = True
+if __name__ == "__main__":
 
-btc_trader = paper_trader('BTC/USD','crypto')
+    PROGRESS_LOG = True
+    TRADE_LOG = True
 
-# Set up the initial parameters and trade
-btc_trader.update_parameters(PROGRESS_LOG) 
-btc_trader.execute_trade(PROGRESS_LOG, TRADE_LOG)
+    btc_trader = paper_trader('BTC/USD','crypto')
 
-# Create an instance of the scheduler
-scheduler = BlockingScheduler()
+    # Set up the initial parameters and trade
+    btc_trader.update_parameters(PROGRESS_LOG) 
+    btc_trader.execute_trade(PROGRESS_LOG, TRADE_LOG)
 
-# Update Parameters Every HOUR
-scheduler.add_job(btc_trader.update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
-print("Paramters updating every 1 hour")
+    # Create an instance of the scheduler
+    scheduler = BlockingScheduler()
 
-# Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FOR TESTING)
-scheduler.add_job(btc_trader.execute_trade, 'interval', minutes=15, args=[PROGRESS_LOG, TRADE_LOG])
-print("Trades Excuted every 15 minutes")
+    # Update Parameters Every HOUR
+    scheduler.add_job(btc_trader.update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
+    print("Paramters updating every 1 hour")
 
+    # Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FOR TESTING)
+    scheduler.add_job(btc_trader.execute_trade, 'interval', minutes=15, args=[PROGRESS_LOG, TRADE_LOG])
+    print("Trades Excuted every 15 minutes")
 
-try:
-    print("Starting the scheduler...")
-    scheduler.start()
-except (KeyboardInterrupt, SystemExit):
-    print("Scheduler stopped.")
+    try:
+        print("Starting the scheduler...")
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        print("Scheduler stopped.")
 
 # —————————————— Do Not Edit Code Above —————————————— 
-
-
-# —————————————— Testing Bench —————————————— 
-
-# btc_trader.update_parameters(PROGRESS_LOG) 
-# btc_trader.execute_trade(PROGRESS_LOG,TRADE_LOG)
