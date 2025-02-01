@@ -14,11 +14,11 @@ class BasicOptimizer():
             end_date (str): The end date for the optimization period.
             time_interval (str): The time interval for the data (e.g., '15min').
         """
-        self.symbol = symbol
+        self.symbol = symbol                # unecessary
         self.df = df
-        self.start_date = start_date
-        self.end_date = end_date
-        self.time_interval = time_interval
+        self.start_date = start_date        # unecessary
+        self.end_date = end_date            # unecessary
+        self.time_interval = time_interval  # unecessary
 
         self.optimized_position_size = 0
         self.optimized_rsi_high = 0
@@ -122,23 +122,52 @@ class BasicOptimizer():
 if __name__ == "__main__":
     from paper_trading import datetime, TimeFrame, TimeFrameUnit
     from testing_tools import setup
+    from tester import tester
+    import time
     
     # Set Environment
     symbol = 'BTC/USD'
     type = 'crypto'
     start_time = datetime(2022,12,1)
     end_time = datetime(2024,12,31)
-    time_interval = TimeFrame(1,TimeFrameUnit.Day)
+    time_interval = TimeFrame(4,TimeFrameUnit.Hour)
     df = setup(symbol, type, start_time, end_time, time_interval)
 
+    
+
     # Setup Optimizer
+    setup_start_time = time.perf_counter()
+    
     optimizer = BasicOptimizer(df, symbol, start_time, end_time, time_interval)
     
-    # Optimize Parameters
-    optimized_parameters = optimizer.optimize()
-    print(optimized_parameters)
+    setup_end_time = time.perf_counter()
+    setup_elapsed_time = setup_end_time - setup_start_time
+    print(f"Time to setup optimizer: {setup_elapsed_time} seconds")
 
+    # Optimize Parameters
+    optimization_start_time = time.perf_counter()
+
+    optimized_parameters = optimizer.optimize()
     
+    optimization_end_time = time.perf_counter()
+    
+    print(f"\nOptimized Parameters: {optimized_parameters}\n")
+
+    optimization_elapsed_time =  optimization_end_time -  optimization_start_time
+    print(f"Time to optimize parameter: {optimization_elapsed_time} seconds")
+
+    run_time = setup_elapsed_time+optimization_elapsed_time
+    print(f"Total Run Time: {run_time}")
+
+
+    # Test Optimized Parameters
+    optimized_position_size, optimized_rsi_high, optimized_rsi_low, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight = optimizer.get_optimized_parameters()
+    optimized_tester = tester(symbol, type, start_time, end_time, time_interval, optimized_rsi_high, optimized_rsi_low, optimized_position_size, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight)
+    optimized_df = optimized_tester.test()
+    optimized_pnl, optimized_roi = calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
+    print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")
+    
+
 
 '''
 Rather than test everything.

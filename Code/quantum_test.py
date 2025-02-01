@@ -17,6 +17,16 @@ class OptimizerWithDynamicBounds:
         self.bounds = np.array([list(b) for b in pbounds.values()])
         self.historical_data = historical_data
 
+        self.optimized_position_size = 0
+        self.optimized_rsi_high = 0
+        self.optimized_rsi_low = 0
+        self.optimized_stop_loss = 0
+        self.optimized_take_profit = 0
+
+        self.optimized_rsi_weight = 0
+        self.optimized_macd_weight = 0
+        self.optimized_bb_weight = 0
+
     def run_quantum_optimization(self):
         """
         Run the quantum optimizer to determine optimal trading parameters.
@@ -43,10 +53,20 @@ class OptimizerWithDynamicBounds:
         # Map optimized parameters back to their names
         optimized_params = {param: best_params[i] for i, param in enumerate(self.pbounds.keys())}
 
-        print("\nOptimized Parameters:")
-        for param, value in optimized_params.items():
-            print(f"{param}: {value}")
-        print(f"Best Objective Value (ROI): {best_value}")
+        self.optimized_position_size = optimized_params.get('position_size')
+        self.optimized_rsi_high = optimized_params.get('rsi_high')
+        self.optimized_rsi_low = optimized_params.get('rsi_low')
+        self.optimized_stop_loss = optimized_params.get('stop_loss')
+        self.optimized_take_profit = optimized_params.get('take_profit')
+
+        self.optimized_rsi_weight = optimized_params.get('rsi_weight')
+        self.optimized_macd_weight = optimized_params.get('macd_weight')
+        self.optimized_bb_weight = optimized_params.get('bb_weight')
+
+        # print("\nOptimized Parameters:")
+        # for param, value in optimized_params.items():
+        #     print(f"{param}: {value}")
+        # print(f"Best Objective Value (ROI): {best_value}")
 
         return optimized_params
 
@@ -90,6 +110,17 @@ class OptimizerWithDynamicBounds:
         # Return the ROI as the objective value
         return roi
 
+    def get_optimized_parameters(self):
+        """
+        Retrieves the optimized parameters.
+
+        Returns:
+            tuple: A tuple containing the optimized parameters.
+        """
+        return (self.optimized_position_size, self.optimized_rsi_high, self.optimized_rsi_low, 
+                self.optimized_take_profit, self.optimized_stop_loss, self.optimized_rsi_weight, 
+                self.optimized_macd_weight, self.optimized_bb_weight)
+
 
 # Test code
 if __name__ == "__main__":
@@ -107,13 +138,47 @@ if __name__ == "__main__":
         'bb_weight': (0, 3)
     }
 
-    # Example historical data (replace with real historical price data)
-    historical_data = pd.DataFrame({
-        'timestamp': pd.date_range(start='2022-01-01', periods=100, freq='D'),
-        'close': np.random.uniform(50000, 60000, size=100),
-        'rsi': np.random.uniform(10, 90, size=100)
-    })
+    from paper_trading import datetime, TimeFrame, TimeFrameUnit
+    from testing_tools import setup
+    from tester import tester
+    import time
+    
+    # Set Environment
+    symbol = 'BTC/USD'
+    type = 'crypto'
+    start_time = datetime(2022,12,1)
+    end_time = datetime(2024,12,31)
+    time_interval = TimeFrame(4,TimeFrameUnit.Hour)
+    df = setup(symbol, type, start_time, end_time, time_interval)
 
-    # Initialize and run the optimizer with dynamic bounds
-    optimizer = OptimizerWithDynamicBounds(pbounds, historical_data)
+    
+    # Setup Optimizer
+    setup_start_time = time.perf_counter()
+    
+    optimizer = OptimizerWithDynamicBounds(pbounds, df)
+    
+    setup_end_time = time.perf_counter()
+    setup_elapsed_time = setup_end_time - setup_start_time
+    print(f"Time to setup optimizer: {setup_elapsed_time} seconds")
+    
+    # Optimize Parameters
+    optimization_start_time = time.perf_counter()
+
     optimized_parameters = optimizer.run_quantum_optimization()
+    
+    optimization_end_time = time.perf_counter()
+    
+    print(f"\nOptimized Parameters: {optimized_parameters}\n")
+
+    optimization_elapsed_time =  optimization_end_time -  optimization_start_time
+    print(f"Time to optimize parameter: {optimization_elapsed_time} seconds")
+
+    run_time = setup_elapsed_time+optimization_elapsed_time
+    print(f"Total Run Time: {run_time}")
+
+    # Test Optimized Parameters
+    optimized_position_size, optimized_rsi_high, optimized_rsi_low, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight = optimizer.get_optimized_parameters()
+    optimized_tester = tester(symbol, type, start_time, end_time, time_interval, optimized_rsi_high, optimized_rsi_low, optimized_position_size, optimized_take_profit, optimized_stop_loss, optimized_rsi_weight, optimized_macd_weight, optimized_bb_weight)
+    optimized_df = optimized_tester.test()
+    optimized_pnl, optimized_roi = calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
+    print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")

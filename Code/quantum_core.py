@@ -80,29 +80,8 @@ class QuantumOptimizerWithCustomKernel:
             self.samples.append(x_next)
             self.evaluations.append(y_next)
 
-            print(f"Iteration {iteration + 1}: Sampled Params={x_next}, Objective={y_next}")
+            # print(f"Iteration {iteration + 1}: Sampled Params={x_next}, Objective={y_next}")
 
         # Return the best-found parameters
         best_index = np.argmax(self.evaluations)
         return self.samples[best_index], self.evaluations[best_index]
-
-
-if __name__ == "__main__":
-    # Example initial data (replace with real market data if available)
-    initial_data = np.array([
-        [70, 15, 0.3],
-        [80, 10, 0.5],
-        [75, 25, 0.7]
-    ])
-
-    # Optimization bounds for (rsi_high, rsi_low, position_size)
-    parameter_bounds = np.array([
-        [70, 90],  # RSI high range
-        [10, 30],  # RSI low range
-        [0.1, 1.0]  # Position size range
-    ])
-
-    # Initialize and run the optimizer
-    optimizer = QuantumOptimizerWithCustomKernel(feature_dimension=3, bounds=parameter_bounds)
-    best_params, best_value = optimizer.optimize(initial_data)
-    print(f"\nOptimized Parameters: {best_params}, Objective Value: {best_value}")
