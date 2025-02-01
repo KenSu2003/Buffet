@@ -258,7 +258,7 @@ if __name__ == "__main__":
     # Setup Optimizer
     setup_start_time = time.perf_counter()
     
-    optimizer = BasicOptimizer(df, symbol, start_time, end_time, time_interval)
+    optimizer = BasicOptimizer(df)
     
     setup_end_time = time.perf_counter()
     setup_elapsed_time = setup_end_time - setup_start_time
