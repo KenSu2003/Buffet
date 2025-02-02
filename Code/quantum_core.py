@@ -48,7 +48,9 @@ class QuantumOptimizerWithCustomKernel:
         """Simulated objective function to evaluate trading performance (replace with actual logic)."""
         rsi_high, rsi_low, position_size = params
         # Placeholder reward: Replace with real trading performance metrics
-        return -np.abs(rsi_high - 75) + np.abs(rsi_low - 20) + 0.5 * position_size
+        # return -np.abs(rsi_high - 75) + np.abs(rsi_low - 20) + 0.5 * position_size
+        print("Core's Objective")
+        return 0
 
     def ucb_acquisition_function(self, x, kernel_matrix, kappa=2.5):
         """UCB acquisition function based on the kernel matrix."""

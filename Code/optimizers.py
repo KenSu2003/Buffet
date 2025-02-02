@@ -121,11 +121,11 @@ class QuantumOptimizer:
             historical_data (pd.DataFrame): The historical price data for backtesting.
         """
         self.pbounds = {
-            'rsi_high': (50, 100),
-            'rsi_low': (0, 50),
-            'position_size': (500, 10000),
+            'rsi_high': (0, 100),
+            'rsi_low': (0, 100),
+            'position_size': (0, 10000),
             'take_profit': (1, 100),
-            'stop_loss': (1, 10),
+            'stop_loss': (1, 100),
             'rsi_weight': (0, 3),
             'macd_weight': (0, 3),
             'bb_weight': (0, 3)
@@ -258,7 +258,8 @@ if __name__ == "__main__":
     # Setup Optimizer
     setup_start_time = time.perf_counter()
     
-    optimizer = BasicOptimizer(df)
+    # optimizer = BasicOptimizer(df)
+    optimizer = QuantumOptimizer(df)
     
     setup_end_time = time.perf_counter()
     setup_elapsed_time = setup_end_time - setup_start_time
