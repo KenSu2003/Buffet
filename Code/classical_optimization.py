@@ -357,8 +357,8 @@ if __name__ == "__main__":
     
     # Setup Optimizer
     setup_start_time = time.perf_counter()              # Start timer
-    optimizer = BasicOptimizer(df)
-    # optimizer = SignalDependentOptimizer(df)
+    # optimizer = BasicOptimizer(df)
+    optimizer = SignalDependentOptimizer(df)
     setup_end_time = time.perf_counter()                # End timer
 
     setup_elapsed_time = setup_end_time - setup_start_time
