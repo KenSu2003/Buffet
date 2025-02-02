@@ -231,6 +231,115 @@ class BasicOptimizer:
                 self.optimized_macd_weight, self.optimized_bb_weight)
 
 
+import numpy as np
+from bayes_opt import BayesianOptimization
+import pandas as pd
+
+class SignalDependentOptimizer:
+    def __init__(self, df):
+        """
+        Initializes the optimizer with historical data and trading parameters.
+        """
+        self.df = df
+        self.optimized_position_size = 0
+        self.optimized_rsi_high = 0
+        self.optimized_rsi_low = 0
+        self.optimized_rsi_weight = 0
+        self.optimized_macd_weight = 0
+        self.optimized_bb_weight = 0
+        
+        self.optimized_take_profit = 0
+        self.optimized_stop_loss = 0
+
+    def calculate_pnl(self, data, trade_size):
+        """
+        Calculate profit based solely on entry/exit signals and trade size.
+        """
+        position = 0  # 1 for long, -1 for short, 0 for no position
+        entry_price = 0
+        total_pnl = 0
+
+        for i in range(len(data)):
+            close_price = data['close'].iloc[i]
+
+            if position == 0:  # No open position, check for entry
+                if data['Signal'].iloc[i] > 0:  # Long signal
+                    position = 1
+                    entry_price = close_price
+                elif data['Signal'].iloc[i] < 0:  # Short signal
+                    position = -1
+                    entry_price = close_price
+
+            elif position == 1:  # Long position
+                if data['Signal'].iloc[i] <= 0:  # Exit long position
+                    pnl = (close_price - entry_price) * (trade_size / entry_price)
+                    total_pnl += pnl
+                    position = 0  # Close position
+
+            elif position == -1:  # Short position
+                if data['Signal'].iloc[i] >= 0:  # Exit short position
+                    pnl = (entry_price - close_price) * (trade_size / entry_price)
+                    total_pnl += pnl
+                    position = 0  # Close position
+
+        return total_pnl
+
+    def objective(self, position_size, rsi_high, rsi_low, rsi_weight=1, macd_weight=1, bb_weight=1):
+        """
+        The objective function for Bayesian Optimization, evaluating the trading strategy.
+        """
+        rsi_high, rsi_low = int(rsi_high), int(rsi_low)
+        position_size = int(position_size)
+
+        # Return a large penalty if the RSI thresholds are invalid
+        if rsi_high <= rsi_low:
+            return -9999
+
+        # Evaluate strategy and simulate trades
+        strategy = Momentum(self.df, rsi_high=rsi_high, rsi_low=rsi_low, rsi_weight=rsi_weight,
+                            macd_weight=macd_weight, bb_weight=bb_weight)
+        evaluated_df = strategy.evaluate_indicators()
+        evaluated_df = simulate_trades(evaluated_df, rsi_weight, macd_weight, bb_weight)
+
+        # Calculate profit based on signals and return it as the optimization target
+        total_pnl = self.calculate_pnl(evaluated_df, position_size)
+
+        return total_pnl
+
+    def optimize(self):
+        """
+        Optimizes the trading strategy parameters using Bayesian Optimization.
+        """
+        pbounds = {
+            'rsi_high': (50, 100),
+            'rsi_low': (0, 50),
+            'position_size': (500, 10000),
+            'rsi_weight': (0, 3),
+            'macd_weight': (0, 3),
+            'bb_weight': (0, 3),
+        }
+        optimizer = BayesianOptimization(f=self.objective, pbounds=pbounds, verbose=0, random_state=1)
+        optimizer.maximize(init_points=10, n_iter=100)
+
+        best_params = optimizer.max['params']
+        self.optimized_position_size = best_params['position_size']
+        self.optimized_rsi_high = best_params['rsi_high']
+        self.optimized_rsi_low = best_params['rsi_low']
+        self.optimized_rsi_weight = best_params['rsi_weight']
+        self.optimized_macd_weight = best_params['macd_weight']
+        self.optimized_bb_weight = best_params['bb_weight']
+
+        return best_params
+
+    def get_optimized_parameters(self):
+        """
+        Retrieves the optimized parameters.
+        """
+        return (self.optimized_position_size, self.optimized_rsi_high, self.optimized_rsi_low, 
+                self.optimized_take_profit, self.optimized_stop_loss, self.optimized_rsi_weight, 
+                self.optimized_macd_weight, self.optimized_bb_weight)
+    
+
 if __name__ == "__main__":
     from paper_trading import datetime, TimeFrame, TimeFrameUnit
     from testing_tools import setup
@@ -249,6 +358,7 @@ if __name__ == "__main__":
     # Setup Optimizer
     setup_start_time = time.perf_counter()              # Start timer
     optimizer = BasicOptimizer(df)
+    # optimizer = SignalDependentOptimizer(df)
     setup_end_time = time.perf_counter()                # End timer
 
     setup_elapsed_time = setup_end_time - setup_start_time
