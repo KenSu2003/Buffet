@@ -10,7 +10,7 @@ CODE_DIR="Buffet/Code"
 PYTHON_FILE="paper_trading.py"
 
 # Log file for output
-LOG_FILE="Buffet/Code/output.log"
+LOG_FILE="Buffet/output.log"
 
 # Activate the virtual environment
 echo "Activating virtual environment: $VENV_PATH"
