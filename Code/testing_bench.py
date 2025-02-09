@@ -1,6 +1,6 @@
 # This is the testing bench for testing different functionalities, feautures, or even just optimization.
 
-import optimizers
+import optimizers, time
 from testing_tools import calculate_pnl
 from datetime import datetime, timedelta
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
@@ -8,15 +8,19 @@ from tester import tester
 from strategies import Momentum, calculate_order_size
 from alpaca_api import get_open_position, get_balance
 
+
+run_start_time = time.perf_counter()
+
+
 SYMBOL = 'BTC/USD'
 CRYPTO_OR_STOCK = 'crypto'
 # SYMBOL = 'MGC'
 # CRYPTO_OR_STOCK = 'stock'
-end_time = datetime.now()
-# end_time = datetime(2024,3,24)
+# end_time = datetime.now()
+end_time = datetime(2024,3,24)
 # start_time = end_time-timedelta(days=31)
 start_time = end_time-timedelta(days=365*10)
-time_interval = TimeFrame(4,TimeFrameUnit.Hour)
+time_interval = TimeFrame(1,TimeFrameUnit.Hour)
 # time_interval = TimeFrame(1,TimeFrameUnit.Day)
 rsi_high, rsi_low = 70, 30
 position_size, take_profit, stop_loss = 1000, 10, 2 
@@ -44,15 +48,19 @@ if PROGRESS_LOG: print("Strategy Analzed")
 
 ####### Setup Optimizer #######
 if PROGRESS_LOG: print("Setting Up Optimizer")
-optimizer = optimizers.BasicOptimizer(df)
-# optimizer = optimizers.QuantumOptimizer(df)
+optimziation_start_time = time.perf_counter()
+# optimizer = optimizers.BasicOptimizer(df)
+optimizer = optimizers.QuantumOptimizer(df)
 if PROGRESS_LOG: print("Optimizer Setup Complete")
 
 ####### Optimize Strategy #######
 if PROGRESS_LOG: print("Optimizing Strategy")
 optimized_parameters = optimizer.optimize()
-if PROGRESS_LOG: print(optimized_parameters)
+optimization_end_time = time.perf_counter()
+optimziation_time = optimization_end_time - optimziation_start_time
 if PROGRESS_LOG: print("Strategy Optimized")
+if PROGRESS_LOG: print(f"Total Optimization Time: {optimziation_time}")
+if PROGRESS_LOG: print(optimized_parameters)
 
 ####### Test Opimized Strategy #######
 if PROGRESS_LOG: print("Testing Optimized Parameters")
@@ -82,7 +90,7 @@ print("Latest Signal",latest_signal)
 
 
 ###### Evaluate Order Size ########
-starting_balance = 250000  # Initial capital
+starting_balance = 10000  # Initial capital
 current_position = get_open_position(symbol=SYMBOL)
 if current_position == None: current_position_size_dollars=0
 else: 
@@ -96,6 +104,12 @@ order_size = calculate_order_size(starting_balance,account_cash,50,max_pos_size_
 order_size = float("{:.2f}".format(order_size))
 if order_size == current_position_size_dollars: order_size = current_position_qty
 print("Order Size: %f"%order_size)
+
+
+
+run_end_time = time.perf_counter()
+run_time = run_end_time-run_start_time
+print(f"Run Time: {run_time}")
 
 # ——————— Example usage with different capital allocations for each symbol
 # symbol = 'BTC/USD'

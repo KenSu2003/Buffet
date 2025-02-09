@@ -1,5 +1,5 @@
 import alpaca_api, optimizers
-from time import time
+import time
 from datetime import timedelta, datetime
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from testing_tools import setup, calculate_pnl
@@ -46,7 +46,7 @@ class paper_trader():
 
             if PROGRESS_LOG: print("\nUpdating Parameters ...")
 
-            start_run_time = time()
+            start_run_time = time.time()
             
             ####### Set Default Parameters #######
             if PROGRESS_LOG: print("Setting Default Parameters")
@@ -75,6 +75,7 @@ class paper_trader():
 
             ####### Setup Optimizer #######
             if PROGRESS_LOG: print("Setting Up Quantum Optimizer")
+            optimziation_start_time = time.perf_counter()
             # optimizer = BasicOptimizer(df)
             optimizer = optimizers.QuantumOptimizer(df)
             if PROGRESS_LOG: print("Optimizer Setup Complete")
@@ -82,8 +83,11 @@ class paper_trader():
             ####### Optimize Strategy #######
             if PROGRESS_LOG: print("Optimizing Strategy")
             optimized_parameters = optimizer.optimize()
-            if PROGRESS_LOG: print(optimized_parameters)
+            optimization_end_time = time.perf_counter()
+            optimziation_time = optimization_end_time - optimziation_start_time
             if PROGRESS_LOG: print("Strategy Optimized")
+            if PROGRESS_LOG: print("Total Optimization Time: {optimziation_time}")
+            if PROGRESS_LOG: print(optimized_parameters)
 
             ####### Test Opimized Strategy #######
             if PROGRESS_LOG: print("Testing Optimized Parameters")
@@ -106,7 +110,7 @@ class paper_trader():
             else:
                 if TRADE_LOG: print("Excuting Trades using Basic Parameters")
 
-            run_time = time() - start_run_time
+            run_time = time.time() - start_run_time
             if PROGRESS_LOG: print(f"Run time: {run_time}\n")
 
             
@@ -199,11 +203,11 @@ if __name__ == "__main__":
 
     # Update Parameters Every 1 Hour(s).
     scheduler.add_job(btc_trader.update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
-    print("Paramters updating every 1 hour(s).")
+    print(f"Paramters updating every 1 hour(s). Current time: {time.time()}")
 
     # Calculate Signal and Excute Trade Every 1 Hour(s).
     job = scheduler.add_job(btc_trader.execute_trade, 'interval', hours=1, args=[PROGRESS_LOG, TRADE_LOG])
-    print("Trades Excuted every 1 hour(s).")
+    print(f"Trades Excuted every 1 hour(s). Current time: {time.time()}")
 
     try:
         print("Starting the scheduler...")
