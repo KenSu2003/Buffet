@@ -21,8 +21,7 @@ class paper_trader():
         self.symbol = symbol
         self.crypto_or_stock = crypto_or_stock
         self.end_time = datetime.now()
-        # self.start_time = self.end_time-timedelta(days=31)
-        self.start_time = self.end_time-timedelta(years=5)
+        self.start_time = self.end_time-timedelta(days=365*5)
         self.time_interval = TimeFrame(amount=1,unit=TimeFrameUnit.Hour)
         self.rsi_high = 70
         self.rsi_low = 30
