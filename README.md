@@ -1,11 +1,12 @@
 
 # Buffet V2
 
-Buffet is part of a sophisticated Trading AI trained to perform and outperform human traders. Buffet V2 is an advanced trading algorithm that derives, tests, and optimizes trading strategies. It can perform paper trading or live trading on actual accounts, utilizing different optimizations to find the best parameters for trading. In this version we are focused are rebuilding the software architecture and letting Buffet run on a paper trading brokerage. 
+Buffet is part of a sophisticated Trading AI trained to perform and outperform human traders. Buffet V2 is an advanced trading algorithm that derives, tests, and optimizes trading strategies. It can perform paper trading or live trading on actual accounts, utilizing different optimizations to find the best parameters for trading. In this version we are focused on rebuilding the software architecture and letting Buffet run on a paper trading brokerage. 
 
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
+- [Process Management](#process-management)
 - [Project Structure](#project-structure)
 - [Features](#features)
 - [Contributing](#contributing)
@@ -44,12 +45,16 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
     pip install apscheduler
     ```
 
+**PI USERS: Refer to the [TA-Lib Installation Guide](ta_lib_install_guide.txt) for detailed instructions on resolving any issues related to the TA-Lib C library or Python wrapper installation.**
+
+---
+
 ## Usage
 
 1. **Set the Correct Parameters**:  
    Ensure you’ve correctly configured key parameters like timeframes, thresholds, and risk limits in `paper_trading.py`.
 
-2. **Switch or Write a New Strategy (If Needed)**:  
+2. **Switch or Write a New Strategy**:  
    - Pick or write a strategy in `strategies.py`.  
    - Modify the `strategy` variable in `paper_trading.py` to select the appropriate strategy.  
 
@@ -64,12 +69,69 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
    python Buffet/Code/paper_trading.py
    ```
 
-5. **Run the Shell File (Optional)**:  
+5. **Run the Shell File**:  
    Use the provided `automated_testing.sh` to automate the execution of `paper_trading.py` with background logging.
 
    ```bash
    ./Buffet/automated_testing.sh
    ```
+
+---
+
+## Process Management
+
+### **How to Find and Kill the Running Processes**
+
+1. **Find the process ID (PID)**:  
+   To identify the process running the `paper_trading.py` script, use one of the following commands:
+
+   - **Using `ps` and `grep`:**
+     ```bash
+     ps aux | grep paper_trading.py
+     ```
+     This will display a list of matching processes, showing their PIDs in the second column.
+
+   - **Using `pgrep`:**
+     ```bash
+     pgrep -f paper_trading.py
+     ```
+     This command will return the PID(s) directly.
+
+2. **Kill the process**:  
+   To terminate the process, use the **`kill`** command:
+   ```bash
+   kill PID
+   ```
+
+   For example:
+   ```bash
+   kill 12345
+   ```
+
+3. **Force kill (if necessary)**:  
+   If the process does not terminate with the standard `kill` command, use the **`-9`** option to force termination:
+   ```bash
+   kill -9 PID
+   ```
+
+   For example:
+   ```bash
+   kill -9 12345
+   ```
+
+4. **Verify the process has been terminated**:  
+   Check that the process is no longer running:
+   ```bash
+   ps aux | grep paper_trading.py
+   ```
+   If no process appears, the termination was successful.
+
+---
+## Project Structure
+![Buffet System Flow Diagram](https://github.com/user-attachments/assets/dd86523b-8a02-4469-a30a-0556da08c875)
+
+
+---
 
 ## Features
 
