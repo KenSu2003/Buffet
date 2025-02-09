@@ -246,7 +246,7 @@ if __name__ == "__main__":
     time_interval = TimeFrame(4,TimeFrameUnit.Hour)
     df = setup(symbol, type, start_time, end_time, time_interval)
 
-    
+    print(datetime.now())
 
     # Setup Optimizer
     setup_start_time = time.perf_counter()
@@ -280,7 +280,7 @@ if __name__ == "__main__":
     optimized_pnl, optimized_roi = calculate_pnl(optimized_df, optimized_position_size, optimized_take_profit, optimized_stop_loss, )
     print(f"Optimized PnL: ${optimized_pnl:.2f}\t({optimized_roi*100:.2f}%)")
     
-
+    print(datetime.now())
 
 '''
 Rather than test everything.
