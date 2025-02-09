@@ -1,11 +1,10 @@
-import alpaca_api
+import alpaca_api, optimizers
 from time import time
 from datetime import timedelta, datetime
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from testing_tools import setup, calculate_pnl
 from tester import tester
 from strategies import Momentum, calculate_order_size
-from optimizers import BasicOptimizer
 from apscheduler.schedulers.blocking import BlockingScheduler
 from threading import Lock
 
@@ -75,8 +74,9 @@ class paper_trader():
             if PROGRESS_LOG: print("Strategy Analzed")
 
             ####### Setup Optimizer #######
-            if PROGRESS_LOG: print("Setting Up Optimizer")
-            optimizer = BasicOptimizer(df, self.symbol, self.start_time, self.end_time, self.time_interval)
+            if PROGRESS_LOG: print("Setting Up Quantum Optimizer")
+            # optimizer = BasicOptimizer(df)
+            optimizer = optimizers.QuantumOptimizer(df)
             if PROGRESS_LOG: print("Optimizer Setup Complete")
 
             ####### Optimize Strategy #######
@@ -198,12 +198,12 @@ if __name__ == "__main__":
     scheduler = BlockingScheduler()
 
     # Update Parameters Every HOUR
-    scheduler.add_job(btc_trader.update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
-    print("Paramters updating every 1 hour")
+    scheduler.add_job(btc_trader.update_parameters, 'interval', hours=4, args=[PROGRESS_LOG])
+    print("Paramters updating every 4 hours")
 
     # Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FOR TESTING)
-    scheduler.add_job(btc_trader.execute_trade, 'interval', minutes=15, args=[PROGRESS_LOG, TRADE_LOG])
-    print("Trades Excuted every 15 minutes")
+    job = scheduler.add_job(btc_trader.execute_trade, 'interval', hours=4, args=[PROGRESS_LOG, TRADE_LOG])
+    print("Trades Excuted every 4 hours")
 
     try:
         print("Starting the scheduler...")
