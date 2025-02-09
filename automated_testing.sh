@@ -9,13 +9,19 @@ CODE_DIR="~/Buffet/Code"
 # Path to the Python file you want to execute
 PYTHON_FILE="~/Buffet/Code/paper_trading.py"
 
+# Log file for output
+LOG_FILE="Buffet/Code/output.log"
+
 # Activate the virtual environment
+echo "Activating virtual environment: $VENV_PATH"
 source "$VENV_PATH"
 
 # Navigate to the Code directory
+echo "Navigating to code directory: $CODE_DIR"
 cd "$CODE_DIR" || exit
 
 # Run the Python script with nohup to keep it running in the background
+echo "Starting Python script in the background: $PYTHON_FILE"
 nohup python -u "$PYTHON_FILE" &
 
 echo "Script is running in the background. Check output.log for details."
