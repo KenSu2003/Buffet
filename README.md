@@ -129,7 +129,7 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
 ---
 ## Project Structure
 
-# Outdated
+#### Outdated
 ![Buffet System Flow Diagram](https://github.com/user-attachments/assets/dd86523b-8a02-4469-a30a-0556da08c875)
 
 
