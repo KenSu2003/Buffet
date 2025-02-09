@@ -10,7 +10,7 @@ from alpaca_api import get_open_position, get_balance
 
 SYMBOL = 'BTC/USD'
 CRYPTO_OR_STOCK = 'crypto'
-# SYMBOL = 'CWEN'
+# SYMBOL = 'MGC'
 # CRYPTO_OR_STOCK = 'stock'
 end_time = datetime.now()
 # end_time = datetime(2024,3,24)
@@ -44,8 +44,8 @@ if PROGRESS_LOG: print("Strategy Analzed")
 
 ####### Setup Optimizer #######
 if PROGRESS_LOG: print("Setting Up Optimizer")
-# optimizer = optimizers.BasicOptimizer(df)
-optimizer = optimizers.QuantumOptimizer(df)
+optimizer = optimizers.BasicOptimizer(df)
+# optimizer = optimizers.QuantumOptimizer(df)
 if PROGRESS_LOG: print("Optimizer Setup Complete")
 
 ####### Optimize Strategy #######
@@ -82,7 +82,7 @@ print("Latest Signal",latest_signal)
 
 
 ###### Evaluate Order Size ########
-starting_balance = 10000  # Initial capital
+starting_balance = 250000  # Initial capital
 current_position = get_open_position(symbol=SYMBOL)
 if current_position == None: current_position_size_dollars=0
 else: 

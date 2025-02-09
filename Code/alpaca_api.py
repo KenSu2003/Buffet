@@ -165,6 +165,13 @@ def get_all_orders(symbol):
 
 # ———————————————————————— TESTING ————————————————————————
 
+if __name__ == "__main__":
+    print(APCA_API_KEY_ID, APCA_API_SECRET_KEY)
+    try:
+        bars = get_open_position("BTC/USD")
+    except Exception as e:
+        print("Error fetching stock bars:", e)
+
 # all_filled_orders = get_all_orders('BTC/USD')
 # title = 'orders_15min_31days.csv'
 # filepath = f"./data/{title}"
