@@ -128,6 +128,8 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
 
 ---
 ## Project Structure
+
+# Outdated
 ![Buffet System Flow Diagram](https://github.com/user-attachments/assets/dd86523b-8a02-4469-a30a-0556da08c875)
 
 
@@ -138,7 +140,7 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
 - **Technical Indicators**: Utilizes various technical indicators to predict market movements.
 - **Simulated Trading**: Allows for backtesting and strategy optimization in a simulated environment.
 - **Risk Management**: Includes modules for setting take-profit and stop-loss levels to manage risk.
-- **Live Trading**: Capable of executing trades in a live market environment.
+- **Paper Trading**: Capable of executing trades in a paper trading environment.
 
 ## Contributing
 
