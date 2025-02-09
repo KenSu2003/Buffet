@@ -1,3 +1,4 @@
+
 # Buffet V2
 
 Buffet is part of a sophisticated Trading AI trained to perform and outperform human traders. Buffet V2 is an advanced trading algorithm that derives, tests, and optimizes trading strategies. It can perform paper trading or live trading on actual accounts, utilizing different optimizations to find the best parameters for trading. In this version we are focused are rebuilding the software architecture and letting Buffet run on a paper trading brokerage. 
@@ -45,28 +46,30 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
 
 ## Usage
 
-To use Buffet, follow these steps:
+1. **Set the Correct Parameters**:  
+   Ensure you’ve correctly configured key parameters like timeframes, thresholds, and risk limits in `paper_trading.py`.
 
-1. **Strategy Selection**: Pick the strategy model you want to use for testing and trading. The strategies should be in **strategies.py**.
+2. **Switch or Write a New Strategy (If Needed)**:  
+   - Pick or write a strategy in `strategies.py`.  
+   - Modify the `strategy` variable in `paper_trading.py` to select the appropriate strategy.  
 
-2. **Strategy Testing**: Test the selected strategy with set timeframe.
-    Use the tester in **tester.py** to create bot(s) for testing basic (given) parameters 
-    and optimized parameters derived from **optimizers.py**
-    ```bash
-    python train_model.py
-    ```
+3. **Modify Optimizers (If Needed)**:  
+   - Edit or switch optimizers in the `optimizers.py` file.  
+   - Update the corresponding optimizer reference in `paper_trading.py`.  
 
-3. **Simulated Trading**: Test the model in a simulated trading environment.
-    ```bash
-    python paper_trading.py
-    ```
+4. **Run `paper_trading.py`**:  
+   Execute the `paper_trading.py` script to start paper trading with the selected strategy and parameters.
 
-4. **Live Trading**: Deploy the model for live trading (ensure all safety checks and risk management protocols are in place).
-    ```bash
-    To be rolled out.
-    ```
+   ```bash
+   python Buffet/Code/paper_trading.py
+   ```
 
-![Buffet System Flow Diagram](https://github.com/user-attachments/assets/dd86523b-8a02-4469-a30a-0556da08c875)
+5. **Run the Shell File (Optional)**:  
+   Use the provided `automated_testing.sh` to automate the execution of `paper_trading.py` with background logging.
+
+   ```bash
+   ./Buffet/automated_testing.sh
+   ```
 
 ## Features
 
