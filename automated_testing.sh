@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to your virtual environment's activate script
-VENV_PATH="buffet_venv/bin/activate"
+VENV_PATH="Buffet/venv/bin/activate"
 
 # Directory where the code is located
 CODE_DIR="Code"
