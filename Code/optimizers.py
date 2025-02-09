@@ -241,7 +241,7 @@ if __name__ == "__main__":
     # Set Environment
     symbol = 'BTC/USD'
     type = 'crypto'
-    start_time = datetime(2022,12,1)
+    start_time = datetime(2019,12,1)
     end_time = datetime(2024,12,31)
     time_interval = TimeFrame(4,TimeFrameUnit.Hour)
     df = setup(symbol, type, start_time, end_time, time_interval)
@@ -251,8 +251,8 @@ if __name__ == "__main__":
     # Setup Optimizer
     setup_start_time = time.perf_counter()
     
-    optimizer = BasicOptimizer(df)
-    # optimizer = QuantumOptimizer(df)
+    # optimizer = BasicOptimizer(df)
+    optimizer = QuantumOptimizer(df)
     
     setup_end_time = time.perf_counter()
     setup_elapsed_time = setup_end_time - setup_start_time

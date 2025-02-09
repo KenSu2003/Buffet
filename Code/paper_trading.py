@@ -21,7 +21,8 @@ class paper_trader():
         self.symbol = symbol
         self.crypto_or_stock = crypto_or_stock
         self.end_time = datetime.now()
-        self.start_time = self.end_time-timedelta(days=31)
+        # self.start_time = self.end_time-timedelta(days=31)
+        self.start_time = self.end_time-timedelta(years=5)
         self.time_interval = TimeFrame(amount=1,unit=TimeFrameUnit.Hour)
         self.rsi_high = 70
         self.rsi_low = 30
@@ -197,13 +198,13 @@ if __name__ == "__main__":
     # Create an instance of the scheduler
     scheduler = BlockingScheduler()
 
-    # Update Parameters Every HOUR
-    scheduler.add_job(btc_trader.update_parameters, 'interval', hours=4, args=[PROGRESS_LOG])
-    print("Paramters updating every 4 hours")
+    # Update Parameters Every 1 Hour(s).
+    scheduler.add_job(btc_trader.update_parameters, 'interval', hours=1, args=[PROGRESS_LOG])
+    print("Paramters updating every 1 hour(s).")
 
-    # Calculate Signal and Excute Trade Every 15 MINUTES (USE 1 MINUTE FOR TESTING)
-    job = scheduler.add_job(btc_trader.execute_trade, 'interval', hours=4, args=[PROGRESS_LOG, TRADE_LOG])
-    print("Trades Excuted every 4 hours")
+    # Calculate Signal and Excute Trade Every 1 Hour(s).
+    job = scheduler.add_job(btc_trader.execute_trade, 'interval', hours=1, args=[PROGRESS_LOG, TRADE_LOG])
+    print("Trades Excuted every 1 hour(s).")
 
     try:
         print("Starting the scheduler...")
