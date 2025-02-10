@@ -86,7 +86,7 @@ class paper_trader():
             optimization_end_time = time.perf_counter()
             optimziation_time = optimization_end_time - optimziation_start_time
             if PROGRESS_LOG: print("Strategy Optimized")
-            if PROGRESS_LOG: print("Total Optimization Time: {optimziation_time}")
+            if PROGRESS_LOG: print(f"Total Optimization Time: {optimziation_time}")
             if PROGRESS_LOG: print(optimized_parameters)
 
             ####### Test Opimized Strategy #######
