@@ -17,10 +17,10 @@ CRYPTO_OR_STOCK = 'crypto'
 # SYMBOL = 'MGC'
 # CRYPTO_OR_STOCK = 'stock'
 # end_time = datetime.now()
-end_time = datetime(2024,3,24)
+end_time = datetime(2024,2,3)
 # start_time = end_time-timedelta(days=31)
-start_time = end_time-timedelta(days=365*10)
-time_interval = TimeFrame(1,TimeFrameUnit.Hour)
+start_time = end_time-timedelta(days=365*5)
+time_interval = TimeFrame(4,TimeFrameUnit.Hour)
 # time_interval = TimeFrame(1,TimeFrameUnit.Day)
 rsi_high, rsi_low = 70, 30
 position_size, take_profit, stop_loss = 1000, 10, 2 

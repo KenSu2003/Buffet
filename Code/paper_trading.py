@@ -158,11 +158,11 @@ class paper_trader():
                 current_position_size_dollars = float(current_position.market_value)
                 current_position_qty = current_position.qty_available
             # account_cash = float(alpaca_api.get_balance().cash)
-            account_cash = float(alpaca_api.get_balance().non_marginable_buying_power)
+            available_balance = float(alpaca_api.get_balance().non_marginable_buying_power)
             max_pos_size_perc = 1   # only symbol traded 
             starting_portfolio_weight = 1
             capital_per_symbol_start = starting_balance * starting_portfolio_weight
-            order_size = calculate_order_size(starting_balance,account_cash,signal,max_pos_size_perc,current_position_size_dollars,capital_per_symbol_start)
+            order_size = calculate_order_size(starting_balance,available_balance,signal,max_pos_size_perc,current_position_size_dollars,capital_per_symbol_start)
             order_size = float("{:.2f}".format(order_size))
             
             ####### Execute Order ####### 
@@ -174,7 +174,7 @@ class paper_trader():
             elif signal<=-1:
                 if TRADE_LOG: print(f"Opening Short Order for ${order_size}\n")
                 # if the calculated order size is larger than the current available qty then set the order size as the current position qty
-                if order_size >= current_position_size_dollars: alpaca_api.set_order(self.symbol,'short',qty=current_position_qty)  
+                if order_size >= current_position_size_dollars: alpaca_api.set_order(self.symbol,'short',qty=float(current_position_qty))  
                 # else set the order as the calculated order_size
                 else: alpaca_api.set_order(self.symbol,'short',order_size)
             else:
