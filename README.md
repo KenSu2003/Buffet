@@ -18,7 +18,7 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
     ```bash
     git clone https://github.com/KenSu2003/Buffet.git
     cd Buffet
-    git checkout branchForV2
+    git checkout buffet_v2.1
     ```
 
 2. Install the required dependencies:
@@ -36,7 +36,7 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
     < Install Bayesian Optimization >
     pip install bayesian-optimization
 
-    < Install Alapaca API >
+    < Install Alpaca API >
     pip install alpaca-py
 
     < Install Other Tools >
@@ -45,32 +45,32 @@ Buffet is part of a sophisticated Trading AI trained to perform and outperform h
     pip install apscheduler
     ```
 
-**PI USERS: Refer to the [TA-Lib Installation Guide](ta_lib_install_guide.txt) for detailed instructions on resolving any issues related to the TA-Lib C library or Python wrapper installation.**
+**Pi users:** Refer to the [TA-Lib Installation Guide](ta_lib_install_guide.md) for detailed instructions on resolving any issues related to the TA-Lib C library or Python wrapper installation.
 
 ---
 
 ## Usage
 
 1. **Set the Correct Parameters**:  
-   Ensure you’ve correctly configured key parameters like timeframes, thresholds, and risk limits in `paper_trading.py`.
+   Ensure you’ve correctly configured key parameters like timeframes, thresholds, and risk limits in `Code/paper_trading.py`.
 
 2. **Switch or Write a New Strategy**:  
-   - Pick or write a strategy in `strategies.py`.  
-   - Modify the `strategy` variable in `paper_trading.py` to select the appropriate strategy.  
+   - Pick or write a strategy in `Code/strategies.py`.  
+   - The default strategy is **Momentum** (RSI, MACD, Bollinger Bands). To use another, add it in `strategies.py` and update the strategy instantiation in `paper_trading.py` (where `Momentum` is used).  
 
 3. **Modify Optimizers (If Needed)**:  
-   - Edit or switch optimizers in the `optimizers.py` file.  
-   - Update the corresponding optimizer reference in `paper_trading.py`.  
+   - Edit or switch optimizers in `Code/optimizers.py`.  
+   - Update the optimizer used in `paper_trading.py` (e.g. `QuantumOptimizer` in `update_parameters`).  
 
 4. **Run `paper_trading.py`**:  
-   Execute the `paper_trading.py` script to start paper trading with the selected strategy and parameters.
+   From the Buffet repo root, run:
 
    ```bash
-   python Buffet/Code/paper_trading.py
+   python Code/paper_trading.py
    ```
 
-5. **Run the Shell File**:  
-   Use the provided `automated_testing.sh` to automate the execution of `paper_trading.py` with background logging.
+5. **Run the Shell File (optional)**:  
+   `automated_testing.sh` runs `paper_trading.py` in the background with logging. It expects to be run from the **parent directory** that contains `Buffet` (it uses `Buffet/venv` and `Buffet/Code`):
 
    ```bash
    ./Buffet/automated_testing.sh
